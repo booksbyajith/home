@@ -885,7 +885,26 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
             </div>
             {config && (
               <section class="card p-4" aria-labelledby="bank-h">
-                <h3 id="bank-h" class="font-sans text-lg font-semibold">
+                <h3 id="bank-h" class="flex items-center gap-3 font-sans text-lg font-semibold">
+                  <span
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-maroon text-white"
+                    aria-hidden="true"
+                  >
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M3 9.5L12 4l9 5.5"></path>
+                      <path d="M4.5 10v7M9 10v7M15 10v7M19.5 10v7"></path>
+                      <path d="M3 20h18"></path>
+                    </svg>
+                  </span>
                   {t('order.payment.title')}
                 </h3>
                 <dl class="mt-3 space-y-3" data-testid="bank">
