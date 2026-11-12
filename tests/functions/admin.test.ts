@@ -131,17 +131,15 @@ describe('updateBook', () => {
 
 describe('moderateReview', () => {
   it('publishes and unpublishes a review', async () => {
-    await db
-      .doc('review_submissions/r1')
-      .set({
-        slug: CHINESE,
-        displayName: 'Reader',
-        rating: 5,
-        text: 'Excellent research.',
-        lang: 'en',
-        status: 'pending',
-        createdAt: Timestamp.now(),
-      });
+    await db.doc('review_submissions/r1').set({
+      slug: CHINESE,
+      displayName: 'Reader',
+      rating: 5,
+      text: 'Excellent research.',
+      lang: 'en',
+      status: 'pending',
+      createdAt: Timestamp.now(),
+    });
     await call('moderateReview', { id: 'r1', action: 'approve' }, { idToken: admin });
     const pub = await db.doc(`books/${CHINESE}/reviews/r1`).get();
     expect(pub.data()).toMatchObject({ displayName: 'Reader', rating: 5, text: 'Excellent research.' });
