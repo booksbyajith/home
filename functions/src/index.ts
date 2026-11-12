@@ -8,3 +8,4 @@ export { updateBook } from './callables/updateBook.js';
 export { moderateReview } from './callables/moderateReview.js';
 export { adminUpdateRecord } from './callables/adminUpdateRecord.js';
 export { anonymiseOldOrders } from './callables/anonymiseOldOrders.js';
+export { onOrderAudit } from './triggers/onOrderAudit.js';

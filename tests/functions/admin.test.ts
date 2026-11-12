@@ -1,7 +1,17 @@
 import { Timestamp } from 'firebase-admin/firestore';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { setAdmin } from '../../scripts/grant-admin.mjs';
-import { adminAuth, adminToken, bucket, call, db, resetAll, signIn, userToken } from '../helpers/emulator.js';
+import {
+  adminAuth,
+  adminToken,
+  bucket,
+  call,
+  db,
+  outbox,
+  resetAll,
+  signIn,
+  userToken,
+} from '../helpers/emulator.js';
 import { CHINESE, orderInput } from '../helpers/fixtures.js';
 
 let admin: string;
@@ -122,6 +132,39 @@ describe('updateBook', () => {
       ).result.ok,
     ).toBe(true);
   });
+  it('emails pending stock alerts when a book becomes orderable', async () => {
+    await db.doc(`books/${CHINESE}`).update({ inStock: false, stock: 0 });
+    await db
+      .doc('stock_alerts/a1')
+      .set({
+        slug: CHINESE,
+        contact: { email: 'wait@example.com', whatsapp: null },
+        lang: 'en',
+        createdAt: Timestamp.now(),
+        notifiedAt: null,
+      });
+    await db
+      .doc('stock_alerts/a2')
+      .set({
+        slug: CHINESE,
+        contact: { email: null, whatsapp: '94770000005' },
+        lang: 'si',
+        createdAt: Timestamp.now(),
+        notifiedAt: null,
+      });
+    const r = await call('updateBook', { slug: CHINESE, inStock: true, stock: 10 }, { idToken: admin });
+    expect(r.result).toEqual({ ok: true, alertsEmailed: 1 });
+    const mail = (await outbox((d) => d.meta?.event === 'back_in_stock'))[0];
+    expect(mail.to).toEqual(['wait@example.com']);
+    expect(mail.text).toContain('/en/order/?book=chinese-expedition');
+    expect((await db.doc('stock_alerts/a1').get()).get('notifiedAt')).toBeTruthy();
+    expect((await db.doc('stock_alerts/a2').get()).get('notifiedAt')).toBeNull();
+    // Already orderable: no second email.
+    expect(
+      (await call('updateBook', { slug: CHINESE, stock: 11 }, { idToken: admin })).result.alertsEmailed,
+    ).toBe(0);
+  });
+
   it('rejects unknown books', async () => {
     expect((await call('updateBook', { slug: 'nope', stock: 1 }, { idToken: admin })).error?.status).toBe(
       'NOT_FOUND',

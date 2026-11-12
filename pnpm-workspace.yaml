@@ -2,11 +2,17 @@ packages:
   - site
   - functions
   - tests
-useNodeVersion: 24.22.3
+
+ignoredBuiltDependencies:
+  - re2
+  - '@firebase/util'
+
 onlyBuiltDependencies:
   - esbuild
   - sharp
   - protobufjs
-ignoredBuiltDependencies:
-  - re2
-  - '@firebase/util'
+
+patchedDependencies:
+  firebase-tools@15.36.0: patches/firebase-tools@15.36.0.patch
+
+useNodeVersion: 24.22.3

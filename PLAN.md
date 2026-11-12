@@ -133,6 +133,13 @@ Locked decisions from the brief are not repeated here. This list records what th
 - D-45 `.firebaserc` contains only `demo-ajith`. Real deploys pass `--project` from a GitHub variable.
 - D-46 Sinhala UI text and message templates are written by the implementer and flagged in `MANUAL_SETUP.md` for the author to review.
 
+**Added during implementation**
+
+- D-47 `firebase-tools@15.36.0` sends emulator loopback requests through `HTTPS_PROXY` and ignores `NO_PROXY`, which breaks Firestore trigger registration behind a proxy. A `pnpm patch` (`patches/firebase-tools@15.36.0.patch`) skips the proxy for `127.x`, `localhost` and `[::1]`. It changes nothing for real Google API calls.
+- D-48 Callable CORS origins are read from `process.env.ALLOWED_ORIGINS` when the module loads (the deployed `functions/.env`), falling back to allow-all when empty. `defineList` was not used because it expects a JSON array in `.env`. Protection does not depend on CORS.
+- D-49 `requestStockAlert`, `submitReview` and `submitEnquiry` also require `consent: true`, matching the consent checkboxes in §14.7.
+- D-50 Order-anonymisation selects closed orders (`delivered`, `rejected`, `cancelled`) by `closedAt`, not only delivered ones, so abandoned orders do not keep personal data forever.
+
 ---
 
 ## 4. Repository layout

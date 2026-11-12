@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  firebase-tools@15.36.0:
+    hash: abb619a6e3ab61b755fc26e33200722309ee8da09cfc7c54ea10b6efc6da5849
+    path: patches/firebase-tools@15.36.0.patch
+
 importers:
 
   .:
@@ -25,7 +30,7 @@ importers:
         version: 14.5.1(@firebase/app-compat@0.5.22)(@firebase/app@0.16.6)
       firebase-tools:
         specifier: 15.36.0
-        version: 15.36.0(@types/node@24.19.2)(bare-buffer@3.7.1)
+        version: 15.36.0(patch_hash=abb619a6e3ab61b755fc26e33200722309ee8da09cfc7c54ea10b6efc6da5849)(@types/node@24.19.2)(bare-buffer@3.7.1)
       prettier:
         specifier: 3.10.0
         version: 3.10.0
@@ -6444,7 +6449,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  firebase-tools@15.36.0(@types/node@24.19.2)(bare-buffer@3.7.1):
+  firebase-tools@15.36.0(patch_hash=abb619a6e3ab61b755fc26e33200722309ee8da09cfc7c54ea10b6efc6da5849)(@types/node@24.19.2)(bare-buffer@3.7.1):
     dependencies:
       '@electric-sql/pglite': 0.3.16
       '@electric-sql/pglite-tools': 0.2.21(@electric-sql/pglite@0.3.16)

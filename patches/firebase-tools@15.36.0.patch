@@ -1,0 +1,15 @@
+diff --git a/lib/apiv2.js b/lib/apiv2.js
+index 2fea12d093fd7696001309d001a0598f08be4961..f1c53fe45f1c80144861665ef27defb8f3bb05fe 100644
+--- a/lib/apiv2.js
++++ b/lib/apiv2.js
+@@ -240,7 +240,9 @@ class Client {
+             redirect: options.redirect,
+         };
+         const proxyURI = proxyURIFromEnv();
+-        if (proxyURI) {
++        // Local patch: never send loopback (emulator) traffic through an HTTPS proxy.
++        const isLoopback = /^https?:\/\/(127\.\d+\.\d+\.\d+|localhost|\[::1\])(:|\/|$)/i.test(String(fetchURL));
++        if (proxyURI && !isLoopback) {
+             fetchOptions.dispatcher = new undici_1.ProxyAgent({ uri: proxyURI });
+         }
+         if (options.signal) {
