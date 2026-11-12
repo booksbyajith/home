@@ -207,26 +207,26 @@ function Shell(p: {
             </button>
           </div>
         </div>
-        <nav class="container-page overflow-x-auto pb-2" aria-label={t('admin.title')}>
-          {/* Equal-width tabs so switching language never moves them; a highlight slides to the active tab. */}
-          <ul
-            class="relative grid min-w-max grid-flow-col auto-cols-[8.5rem] sm:auto-cols-[9.5rem]"
-            data-admin-tabs
-          >
+        <nav class="container-page pb-2" aria-label={t('admin.title')}>
+          {/* Equal-width tabs that always fit (no scrolling), so switching language never moves them.
+              One row with a sliding highlight on large screens; equal rows on smaller screens. */}
+          <ul class="relative grid grid-cols-3 gap-1 sm:grid-cols-5 lg:grid-cols-9 lg:gap-0" data-admin-tabs>
             <li
               aria-hidden="true"
-              class="pointer-events-none absolute inset-y-0 left-0 rounded bg-maroon transition-transform duration-300 ease-out motion-reduce:transition-none"
+              class="pointer-events-none absolute inset-y-0 left-0 hidden rounded bg-maroon transition-transform duration-300 ease-out motion-reduce:transition-none lg:block"
               style={{ width: `${100 / NAV.length}%`, transform: `translateX(${activeIndex * 100}%)` }}
               data-tab-indicator
             />
             {NAV.map(([h, k], i) => {
               const active = i === activeIndex;
               return (
-                <li class="relative">
+                <li class="relative min-w-0">
                   <a
                     href={`#${h}`}
                     aria-current={active ? 'page' : undefined}
-                    class={`block truncate rounded px-2 py-2 text-center no-underline transition-colors duration-300 ${active ? 'text-white' : 'text-ink hover:bg-paper'}`}
+                    class={`flex min-h-12 items-center justify-center rounded px-1 py-1 text-center text-sm leading-tight no-underline transition-colors duration-300 xl:text-base ${
+                      active ? 'bg-maroon text-white lg:bg-transparent' : 'text-ink hover:bg-paper'
+                    }`}
                     title={t(k)}
                   >
                     {t(k)}
