@@ -18,6 +18,7 @@ import {
   type DraftFields,
   type DraftGeo,
 } from '../../lib/draft';
+import { guessCountryName } from '../../lib/guessCountry';
 import { call, callError, orderErrorKey } from '../../lib/firebase';
 import { currentLocation, geoSupported, type GeoError } from '../../lib/geo';
 import { prepareSlip } from '../../lib/imageCompress';
@@ -156,6 +157,11 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
           else setSlipMsg('order.draft.slipNotSaved');
         });
       }
+    } else {
+      // Outside Sri Lanka (judged by the device time zone): pre-select overseas delivery
+      // and fill in the country. The customer can change both.
+      const country = guessCountryName(lang);
+      if (country) setFields((f) => ({ ...f, districtId: OVERSEAS, country }));
     }
     const want = new URLSearchParams(location.search).get('book');
     if (want && books.some((b) => b.slug === want) && !nextCart.some((c) => c.slug === want))

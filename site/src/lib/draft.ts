@@ -69,7 +69,8 @@ export function isMeaningful(d: Draft | null): boolean {
     d.step > 0 ||
     !!d.slipMeta ||
     !!d.geo ||
-    [f.name, f.mobile, f.email, f.line1, f.city, f.districtId, f.postalCode, f.landmark, f.dedicationNote].some((v) => v.trim())
+    // District and country alone don't count: they can be pre-filled from the device time zone.
+    [f.name, f.mobile, f.email, f.line1, f.city, f.postalCode, f.landmark, f.dedicationNote].some((v) => v.trim())
   );
 }
 

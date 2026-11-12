@@ -91,3 +91,21 @@ test('overseas order: country field, international mobile, postage to be confirm
   await admin.goto(`admin/#/orders/${orderId}`);
   await expect(admin.locator('[data-testid="detail-address"]')).toContainText('Australia 2640');
 });
+
+test('a visitor outside Sri Lanka gets overseas delivery and their country pre-filled', async ({
+  browser,
+}) => {
+  const ctx = await browser.newContext({
+    timezoneId: 'Australia/Sydney',
+    baseURL: test.info().project.use.baseURL,
+    serviceWorkers: 'block',
+  });
+  const page = await ctx.newPage();
+  await page.goto('en/order/?book=portuguese-era-1505-1594');
+  await ready(page);
+  await page.click('[data-next-step]');
+  await expect(page.locator('#f-districtId')).toHaveValue('overseas');
+  await expect(page.locator('#f-country')).toHaveValue('Australia');
+  await expect(page.locator('[data-testid="overseas-note"]')).toBeVisible();
+  await ctx.close();
+});
