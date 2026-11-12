@@ -78,6 +78,8 @@
     line-height: 1.8;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
+    /* Keep jump-to targets (skip link, #books, form errors) clear of the sticky header. */
+    scroll-padding-top: 5.5rem;
   }
   html[lang='en'] {
     line-height: 1.65;

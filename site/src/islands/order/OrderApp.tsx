@@ -987,7 +987,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
           )}
         </div>
       </div>
-      <aside class="lg:sticky lg:top-4 lg:self-start">
+      <aside class="lg:sticky lg:top-24 lg:self-start">
         <Summary />
       </aside>
     </div>
