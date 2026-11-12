@@ -10,7 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pub = path.join(root, 'site/public');
 const out = path.join(pub, '_gen');
 const WIDTHS = [320, 640, 960];
-const DIRS = ['covers', 'samples', 'author'];
+const DIRS = ['covers', 'samples', 'author', 'news'];
 
 function walk(dir) {
   if (!existsSync(dir)) return [];
