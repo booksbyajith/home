@@ -103,20 +103,18 @@ Only the host name: no `https://`, no `/home`. GitHub Pages serves every reposit
 
 You already have the config. (These values are public by design; it is fine that they appear in the website. Security comes from the rules and App Check.)
 
-## 6. App Check with reCAPTCHA v3
+## 6. App Check with Fraud Defense (reCAPTCHA Enterprise)
 
-Your error came from typing a full address. The domain box wants **only the host name**:
+Firebase no longer accepts new reCAPTCHA Classic registrations, so the site uses **Fraud Defense (reCAPTCHA Enterprise)**. It needs one **site key** and no secret key. It is free up to 10,000 checks a month.
 
-1. Open <https://www.google.com/recaptcha/admin/create>.
-   - Label: `booksbyajith`.
-   - Type: **Score based (v3)**.
-   - Domains: type `booksbyajith.github.io` and press Enter. (Not `https://…`, not `/home/`.)
-   - Google Cloud project: choose **booksbyajith** if asked.
-   - Submit, then copy the **site key** and the **secret key**.
-2. Firebase console → **Build → App Check → Apps** → your web app → **reCAPTCHA** → paste the **secret key** → **Save**.
-3. **App Check → APIs**: leave Cloud Firestore, Cloud Storage and Authentication as **Unenforced**. (The Cloud Functions check App Check themselves.)
-
-**Expected:** the web app shows reCAPTCHA as registered. Keep the **site key** for step 9.
+1. Firebase console → left sidebar **App Check** → **Apps** → **site** → **Fraud Defense (formerly reCAPTCHA Enterprise)** → **+**.
+2. It asks for a **reCAPTCHA Enterprise site key**. Click the link to create one (or open <https://console.cloud.google.com/security/recaptcha?project=booksbyajith>, click **Enable** if asked, then **Create key**):
+   - Display name: `booksbyajith-site`. Application type: **Web**.
+   - Domains: `booksbyajith.github.io` (host name only).
+   - Leave "Use checkbox challenge" **off** (score-based). **Create key**, then copy the **key ID**.
+3. Paste the key ID into the App Check form → **Save**. The **site** row becomes **Registered**.
+4. **App Check → APIs**: leave Cloud Firestore, Cloud Storage and Authentication **Unenforced**.
+5. GitHub `booksbyajith/home` variable `PUBLIC_RECAPTCHA_SITE_KEY` = the same key ID.
 
 ## 7. Service account for deployments (redo)
 

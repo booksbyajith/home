@@ -36,7 +36,7 @@ export function getFirebaseApp(): Promise<FirebaseApp> {
       });
     } else if (env.recaptchaSiteKey) {
       appCheck.initializeAppCheck(app, {
-        provider: new appCheck.ReCaptchaV3Provider(env.recaptchaSiteKey),
+        provider: new appCheck.ReCaptchaEnterpriseProvider(env.recaptchaSiteKey),
         isTokenAutoRefreshEnabled: true,
       });
     }
