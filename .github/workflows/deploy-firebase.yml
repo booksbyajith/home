@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       rules:
-        description: Firestore and Storage security rules
+        description: Firestore security rules (slips use a private Cloud Storage bucket, no Firebase Storage rules)
         type: boolean
         default: true
       indexes:
@@ -43,7 +43,7 @@ jobs:
         id: targets
         run: |
           t=""
-          if [ "${{ inputs.rules }}" = "true" ]; then t="$t,firestore:rules,storage"; fi
+          if [ "${{ inputs.rules }}" = "true" ]; then t="$t,firestore:rules"; fi
           if [ "${{ inputs.indexes }}" = "true" ]; then t="$t,firestore:indexes"; fi
           if [ "${{ inputs.functions }}" = "true" ]; then t="$t,functions"; fi
           t="${t#,}"

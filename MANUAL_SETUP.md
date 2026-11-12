@@ -11,7 +11,7 @@ Values used throughout (change them if yours differ):
 | GitHub repository | `booksbyajith/home` |
 | Website address | `https://booksbyajith.github.io/home/` |
 | Site origin (no path) | `https://booksbyajith.github.io` |
-| Storage bucket | `booksbyajith.firebasestorage.app` |
+| Storage bucket (bank slips) | `booksbyajith-slips` |
 
 ---
 
@@ -22,7 +22,7 @@ Values used throughout (change them if yours differ):
 | 1. Firebase project `booksbyajith` | ✅ done |
 | 2. **Blaze plan** | ❌ **blocking — see step 2** |
 | 3. Firestore in `asia-south1` | ✅ done |
-| 3. Storage | ❌ needs Blaze (step 2) |
+| 3. Storage bucket `booksbyajith-slips` | ✅ done |
 | 4. Google sign-in | ✅ enabled — authorised domain still to add |
 | 5. Web app registered | ✅ done |
 | 6. reCAPTCHA / App Check | ❌ domain error — see step 6 |
@@ -81,13 +81,11 @@ Then:
 
 > If you decide you will never use Blaze, the brief's ordering system (server-side price checks, rate limiting, emails, private bank slips) cannot be delivered as designed. Tell Claude and it can propose a reduced, Spark-only version and explain exactly what is lost.
 
-## 3. Storage (after step 2)
+## 3. Storage bucket for bank slips ✅
 
-Firebase console → **Build → Storage → Get started** → location **`asia-south1`** → **production mode**.
+Done: a private Google Cloud Storage bucket **`booksbyajith-slips`** in **asia-south1 (Mumbai)**, public access prevention on. Firebase's own "Storage → Get started" page is not used (it refused the location), so ignore it.
 
-Storage is needed: it holds the customers' bank slips privately (only admins can open them, through links that expire after 5 minutes).
-
-**Expected:** an empty bucket named `booksbyajith.firebasestorage.app`.
+Set the GitHub variable `STORAGE_BUCKET` = `booksbyajith-slips` (step 9).
 
 ## 4. Authorised domain for sign-in
 
@@ -180,7 +178,7 @@ Yes — everything in this step must be in **`booksbyajith/home`**, because that
 | `PUBLIC_FUNCTIONS_REGION` | ✅ `asia-south1` |
 | `PUBLIC_ANALYTICS_PROVIDER` | ✅ `none` |
 | `PUBLIC_RECAPTCHA_SITE_KEY` | site key from step 6 ← add |
-| `STORAGE_BUCKET` | `booksbyajith.firebasestorage.app` ← add (after step 3) |
+| `STORAGE_BUCKET` | `booksbyajith-slips` ← add |
 
 3. **Settings → Secrets and variables → Actions → Secrets → New repository secret** for each:
 
