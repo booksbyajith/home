@@ -173,6 +173,10 @@ function Shell(p: {
     );
 
   const path = route.path;
+  const activeIndex = Math.max(
+    0,
+    NAV.findIndex(([h]) => (h === '/' ? path === '/' : path.startsWith(h))),
+  );
   const orderMatch = path.match(/^\/orders\/(AJ-\d{4}-[A-Z0-9]{4})$/);
   let screen;
   if (path === '/') screen = <Dashboard />;
@@ -204,15 +208,26 @@ function Shell(p: {
           </div>
         </div>
         <nav class="container-page overflow-x-auto pb-2" aria-label={t('admin.title')}>
-          <ul class="flex gap-1 whitespace-nowrap">
-            {NAV.map(([h, k]) => {
-              const active = h === '/' ? path === '/' : path.startsWith(h);
+          {/* Equal-width tabs so switching language never moves them; a highlight slides to the active tab. */}
+          <ul
+            class="relative grid min-w-max grid-flow-col auto-cols-[8.5rem] sm:auto-cols-[9.5rem]"
+            data-admin-tabs
+          >
+            <li
+              aria-hidden="true"
+              class="pointer-events-none absolute inset-y-0 left-0 rounded bg-maroon transition-transform duration-300 ease-out motion-reduce:transition-none"
+              style={{ width: `${100 / NAV.length}%`, transform: `translateX(${activeIndex * 100}%)` }}
+              data-tab-indicator
+            />
+            {NAV.map(([h, k], i) => {
+              const active = i === activeIndex;
               return (
-                <li>
+                <li class="relative">
                   <a
                     href={`#${h}`}
                     aria-current={active ? 'page' : undefined}
-                    class={`block rounded px-3 py-2 no-underline ${active ? 'bg-maroon text-white' : 'text-ink hover:bg-paper'}`}
+                    class={`block truncate rounded px-2 py-2 text-center no-underline transition-colors duration-300 ${active ? 'text-white' : 'text-ink hover:bg-paper'}`}
+                    title={t(k)}
                   >
                     {t(k)}
                   </a>
