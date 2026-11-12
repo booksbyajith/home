@@ -138,9 +138,14 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
     saver.current = createDraftSaver(400);
     const d = loadDraft();
     let nextCart = d?.cart ?? [];
+    // Outside Sri Lanka (judged by the device time zone): pre-select overseas delivery and
+    // fill in the country, unless the customer has already chosen a district. Both stay editable.
+    const guessed = guessCountryName(lang);
+    const withGuess = (f: DraftFields): DraftFields =>
+      guessed && !f.districtId ? { ...f, districtId: OVERSEAS, country: f.country || guessed } : f;
     if (d && isMeaningful(d)) {
       setStep(Math.min(Math.max(d.step, 0), 3));
-      setFields(d.fields);
+      setFields(withGuess(d.fields));
       setGeo(d.geo);
       setConsent(!!d.consent);
       setRestored(true);
@@ -158,10 +163,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
         });
       }
     } else {
-      // Outside Sri Lanka (judged by the device time zone): pre-select overseas delivery
-      // and fill in the country. The customer can change both.
-      const country = guessCountryName(lang);
-      if (country) setFields((f) => ({ ...f, districtId: OVERSEAS, country }));
+      setFields((f) => withGuess(f));
     }
     const want = new URLSearchParams(location.search).get('book');
     if (want && books.some((b) => b.slug === want) && !nextCart.some((c) => c.slug === want))
