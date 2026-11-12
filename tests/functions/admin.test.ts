@@ -1,6 +1,5 @@
 import { Timestamp } from 'firebase-admin/firestore';
 import { beforeEach, describe, expect, it } from 'vitest';
-// @ts-ignore plain ESM script
 import { setAdmin } from '../../scripts/grant-admin.mjs';
 import { adminAuth, adminToken, bucket, call, db, resetAll, signIn, userToken } from '../helpers/emulator.js';
 import { CHINESE, orderInput } from '../helpers/fixtures.js';
