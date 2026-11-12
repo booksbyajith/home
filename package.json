@@ -23,7 +23,8 @@
     "dev": "node scripts/dev.mjs",
     "test:e2e": "pnpm build:emu && pnpm build:functions && firebase emulators:exec --only auth,firestore,storage,functions --project demo-ajith \"pnpm --filter tests exec playwright test --trace off\"",
     "check:prod": "ASTRO_OUT_DIR=./dist-prod node scripts/with-env.mjs .env.example pnpm --filter site build && node scripts/check-prod-bundle.mjs site/dist-prod",
-    "test:lhci": "pnpm build:emu && pnpm build:functions && firebase emulators:exec --only auth,firestore,storage,functions --project demo-ajith \"node scripts/seed.mjs --emulator --fixtures && node scripts/lhci.mjs\""
+    "test:lhci": "pnpm build:emu && pnpm build:functions && firebase emulators:exec --only auth,firestore,storage,functions --project demo-ajith \"node scripts/seed.mjs --emulator --fixtures && node scripts/lhci.mjs\"",
+    "test": "pnpm lint && pnpm build:functions && pnpm typecheck && pnpm scan && pnpm test:unit && pnpm test:rules && pnpm test:functions && pnpm test:e2e"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

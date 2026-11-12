@@ -16,3 +16,6 @@ patchedDependencies:
   firebase-tools@15.36.0: patches/firebase-tools@15.36.0.patch
 
 useNodeVersion: 24.22.3
+
+overrides:
+  '@grpc/grpc-js@<1.13.6': 1.14.7

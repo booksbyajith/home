@@ -1,0 +1,33 @@
+name: Setup
+description: Node (from .node-version), pnpm (from packageManager) and dependencies
+inputs:
+  java:
+    description: Install Java 21 for the Firebase emulators
+    default: 'false'
+  browser:
+    description: Install Playwright Chromium
+    default: 'false'
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: .node-version
+        cache: pnpm
+    - run: pnpm install --frozen-lockfile
+      shell: bash
+    - if: inputs.java == 'true'
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '21'
+    - if: inputs.java == 'true'
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/firebase/emulators
+        key: firebase-emulators-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: firebase-emulators-
+    - if: inputs.browser == 'true'
+      run: pnpm --filter tests exec playwright install --with-deps chromium
+      shell: bash

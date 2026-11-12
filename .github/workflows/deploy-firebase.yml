@@ -1,0 +1,53 @@
+name: Deploy Firebase (rules, indexes, functions)
+
+on:
+  workflow_dispatch:
+    inputs:
+      rules:
+        description: Firestore and Storage security rules
+        type: boolean
+        default: true
+      indexes:
+        description: Firestore indexes and TTL policies
+        type: boolean
+        default: true
+      functions:
+        description: Cloud Functions
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firebase-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - name: Write functions/.env (non-secret parameters)
+        run: |
+          {
+            echo "SITE_URL=${{ vars.SITE_URL }}"
+            echo "ALLOWED_ORIGINS=${{ vars.ALLOWED_ORIGINS }}"
+            echo "STORAGE_BUCKET=${{ vars.STORAGE_BUCKET }}"
+          } > functions/.env
+      - name: Choose targets
+        id: targets
+        run: |
+          t=""
+          if [ "${{ inputs.rules }}" = "true" ]; then t="$t,firestore:rules,storage"; fi
+          if [ "${{ inputs.indexes }}" = "true" ]; then t="$t,firestore:indexes"; fi
+          if [ "${{ inputs.functions }}" = "true" ]; then t="$t,functions"; fi
+          t="${t#,}"
+          if [ -z "$t" ]; then echo "Nothing selected"; exit 1; fi
+          echo "only=$t" >> "$GITHUB_OUTPUT"
+      - name: Deploy
+        run: pnpm exec firebase deploy --only "${{ steps.targets.outputs.only }}" --project "${{ vars.FIREBASE_PROJECT_ID }}" --non-interactive --force
