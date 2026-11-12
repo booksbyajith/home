@@ -31,7 +31,7 @@ export function decodeFields(fields: Record<string, FsValue> | undefined): Recor
 }
 
 function base(): string {
-  const host = env.useEmulators ? 'http://127.0.0.1:8080' : 'https://firestore.googleapis.com';
+  const host = __USE_EMULATORS__ ? 'http://127.0.0.1:8080' : 'https://firestore.googleapis.com';
   return `${host}/v1/projects/${env.firebase.projectId}/databases/(default)/documents`;
 }
 
@@ -58,7 +58,7 @@ function cacheSet(key: string, data: unknown) {
 
 async function getJson(path: string): Promise<unknown | null> {
   try {
-    const res = await fetch(`${base()}/${path}${env.useEmulators ? '' : `?key=${env.firebase.apiKey}`}`, {
+    const res = await fetch(`${base()}/${path}${__USE_EMULATORS__ ? '' : `?key=${env.firebase.apiKey}`}`, {
       headers: { Accept: 'application/json' },
     });
     if (!res.ok) return null;

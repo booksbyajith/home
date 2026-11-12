@@ -21,7 +21,8 @@
     "preview:emu": "node scripts/with-env.mjs .env.emulator pnpm --filter site preview",
     "check:links": "node scripts/check-links.mjs site/dist",
     "dev": "node scripts/dev.mjs",
-    "test:e2e": "pnpm build:emu && pnpm build:functions && firebase emulators:exec --only auth,firestore,storage,functions --project demo-ajith \"pnpm --filter tests exec playwright test --trace off\""
+    "test:e2e": "pnpm build:emu && pnpm build:functions && firebase emulators:exec --only auth,firestore,storage,functions --project demo-ajith \"pnpm --filter tests exec playwright test --trace off\"",
+    "check:prod": "ASTRO_OUT_DIR=./dist-prod node scripts/with-env.mjs .env.example pnpm --filter site build && node scripts/check-prod-bundle.mjs site/dist-prod"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

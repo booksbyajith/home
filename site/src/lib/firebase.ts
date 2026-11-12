@@ -9,7 +9,7 @@ async function functions(): Promise<Functions> {
   fnsPromise ??= (async () => {
     const [app, { getFunctions, connectFunctionsEmulator }] = await Promise.all([getFirebaseApp(), import('firebase/functions')]);
     const f = getFunctions(app, env.functionsRegion);
-    if (env.useEmulators) connectFunctionsEmulator(f, '127.0.0.1', 5001);
+    if (__USE_EMULATORS__) connectFunctionsEmulator(f, '127.0.0.1', 5001);
     return f;
   })();
   return fnsPromise;

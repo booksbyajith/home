@@ -1,0 +1,20 @@
+---
+import '../styles/global.css';
+import { asset } from '../lib/paths';
+---
+
+<!doctype html>
+<html lang="si">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="theme-color" content="#7a1f1f" />
+    <title>Admin</title>
+    <link rel="icon" href={asset('/icons/favicon.svg')} type="image/svg+xml" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

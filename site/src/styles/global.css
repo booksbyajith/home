@@ -151,3 +151,64 @@
     @apply my-6 rounded-md;
   }
 }
+
+/* ---- Admin print views ---- */
+@page sheet {
+  size: A4;
+  margin: 13mm 6mm;
+}
+@page label {
+  size: 100mm 150mm;
+  margin: 5mm;
+}
+@layer components {
+  .print-sheet {
+    page: sheet;
+    display: grid;
+    grid-template-columns: repeat(2, 99.1mm);
+    grid-auto-rows: 67.7mm;
+    gap: 0 2.5mm;
+    break-after: page;
+  }
+  .print-single {
+    page: label;
+    width: 90mm;
+    break-after: page;
+  }
+  .print-label-box {
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 4mm 5mm;
+    border: 1px dashed var(--color-line);
+    font-size: 11pt;
+    line-height: 1.35;
+    background: white;
+  }
+  .print-packing {
+    break-before: page;
+    padding: 8mm;
+    background: white;
+  }
+  @media screen {
+    .print-sheet {
+      margin-bottom: 1rem;
+      background: white;
+      padding: 4mm;
+      width: max-content;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+  }
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    html,
+    body {
+      background: white;
+    }
+    .print-label-box {
+      border-color: transparent;
+    }
+  }
+}

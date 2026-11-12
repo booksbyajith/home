@@ -1,0 +1,13 @@
+---
+import AdminApp from '../../islands/admin/AdminApp';
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { pick } from '../../i18n';
+import { env } from '../../lib/env';
+
+const prefixes = ['admin.', 'status.', 'order.payment.', 'order.summary.', 'order.field.district'];
+const dicts = { si: pick('si', prefixes), en: pick('en', prefixes) };
+---
+
+<AdminLayout>
+  <AdminApp client:only="preact" dicts={dicts} base={env.base} siteUrl={env.siteUrl} />
+</AdminLayout>

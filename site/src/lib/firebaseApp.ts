@@ -27,7 +27,7 @@ export function getFirebaseApp(): Promise<FirebaseApp> {
   appPromise ??= (async () => {
     const [{ initializeApp, getApps }, appCheck] = await Promise.all([import('firebase/app'), import('firebase/app-check')]);
     const app = getApps()[0] ?? initializeApp(env.firebase);
-    if (env.useEmulators) {
+    if (__USE_EMULATORS__) {
       appCheck.initializeAppCheck(app, {
         provider: new appCheck.CustomProvider({
           getToken: async () => ({ token: emulatorAppCheckToken(), expireTimeMillis: Date.now() + 3_000_000 }),

@@ -21,3 +21,4 @@ test-results
 
 site/public/_gen
 site/src/generated/images.json
+site/dist-prod
