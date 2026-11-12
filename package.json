@@ -9,7 +9,10 @@
   "scripts": {
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "scan": "node scripts/scan.mjs"
+    "scan": "node scripts/scan.mjs",
+    "typecheck": "pnpm --filter functions typecheck && pnpm --filter tests exec tsc --noEmit",
+    "test:unit": "pnpm --filter functions test",
+    "test:rules": "firebase emulators:exec --only firestore,storage --project demo-ajith \"pnpm --filter tests exec vitest run -c vitest.rules.config.ts\""
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
