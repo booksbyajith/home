@@ -36,7 +36,6 @@ const notes = t('home.hero.notes').split('|');
   <p class="secret relative z-[2] mt-2 text-center font-serif text-xl text-maroon italic sm:text-2xl">
     {t('home.hero.secret')}
   </p>
-  <p class="hint relative z-[2] mt-1 text-center text-sm text-ink-soft">{t('home.hero.hint')}</p>
 </div>
 
 <style>
@@ -112,10 +111,6 @@ const notes = t('home.hero.notes').split('|');
       opacity 0.4s ease,
       translate 0.4s ease;
   }
-  .hint {
-    opacity: 0;
-    animation: fade-in 1s ease 3s forwards;
-  }
   /* Touch screens: no pointer to follow, so the notes and the hidden line appear on their own. */
   @media (hover: none) {
     .notes {
@@ -128,14 +123,10 @@ const notes = t('home.hero.notes').split('|');
       translate: none;
       animation: fade-in 1s ease 3.8s forwards;
     }
-    .hint {
-      display: none;
-    }
   }
   @media (prefers-reduced-motion: reduce) {
     .notes,
-    .secret,
-    .hint {
+    .secret {
       opacity: 1;
     }
   }

@@ -4,7 +4,7 @@ description: "சிங்கள மக்களின் வரலாற்ற�
 date: 2019-04-21
 tags: [press, finding-sinhabahu, review]
 cover: /news/2019-04-sunday-times-finding-sinhabahu.jpg
-coverAlt: "கலாநிதி அஜித் அமரசிங்க மற்றும் Finding Sinhabahu நூலின் அட்டை"
+coverAlt: "வைத்தியர் அஜித் அமரசிங்க மற்றும் Finding Sinhabahu நூலின் அட்டை"
 translationKey: press-sunday-times-2019
 ---
 

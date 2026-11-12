@@ -14,10 +14,10 @@ const out = path.join(site, 'public/og');
 mkdirSync(out, { recursive: true });
 const W = 1200;
 const H = 630;
-const NAME = { si: 'ආචාර්ය අජිත් අමරසිංහ', en: 'Dr. Ajith Amarasinghe', ta: 'கலாநிதி அஜித் அமரசிங்க' };
+const NAME = { si: 'වෛද්‍ය අජිත් අමරසිංහ', en: 'Dr. Ajith Amarasinghe', ta: 'வைத்தியர் அஜித் அமரசிங்க' };
 const LANGS = ['si', 'en', 'ta'];
 const TAG = {
-  si: 'ශ්‍රී ලංකා ඉතිහාසය පිළිබඳ පර්යේෂණ',
+  si: 'ඉතිහාස පබැඳුම',
   en: 'Research on the history of Sri Lanka',
   ta: 'இலங்கை வரலாறு பற்றிய ஆய்வுகள்',
 };

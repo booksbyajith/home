@@ -4,7 +4,7 @@ description: "Finding Sinhabahu කෘතිය සිංහල ජනයාග�
 date: 2019-04-21
 tags: [press, finding-sinhabahu, review]
 cover: /news/2019-04-sunday-times-finding-sinhabahu.jpg
-coverAlt: "ආචාර්ය අජිත් අමරසිංහ සහ Finding Sinhabahu කෘතියේ කවරය"
+coverAlt: "වෛද්‍ය අජිත් අමරසිංහ සහ Finding Sinhabahu කෘතියේ කවරය"
 translationKey: press-sunday-times-2019
 ---
 

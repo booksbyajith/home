@@ -77,7 +77,7 @@ for (const [i, b] of books.entries()) {
 }
 
 await card(path.join(pub, 'author/author-portrait.jpg'), 1200, 1500, '#4a4136', [
-  ['ආචාර්ය අජිත් අමරසිංහ', 64],
+  ['වෛද්‍ය අජිත් අමරසිංහ', 64],
   ['Dr. Ajith Amarasinghe', 48],
   ['PLACEHOLDER — author/author-portrait.jpg', 30],
 ]);

@@ -5,7 +5,7 @@ export const GET: APIRoute = () =>
   new Response(
     JSON.stringify(
       {
-        name: 'ආචාර්ය අජිත් අමරසිංහ — පොත්',
+        name: 'වෛද්‍ය අජිත් අමරසිංහ — පොත්',
         short_name: 'අජිත් අමරසිංහ',
         description: 'Books on the history of Sri Lanka by Dr. Ajith Amarasinghe',
         lang: 'si',

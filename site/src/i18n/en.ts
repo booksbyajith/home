@@ -52,7 +52,6 @@ export const en: Dict = {
   'home.hero.explore': 'Explore the books',
   'home.hero.notes': 'Sinhapura|Dantapura|Kotte, 1505|Zheng He, 1411|Kalinga|Taprobana',
   'home.hero.secret': 'Every chronicle hides another story.',
-  'home.hero.hint': 'Move closer to the portrait to uncover the notes',
   'home.featured.title': 'New book',
   'home.featured.launched': 'Launched on {date} at {venue}',
   'home.featured.orderNow': 'Order now',

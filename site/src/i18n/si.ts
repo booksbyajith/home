@@ -1,7 +1,7 @@
 /* Sinhala UI text. AUTHOR: please review wording (see MANUAL_SETUP.md). */
 export const si = {
-  'site.name': 'ආචාර්ය අජිත් අමරසිංහ',
-  'site.tagline': 'ශ්‍රී ලංකා ඉතිහාසය පිළිබඳ පර්යේෂණ',
+  'site.name': 'වෛද්‍ය අජිත් අමරසිංහ',
+  'site.tagline': 'ඉතිහාස පබැඳුම',
   'site.skipToContent': 'අන්තර්ගතයට යන්න',
   'site.langToggle': 'English',
   'site.langName.si': 'සිංහල',
@@ -41,7 +41,7 @@ export const si = {
   'footer.rights': 'සියලු හිමිකම් ඇවිරිණි.',
   'footer.newsletter': 'නව පොත් සහ උත්සව පිළිබඳ පුවත් ලබා ගන්න',
 
-  'home.hero.label': 'ආචාර්ය අජිත් අමරසිංහගේ පොත්',
+  'home.hero.label': 'වෛද්‍ය අජිත් අමරසිංහගේ පොත්',
   'home.hero.prev': 'පෙර පොත',
   'home.hero.next': 'ඊළඟ පොත',
   'home.hero.pause': 'ස්ලයිඩ් නවත්වන්න',
@@ -50,7 +50,6 @@ export const si = {
   'home.hero.explore': 'පොත් ගවේෂණය කරන්න',
   'home.hero.notes': 'සිංහපුරය|දන්තපුරය|කෝට්ටේ, 1505|සෙංහෙ, 1411|කාලිංගය|තප්\u200dරොබේන්',
   'home.hero.secret': 'සෑම වංශකතාවක්ම තවත් කතාවක් සඟවයි.',
-  'home.hero.hint': 'සටහන් හෙළි කර ගැනීමට ඡායාරූපය වෙත ළං වන්න',
   'home.featured.title': 'නව පොත',
   'home.featured.launched': '{date} දින {venue} හිදී එළිදක්වන ලදී',
   'home.featured.orderNow': 'දැන් ඇණවුම් කරන්න',
@@ -125,7 +124,7 @@ export const si = {
   'blog.intro': 'ශ්‍රී ලංකා ඉතිහාසය පිළිබඳ සටහන් සහ ලිපි.',
   'news.title': 'පුවත්',
   'news.intro': 'එළිදැක්වීම්, දේශන සහ නිවේදන.',
-  'rss.title': 'ආචාර්ය අජිත් අමරසිංහ — ලිපි සහ පුවත්',
+  'rss.title': 'වෛද්‍ය අජිත් අමරසිංහ — ලිපි සහ පුවත්',
   'rss.description': 'ශ්‍රී ලංකා ඉතිහාසය පිළිබඳ පොත් ගැන නව ලිපි සහ පුවත්.',
 
   'press.title': 'මාධ්‍ය සහ උත්සව',

@@ -28,13 +28,13 @@ const nav = [
   { path: '/about/', label: t('nav.about') },
   { path: '/contact/', label: t('nav.contact') },
 ];
-// Tamil menu labels are long: keep the full menu for wider screens.
-const wideNav = lang === 'ta';
+// Sinhala and Tamil names and menu labels are long: keep the full menu for wider screens.
+const wideNav = lang !== 'en';
 const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWith(p));
 ---
 
 <header class="site-header sticky top-0 z-40 border-b border-line/70 bg-paper/85 backdrop-blur-md">
-  <div class="container-page flex h-16 items-center justify-between gap-3 sm:h-[4.5rem]">
+  <div class="container-page flex h-16 items-center justify-between gap-3 sm:h-[4.5rem] 2xl:max-w-[1440px]">
     <a href={href(lang, '/')} class="group flex min-w-0 items-center gap-3 text-ink no-underline">
       <span class="block h-10 w-10 shrink-0 overflow-hidden rounded-full border border-line bg-sepia/60 sm:h-11 sm:w-11">
         <Cover
