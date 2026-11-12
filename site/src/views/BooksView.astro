@@ -1,0 +1,27 @@
+---
+import type { Lang } from '@shared/constants';
+import BookCard from '../components/BookCard.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { useT } from '../i18n';
+import { getBookText, getBooks } from '../lib/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+const books = await getBooks();
+const summaries = await Promise.all(books.map(async (b) => (await getBookText(b.slug, lang))?.data.summary));
+---
+
+<BaseLayout lang={lang} title={t('books.title')} description={t('books.intro')}>
+  <section class="container-page py-10">
+    <h1 class="text-3xl font-bold">{t('books.title')}</h1>
+    <p class="mt-2 text-lg text-ink-soft">{t('books.intro')}</p>
+    <div class="mt-8 grid gap-6 lg:grid-cols-2">
+      {books.map((b, i) => (
+        <BookCard lang={lang} book={b} summary={summaries[i]} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

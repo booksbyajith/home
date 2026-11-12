@@ -1,0 +1,42 @@
+---
+import type { Lang } from '@shared/constants';
+import { useT } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  url: string;
+  title: string;
+}
+const { lang, url, title } = Astro.props;
+const t = useT(lang);
+const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+const wa = `https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`;
+---
+
+<div class="flex flex-wrap items-center gap-2" data-share>
+  <span class="font-semibold">{t('book.share')}:</span>
+  <a class="btn-secondary px-3 py-1" href={fb} target="_blank" rel="noopener">
+    {t('book.share.facebook')}
+  </a>
+  <a class="btn-secondary px-3 py-1" href={wa} target="_blank" rel="noopener">
+    {t('book.share.whatsapp')}
+  </a>
+  <button type="button" class="btn-secondary px-3 py-1" data-copy={url} data-copied-label={t('site.copied')}>
+    {t('book.share.copy')}
+  </button>
+  <span class="text-sm text-success" role="status" data-copy-status></span>
+</div>
+
+<script>
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-copy]')) {
+    btn.addEventListener('click', async () => {
+      const status = btn.parentElement?.querySelector('[data-copy-status]');
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy ?? '');
+        if (status) status.textContent = btn.dataset.copiedLabel ?? '';
+      } catch {
+        window.prompt('', btn.dataset.copy ?? '');
+      }
+    });
+  }
+</script>

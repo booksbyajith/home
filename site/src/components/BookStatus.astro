@@ -1,0 +1,82 @@
+---
+/**
+ * Price, availability and the order / external / notify controls for one book.
+ * Rendered from build-time defaults, then updated in the browser from Firestore books/{slug}.
+ */
+import type { Lang } from '@shared/constants';
+import { formatLKR } from '@shared/pricing';
+import { useT } from '../i18n';
+import type { BookFacts } from '../lib/content';
+import { href } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+  book: BookFacts;
+  compact?: boolean;
+}
+const { lang, book, compact = false } = Astro.props;
+const t = useT(lang);
+const d = book.defaults;
+const direct = d.saleMode === 'direct' && d.priceLKR > 0 && d.inStock;
+---
+
+<div
+  data-book-live={book.slug}
+  data-lang={lang}
+  data-labels={JSON.stringify({
+    tba: t('books.priceTba'),
+    out: t('books.outOfStock'),
+    pre: t('books.preorder'),
+    unavailable: t('books.unavailable'),
+    low: t('books.lowStock'),
+  })}
+  class="space-y-3"
+>
+  <p class="text-2xl font-bold text-maroon" data-price>
+    {d.priceLKR > 0 ? formatLKR(d.priceLKR) : t('books.priceTba')}
+  </p>
+  <p class="text-sm font-semibold text-ink-soft" data-availability>
+    {direct
+      ? d.preorder
+        ? t('books.preorder')
+        : ''
+      : d.saleMode === 'unavailable'
+        ? t('books.unavailable')
+        : ''}
+  </p>
+  <div class="flex flex-wrap gap-2">
+    <a
+      href={href(lang, `/order/?book=${book.slug}`)}
+      class="btn-primary"
+      data-action="order"
+      hidden={!direct}
+    >
+      {t('books.orderDirect')}
+    </a>
+    <a
+      href={d.externalUrl ?? '#'}
+      class="btn-secondary"
+      data-action="external"
+      target="_blank"
+      rel="noopener"
+      hidden={d.saleMode !== 'external'}
+    >
+      {t('books.buyExternal')}
+    </a>
+    {compact && (
+      <a href={href(lang, `/books/${book.slug}/`)} class="btn-quiet">
+        {t('books.viewDetails')}
+      </a>
+    )}
+  </div>
+  {!compact && (
+    <div data-action="notify" hidden={direct || d.saleMode === 'external'}>
+      <slot name="notify" />
+    </div>
+  )}
+</div>
+
+<script>
+  import { initBookStatus } from '../lib/bookLive';
+  initBookStatus();
+</script>

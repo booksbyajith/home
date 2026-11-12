@@ -1,0 +1,63 @@
+---
+import type { Lang } from '@shared/constants';
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { useT, type I18nKey } from '../i18n';
+import { getFaq } from '../lib/content';
+import { href } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+const items = await Promise.all(
+  (await getFaq(lang)).map(async (e) => ({ e, Content: (await render(e)).Content })),
+);
+const cats = ['payment', 'delivery', 'returns', 'bulk', 'general'] as const;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map(({ e }) => ({
+    '@type': 'Question',
+    name: e.data.question,
+    acceptedAnswer: { '@type': 'Answer', text: (e.body ?? '').trim() },
+  })),
+};
+---
+
+<BaseLayout
+  lang={lang}
+  title={t('faq.title')}
+  description={items[0]?.e.data.question ?? t('faq.title')}
+  jsonLd={jsonLd}
+>
+  <section class="container-page py-10">
+    <div class="prose-page">
+      <h1 class="text-3xl font-bold">{t('faq.title')}</h1>
+      {cats.map((c) => {
+        const list = items.filter((i) => i.e.data.category === c);
+        return list.length ? (
+          <section class="mt-8">
+            <h2 class="text-2xl font-bold">{t(`faq.cat.${c}` as I18nKey)}</h2>
+            <div class="mt-3 space-y-3">
+              {list.map(({ e, Content }) => (
+                <details class="card p-4">
+                  <summary class="cursor-pointer font-semibold">{e.data.question}</summary>
+                  <div class="prose mt-2">
+                    <Content />
+                  </div>
+                </details>
+              ))}
+            </div>
+          </section>
+        ) : null;
+      })}
+      <p class="mt-10">
+        <a class="btn-secondary" href={href(lang, '/contact/')}>
+          {t('nav.contact')}
+        </a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>

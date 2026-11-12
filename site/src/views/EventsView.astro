@@ -1,0 +1,50 @@
+---
+import type { Lang } from '@shared/constants';
+import EventCard from '../components/EventCard.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { useT } from '../i18n';
+import { getEvents, splitEvents } from '../lib/content';
+import { absUrl, href } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+const events = await getEvents();
+const { upcoming, past } = splitEvents(events);
+const jsonLd = events.map((e) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: e.title[lang],
+  startDate: e.start.toISOString().slice(0, 10),
+  endDate: e.end?.toISOString().slice(0, 10),
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: { '@type': 'Place', name: e.venue[lang], address: e.city[lang] },
+  organizer: { '@type': 'Person', name: 'Ajith Amarasinghe' },
+  url: e.url ?? absUrl(href(lang, '/events/')),
+}));
+---
+
+<BaseLayout lang={lang} title={t('events.title')} description={t('press.intro')} jsonLd={jsonLd}>
+  <section class="container-page py-10">
+    <h1 class="text-3xl font-bold">{t('events.title')}</h1>
+    <h2 class="mt-8 text-2xl font-bold">{t('events.upcoming')}</h2>
+    {upcoming.length === 0 && <p class="mt-2 text-ink-soft">{t('events.none')}</p>}
+    <div class="mt-4 grid gap-4 md:grid-cols-2">
+      {upcoming.map((e) => (
+        <EventCard lang={lang} event={e} />
+      ))}
+    </div>
+    {past.length > 0 && (
+      <>
+        <h2 class="mt-10 text-2xl font-bold">{t('events.past')}</h2>
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+          {past.map((e) => (
+            <EventCard lang={lang} event={e} />
+          ))}
+        </div>
+      </>
+    )}
+  </section>
+</BaseLayout>

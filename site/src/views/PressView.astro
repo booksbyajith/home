@@ -1,0 +1,58 @@
+---
+import type { Lang } from '@shared/constants';
+import EventCard from '../components/EventCard.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatDate, useT } from '../i18n';
+import { getEvents, getPress, splitEvents } from '../lib/content';
+import { href } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+const press = await getPress();
+const { upcoming, past } = splitEvents(await getEvents());
+const shown = upcoming.length ? upcoming.slice(0, 3) : past.slice(0, 2);
+---
+
+<BaseLayout lang={lang} title={t('press.title')} description={t('press.intro')}>
+  <section class="container-page py-10">
+    <h1 class="text-3xl font-bold">{t('press.title')}</h1>
+    <p class="mt-2 text-lg text-ink-soft">{t('press.intro')}</p>
+    <div class="mt-8 grid gap-10 lg:grid-cols-2">
+      <section>
+        <h2 class="text-2xl font-bold">{t('press.coverage')}</h2>
+        <ul class="mt-4 space-y-3">
+          {press.map((p) => (
+            <li class="card p-4">
+              <p class="text-sm text-ink-soft">
+                {p.outlet} · <time datetime={p.date.toISOString()}>{formatDate(lang, p.date)}</time>
+              </p>
+              <p class="mt-1 font-semibold">{p.title}</p>
+              {p.excerpt && <p class="mt-1 text-ink-soft">{p.excerpt[lang]}</p>}
+              <a class="mt-2 inline-block" href={p.url} target="_blank" rel="noopener">
+                {t('press.readArticle')} ↗
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section>
+        <h2 class="text-2xl font-bold">{upcoming.length ? t('press.upcoming') : t('events.past')}</h2>
+        {!upcoming.length && <p class="mt-2 text-ink-soft">{t('events.none')}</p>}
+        <div class="mt-4 space-y-3">
+          {shown.map((e) => (
+            <EventCard lang={lang} event={e} />
+          ))}
+        </div>
+        <p class="mt-4">
+          <a href={href(lang, '/events/')}>{t('press.allEvents')} →</a>
+        </p>
+        <p class="mt-2">
+          <a href={href(lang, '/press-kit/')}>{t('nav.pressKit')} →</a>
+        </p>
+      </section>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,84 @@
+---
+import type { Lang } from '@shared/constants';
+import { render } from 'astro:content';
+import Cover from '../components/Cover.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { useT } from '../i18n';
+import { getBooks, getPage } from '../lib/content';
+import { absUrl, asset, href } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+const page = (await getPage(lang, 'about'))!;
+const { Content } = await render(page);
+const books = await getBooks();
+const credentials =
+  lang === 'si'
+    ? [
+        'වෘත්තියෙන් වෛද්‍ය විශේෂඥයෙකි',
+        'ශ්‍රී ලංකා රාජකීය ආසියාතික සංගමයේ සාමාජිකයෙකි',
+        'ඓතිහාසික පර්යේෂණ කෘති තුනක කතුවරයා',
+        '2020 රාජ්‍ය සාහිත්‍ය සම්මානලාභී (සමාජ විද්‍යා)',
+      ]
+    : [
+        'Medical specialist by profession',
+        'Member of the Royal Asiatic Society of Sri Lanka',
+        'Author of three historical research works',
+        'State Literary Award 2020 (Social Science)',
+      ];
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Ajith Amarasinghe',
+  honorificPrefix: 'Dr.',
+  description: page.data.description,
+  image: absUrl(asset('/author/author-portrait.jpg')),
+  memberOf: { '@type': 'Organization', name: 'Royal Asiatic Society of Sri Lanka' },
+  url: absUrl(href(lang, '/about/')),
+};
+---
+
+<BaseLayout
+  lang={lang}
+  title={page.data.title}
+  description={page.data.description}
+  ogType="profile"
+  jsonLd={jsonLd}
+>
+  <article class="container-page py-10">
+    <div class="grid gap-10 lg:grid-cols-[320px_1fr]">
+      <div>
+        <Cover
+          path="/author/author-portrait.jpg"
+          alt={t('pressKit.photo')}
+          eager
+          sizes="(min-width: 1024px) 320px, 80vw"
+          class="rounded-lg shadow-md"
+        />
+        <h2 class="mt-6 font-sans text-lg font-semibold">{t('about.credentials')}</h2>
+        <ul class="mt-2 list-disc space-y-1 pl-5">
+          {credentials.map((c) => (
+            <li>{c}</li>
+          ))}
+        </ul>
+      </div>
+      <div class="max-w-[72ch]">
+        <h1 class="text-3xl font-bold">{page.data.title}</h1>
+        <div class="prose mt-6 text-lg">
+          <Content />
+        </div>
+        <h2 class="mt-10 text-2xl font-bold">{t('books.title')}</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5">
+          {books.map((b) => (
+            <li>
+              <a href={href(lang, `/books/${b.slug}/`)}>{b.title[lang]}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

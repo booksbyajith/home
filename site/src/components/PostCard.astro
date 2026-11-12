@@ -1,0 +1,43 @@
+---
+import type { Lang } from '@shared/constants';
+import { formatDate, useT } from '../i18n';
+import { postMinutes, postSlug, type Post, type PostKind } from '../lib/content';
+import { href } from '../lib/paths';
+import Cover from './Cover.astro';
+
+interface Props {
+  lang: Lang;
+  kind: PostKind;
+  post: Post;
+  headingLevel?: 'h2' | 'h3';
+}
+const { lang, kind, post, headingLevel: H = 'h2' } = Astro.props;
+const t = useT(lang);
+const url = href(lang, `/${kind}/${postSlug(post)}/`);
+---
+
+<article class="card flex h-full flex-col overflow-hidden">
+  {post.data.cover && (
+    <a href={url} tabindex="-1" aria-hidden="true" class="block aspect-[16/9] overflow-hidden bg-paper-dark">
+      <Cover
+        path={post.data.cover}
+        alt=""
+        sizes="(min-width: 1024px) 380px, 90vw"
+        class="h-full w-full object-cover"
+      />
+    </a>
+  )}
+  <div class="flex flex-1 flex-col p-4">
+    <p class="text-sm text-ink-soft">
+      <span class="badge bg-paper-dark text-ink">{t(kind === 'news' ? 'news.title' : 'blog.title')}</span>
+      <time datetime={post.data.date.toISOString()}>{formatDate(lang, post.data.date)}</time> ·{' '}
+      {t('post.readingTime', { min: postMinutes(post) })}
+    </p>
+    <H class="mt-2 text-xl font-bold">
+      <a href={url} class="text-ink no-underline hover:underline">
+        {post.data.title}
+      </a>
+    </H>
+    <p class="mt-2 text-ink-soft">{post.data.description}</p>
+  </div>
+</article>

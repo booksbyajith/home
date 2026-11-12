@@ -1,0 +1,33 @@
+---
+import { img } from '../lib/images';
+
+interface Props {
+  path: string;
+  alt: string;
+  sizes?: string;
+  class?: string;
+  eager?: boolean;
+}
+const {
+  path,
+  alt,
+  sizes = '(min-width: 1024px) 320px, 60vw',
+  class: className = '',
+  eager = false,
+} = Astro.props;
+const i = img(path);
+---
+
+<picture>
+  {i.srcset && <source type="image/webp" srcset={i.srcset} sizes={sizes} />}
+  <img
+    src={i.src}
+    alt={alt}
+    width={i.width}
+    height={i.height}
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : undefined}
+    decoding="async"
+    class={className}
+  />
+</picture>

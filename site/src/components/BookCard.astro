@@ -1,0 +1,34 @@
+---
+import type { Lang } from '@shared/constants';
+import { useT } from '../i18n';
+import type { BookFacts } from '../lib/content';
+import { href } from '../lib/paths';
+import BookStatus from './BookStatus.astro';
+import Cover from './Cover.astro';
+
+interface Props {
+  lang: Lang;
+  book: BookFacts;
+  summary?: string;
+}
+const { lang, book, summary } = Astro.props;
+const t = useT(lang);
+const front = book.covers.find((c) => c.kind === 'front')!;
+const url = href(lang, `/books/${book.slug}/`);
+---
+
+<article class="card flex flex-col gap-4 p-4 sm:flex-row">
+  <a href={url} class="block w-40 shrink-0 self-center sm:self-start" tabindex="-1" aria-hidden="true">
+    <Cover path={`/covers/${front.file}`} alt="" sizes="160px" class="rounded shadow-md" />
+  </a>
+  <div class="flex flex-1 flex-col gap-2">
+    <h2 class="text-xl font-bold" lang={book.title[lang] === book.title.si ? 'si' : lang}>
+      <a href={url} class="text-ink no-underline hover:underline">
+        {book.title[lang]}
+      </a>
+    </h2>
+    {book.awards.length > 0 && <p class="badge self-start bg-gold/15 text-ink">🏅 {book.awards[0][lang]}</p>}
+    {summary && <p class="text-ink-soft">{summary}</p>}
+    <BookStatus lang={lang} book={book} compact />
+  </div>
+</article>

@@ -1,0 +1,9 @@
+---
+import View from '../../../views/PressView.astro';
+import { langPaths } from '../../../lib/paths';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props;
+---
+
+<View lang={lang} />

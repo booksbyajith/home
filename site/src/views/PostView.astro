@@ -1,0 +1,108 @@
+---
+import type { Lang } from '@shared/constants';
+import { render } from 'astro:content';
+import Cover from '../components/Cover.astro';
+import ShareButtons from '../components/ShareButtons.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatDate, useT } from '../i18n';
+import { postMinutes, postSlug, translationPath, type Post, type PostKind } from '../lib/content';
+import { absUrl, asset, href } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+  kind: PostKind;
+  post: Post;
+}
+const { lang, kind, post } = Astro.props;
+const t = useT(lang);
+const { Content } = await render(post);
+const slug = postSlug(post);
+const alt = await translationPath(kind, post);
+const url = absUrl(href(lang, `/${kind}/${slug}/`));
+const d = post.data;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': kind === 'news' ? 'NewsArticle' : 'BlogPosting',
+  headline: d.title,
+  description: d.description,
+  datePublished: d.date.toISOString(),
+  dateModified: (d.updated ?? d.date).toISOString(),
+  inLanguage: lang,
+  author: { '@type': 'Person', name: 'Ajith Amarasinghe' },
+  image: absUrl(asset(`/og/${kind}-${slug}-${lang}.jpg`)),
+  mainEntityOfPage: url,
+};
+---
+
+<BaseLayout
+  lang={lang}
+  title={d.title}
+  description={d.description}
+  ogType="article"
+  ogImage={asset(`/og/${kind}-${slug}-${lang}.jpg`)}
+  altPath={alt}
+  togglePath={alt ?? `/${kind}/`}
+  jsonLd={jsonLd}
+  extraMeta={[
+    { property: 'article:published_time', content: d.date.toISOString() },
+    ...d.tags.map((tg) => ({ property: 'article:tag', content: tg })),
+  ]}
+>
+  <article class="container-page py-10">
+    <div class="prose-page">
+      <p class="text-sm">
+        <a href={href(lang, `/${kind}/`)}>{t(kind === 'news' ? 'news.title' : 'blog.title')}</a>
+      </p>
+      <h1 class="mt-2 text-3xl font-bold sm:text-4xl">{d.title}</h1>
+      <p class="mt-2 text-ink-soft">
+        {t('post.published')}: <time datetime={d.date.toISOString()}>{formatDate(lang, d.date)}</time>
+        {d.updated && (
+          <>
+            {' '}
+            · {t('post.updated')}:{' '}
+            <time datetime={d.updated.toISOString()}>{formatDate(lang, d.updated)}</time>
+          </>
+        )}
+        <span aria-hidden="true">&nbsp;·&nbsp;</span>
+        {t('post.readingTime', { min: postMinutes(post) })}
+      </p>
+      {d.cover && (
+        <div class="mt-6 flex justify-center">
+          <Cover
+            path={d.cover}
+            alt={d.coverAlt ?? ''}
+            eager
+            sizes="(min-width: 768px) 360px, 70vw"
+            class="max-h-[480px] w-auto rounded-md shadow-md"
+          />
+        </div>
+      )}
+      <div class="prose mt-6 text-lg">
+        <Content />
+      </div>
+      {d.tags.length > 0 && (
+        <p class="mt-8 flex flex-wrap gap-2">
+          <span class="font-semibold">{t('post.tags')}:</span>
+          {d.tags.map((tg) =>
+            kind === 'blog' ? (
+              <a
+                href={href(lang, `/blog/tag/${encodeURIComponent(tg)}/`)}
+                class="badge bg-paper-dark text-ink no-underline"
+              >
+                #{tg}
+              </a>
+            ) : (
+              <span class="badge bg-paper-dark text-ink">#{tg}</span>
+            ),
+          )}
+        </p>
+      )}
+      <div class="mt-8">
+        <ShareButtons lang={lang} url={url} title={d.title} />
+      </div>
+      <p class="mt-8">
+        <a href={href(lang, `/${kind}/`)}>← {t('post.back')}</a>
+      </p>
+    </div>
+  </article>
+</BaseLayout>

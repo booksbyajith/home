@@ -1,0 +1,18 @@
+---
+import BookView from '../../../views/BookView.astro';
+import { getBooks } from '../../../lib/content';
+import { LANGS } from '../../../lib/paths';
+
+export async function getStaticPaths() {
+  const books = await getBooks();
+  return LANGS.flatMap((lang) =>
+    books.map((book) => ({
+      params: { lang: lang === 'si' ? undefined : 'en', slug: book.slug },
+      props: { lang, book },
+    })),
+  );
+}
+const { lang, book } = Astro.props;
+---
+
+<BookView lang={lang} book={book} />

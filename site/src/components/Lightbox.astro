@@ -1,0 +1,81 @@
+---
+import type { Lang } from '@shared/constants';
+import { useT } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const t = useT(Astro.props.lang);
+---
+
+<dialog
+  data-lightbox
+  class="m-auto max-h-[95vh] w-[min(96vw,900px)] rounded-lg bg-ink p-0 text-white backdrop:bg-black/80"
+  aria-label={t('book.gallery')}
+>
+  <div class="flex items-center justify-between gap-2 p-2">
+    <p data-lightbox-caption class="px-2 text-sm" aria-live="polite"></p>
+    <form method="dialog">
+      <button class="btn-quiet text-white" aria-label={t('site.close')}>
+        ✕
+      </button>
+    </form>
+  </div>
+  <div class="relative flex items-center justify-center px-2 pb-2">
+    <button
+      type="button"
+      data-lightbox-prev
+      class="btn-quiet absolute left-2 bg-black/40 text-white"
+      aria-label={t('home.hero.prev')}
+    >
+      ‹
+    </button>
+    <img data-lightbox-img alt="" class="max-h-[80vh] w-auto object-contain" />
+    <button
+      type="button"
+      data-lightbox-next
+      class="btn-quiet absolute right-2 bg-black/40 text-white"
+      aria-label={t('home.hero.next')}
+    >
+      ›
+    </button>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  if (dialog) {
+    const imgEl = dialog.querySelector<HTMLImageElement>('[data-lightbox-img]')!;
+    const caption = dialog.querySelector<HTMLElement>('[data-lightbox-caption]')!;
+    let group: HTMLAnchorElement[] = [];
+    let index = 0;
+    let opener: HTMLElement | null = null;
+    const show = (i: number) => {
+      index = (i + group.length) % group.length;
+      const a = group[index];
+      imgEl.src = a.href;
+      imgEl.alt = a.dataset.alt ?? '';
+      caption.textContent = `${a.dataset.alt ?? ''} (${index + 1}/${group.length})`;
+    };
+    document.addEventListener('click', (e) => {
+      const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-lightbox-group]');
+      if (!a) return;
+      e.preventDefault();
+      group = [
+        ...document.querySelectorAll<HTMLAnchorElement>(
+          `a[data-lightbox-group="${a.dataset.lightboxGroup}"]`,
+        ),
+      ];
+      opener = a;
+      show(group.indexOf(a));
+      dialog.showModal();
+    });
+    dialog.querySelector('[data-lightbox-prev]')!.addEventListener('click', () => show(index - 1));
+    dialog.querySelector('[data-lightbox-next]')!.addEventListener('click', () => show(index + 1));
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(index - 1);
+      if (e.key === 'ArrowRight') show(index + 1);
+    });
+    dialog.addEventListener('close', () => opener?.focus());
+  }
+</script>

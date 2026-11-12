@@ -1,0 +1,57 @@
+---
+import type { Lang } from '@shared/constants';
+import PostCard from '../components/PostCard.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { useT } from '../i18n';
+import { getPosts, type PostKind } from '../lib/content';
+import { href } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+  kind: PostKind;
+  tag?: string;
+}
+const { lang, kind, tag } = Astro.props;
+const t = useT(lang);
+const all = await getPosts(kind, lang);
+const posts = tag ? all.filter((p) => p.data.tags.includes(tag)) : all;
+const tags = [...new Set(all.flatMap((p) => p.data.tags))].sort();
+const title = tag ? t('post.tagged', { tag }) : t(kind === 'news' ? 'news.title' : 'blog.title');
+const intro = t(kind === 'news' ? 'news.intro' : 'blog.intro');
+---
+
+<BaseLayout
+  lang={lang}
+  title={title}
+  description={intro}
+  altPath={tag ? `/${kind}/` : undefined}
+  noindex={!!tag}
+>
+  <section class="container-page py-10">
+    <h1 class="text-3xl font-bold">{title}</h1>
+    <p class="mt-2 text-lg text-ink-soft">{intro}</p>
+    {tags.length > 0 && kind === 'blog' && (
+      <nav class="mt-4 flex flex-wrap gap-2" aria-label={t('post.tags')}>
+        {tags.map((tg) => (
+          <a
+            href={href(lang, `/${kind}/tag/${encodeURIComponent(tg)}/`)}
+            class="badge bg-paper-dark text-ink no-underline"
+            aria-current={tg === tag ? 'page' : undefined}
+          >
+            #{tg}
+          </a>
+        ))}
+      </nav>
+    )}
+    <div class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {posts.map((p) => (
+        <PostCard lang={lang} kind={kind} post={p} />
+      ))}
+    </div>
+    {tag && (
+      <p class="mt-8">
+        <a href={href(lang, `/${kind}/`)}>{t('post.back')}</a>
+      </p>
+    )}
+  </section>
+</BaseLayout>

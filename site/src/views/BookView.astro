@@ -1,0 +1,255 @@
+---
+import type { Lang } from '@shared/constants';
+import { render } from 'astro:content';
+import BookStatus from '../components/BookStatus.astro';
+import Cover from '../components/Cover.astro';
+import Lightbox from '../components/Lightbox.astro';
+import ShareButtons from '../components/ShareButtons.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatDate, useT } from '../i18n';
+import { getBookText, getPress, getTestimonials, type BookFacts } from '../lib/content';
+import { absUrl, asset, href } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+  book: BookFacts;
+}
+const { lang, book } = Astro.props;
+const t = useT(lang);
+const text = await getBookText(book.slug, lang);
+const { Content } = text ? await render(text) : { Content: null };
+const testimonials = await getTestimonials(book.slug);
+const press = await getPress(book.slug);
+const front = book.covers.find((c) => c.kind === 'front')!;
+const url = absUrl(href(lang, `/books/${book.slug}/`));
+const title = book.title[lang];
+const description = text?.data.summary ?? title;
+const kindLabel = { front: t('book.cover.front'), back: t('book.cover.back'), inner: t('book.cover.inner') };
+
+const specs: [string, string][] = [];
+if (book.isbn) specs.push([t('book.spec.isbn'), book.isbn]);
+if (book.pages) specs.push([t('book.spec.pages'), String(book.pages)]);
+specs.push([t('book.spec.language'), t(book.originalLanguage === 'si' ? 'book.lang.si' : 'book.lang.en')]);
+if (book.binding) specs.push([t('book.spec.binding'), book.binding[lang]]);
+if (book.publisher) specs.push([t('book.spec.publisher'), book.publisher]);
+if (book.firstPublished)
+  specs.push([
+    t('book.spec.published'),
+    [book.firstPublished, book.publishedPlace?.[lang]].filter(Boolean).join(', '),
+  ]);
+if (book.launch)
+  specs.push([t('book.spec.launch'), `${formatDate(lang, book.launch.date)}, ${book.launch.venue[lang]}`]);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Book',
+  name: book.title.si,
+  alternateName: book.title.en !== book.title.si ? book.title.en : undefined,
+  author: { '@type': 'Person', name: 'Ajith Amarasinghe', honorificPrefix: 'Dr.' },
+  inLanguage: book.originalLanguage,
+  isbn: book.isbn,
+  numberOfPages: book.pages,
+  publisher: book.publisher ? { '@type': 'Organization', name: book.publisher } : undefined,
+  datePublished:
+    book.firstPublished ?? (book.launch ? book.launch.date.toISOString().slice(0, 10) : undefined),
+  award: book.awards.map((a) => a.en),
+  bookFormat: 'https://schema.org/Paperback',
+  image: absUrl(asset(`/covers/${front.file}`)),
+  description: text?.data.summary,
+  url,
+  offers:
+    book.defaults.saleMode === 'direct' && book.defaults.priceLKR > 0
+      ? {
+          '@type': 'Offer',
+          price: book.defaults.priceLKR,
+          priceCurrency: 'LKR',
+          availability: book.defaults.inStock
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/OutOfStock',
+          url: absUrl(href(lang, `/order/?book=${book.slug}`)),
+        }
+      : undefined,
+};
+---
+
+<BaseLayout
+  lang={lang}
+  title={title}
+  description={description}
+  ogType="book"
+  ogImage={asset(`/og/book-${book.slug}-${lang}.jpg`)}
+  jsonLd={jsonLd}
+  extraMeta={book.isbn ? [{ property: 'book:isbn', content: book.isbn.replace(/-/g, '') }] : []}
+>
+  <article class="container-page py-8">
+    <nav aria-label="breadcrumb" class="text-sm">
+      <a href={href(lang, '/books/')}>{t('books.title')}</a> / <span>{title}</span>
+    </nav>
+    <div class="mt-4 grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr]">
+      <section aria-label={t('book.gallery')}>
+        <a
+          href={asset(`/covers/${front.file}`)}
+          data-lightbox-group="covers"
+          data-alt={front.alt[lang]}
+          class="block"
+        >
+          <Cover
+            path={`/covers/${front.file}`}
+            alt={front.alt[lang]}
+            eager
+            sizes="(min-width: 1024px) 420px, 90vw"
+            class="mx-auto rounded-md shadow-lg"
+          />
+        </a>
+        <ul class="mt-3 grid grid-cols-4 gap-2">
+          {book.covers
+            .filter((c) => c !== front)
+            .map((c) => (
+              <li>
+                <a
+                  href={asset(`/covers/${c.file}`)}
+                  data-lightbox-group="covers"
+                  data-alt={c.alt[lang]}
+                  class="block"
+                >
+                  <Cover
+                    path={`/covers/${c.file}`}
+                    alt={`${kindLabel[c.kind]}: ${c.alt[lang]}`}
+                    sizes="100px"
+                    class="rounded border border-line"
+                  />
+                </a>
+              </li>
+            ))}
+        </ul>
+      </section>
+      <div>
+        <h1
+          class="text-3xl font-bold sm:text-4xl"
+          lang={book.originalLanguage === 'si' && lang === 'en' && title === book.title.si ? 'si' : undefined}
+        >
+          {title}
+        </h1>
+        {lang === 'en' && book.title.si !== book.title.en && (
+          <p class="mt-1 text-lg text-ink-soft" lang="si">
+            {book.title.si}
+          </p>
+        )}
+        {book.awards.length > 0 && (
+          <ul class="mt-3 flex flex-wrap gap-2" aria-label={t('book.awards')}>
+            {book.awards.map((a) => (
+              <li class="badge bg-gold/15 text-ink">🏅 {a[lang]}</li>
+            ))}
+          </ul>
+        )}
+        <div class="mt-5 card p-4">
+          <BookStatus lang={lang} book={book}>
+            <div slot="notify" data-notify-slot={book.slug}>
+              <h2 class="font-sans text-lg font-semibold">{t('book.notify.title')}</h2>
+              <p class="text-ink-soft">{t('book.notify.blurb')}</p>
+              <div data-island="stock-alert" data-slug={book.slug}></div>
+            </div>
+          </BookStatus>
+        </div>
+        <section class="mt-8">
+          <h2 class="text-2xl font-bold">{t('book.description')}</h2>
+          <div class="prose mt-3">{Content && <Content />}</div>
+        </section>
+        <section class="mt-8">
+          <h2 class="text-2xl font-bold">{t('book.specs')}</h2>
+          <dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2" data-specs>
+            {specs.map(([k, v]) => (
+              <>
+                <dt class="font-semibold">{k}</dt>
+                <dd>{v}</dd>
+              </>
+            ))}
+          </dl>
+        </section>
+        <div class="mt-8">
+          <ShareButtons lang={lang} url={url} title={title} />
+        </div>
+      </div>
+    </div>
+
+    {book.samples.length > 0 && (
+      <section class="mt-12">
+        <h2 class="text-2xl font-bold">{t('book.lookInside')}</h2>
+        <ul class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          {book.samples.map((s, i) => {
+            const p = `/samples/${book.slug}/${s.file}`;
+            return (
+              <li>
+                <a
+                  href={asset(p)}
+                  data-lightbox-group="samples"
+                  data-alt={t('book.sampleOf', { n: i + 1, total: book.samples.length })}
+                  class="block"
+                >
+                  <Cover
+                    path={p}
+                    alt={s.alt[lang]}
+                    sizes="(min-width: 1024px) 180px, 45vw"
+                    class="rounded border border-line shadow-sm"
+                  />
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    )}
+
+    {testimonials.length > 0 && (
+      <section class="mt-12">
+        <h2 class="text-2xl font-bold">{t('book.testimonials')}</h2>
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+          {testimonials.map((q) => (
+            <figure class="card p-5">
+              <blockquote class="font-serif text-lg">“{q.quote[lang]}”</blockquote>
+              <figcaption class="mt-3 text-ink-soft">
+                — {q.author}
+                {q.role && `, ${q.role[lang]}`}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="mt-12" aria-labelledby="reviews-h">
+      <h2 id="reviews-h" class="text-2xl font-bold">
+        {t('book.readerReviews')}
+      </h2>
+      <div data-reviews={book.slug} data-empty={t('book.noReviews')} class="mt-4">
+        <p class="text-ink-soft" data-reviews-empty>
+          {t('book.noReviews')}
+        </p>
+      </div>
+      <details class="mt-4">
+        <summary class="btn-secondary inline-flex">{t('book.writeReview')}</summary>
+        <p class="mt-2 text-sm text-ink-soft">{t('review.moderated')}</p>
+        <div data-island="review" data-slug={book.slug} class="mt-3"></div>
+      </details>
+    </section>
+
+    {press.length > 0 && (
+      <section class="mt-12">
+        <h2 class="text-2xl font-bold">{t('book.press')}</h2>
+        <ul class="mt-4 space-y-3">
+          {press.map((p) => (
+            <li class="card p-4">
+              <a href={p.url} target="_blank" rel="noopener" class="font-semibold">
+                {p.title}
+              </a>
+              <p class="text-sm text-ink-soft">
+                {p.outlet} · {formatDate(lang, p.date)}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </article>
+  <Lightbox lang={lang} />
+</BaseLayout>

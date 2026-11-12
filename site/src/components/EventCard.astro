@@ -1,0 +1,42 @@
+---
+import type { Lang } from '@shared/constants';
+import { formatDate, useT, type I18nKey } from '../i18n';
+import { href } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+  event: {
+    title: { si: string; en: string };
+    type: 'launch' | 'talk' | 'other';
+    start: Date;
+    end?: Date;
+    venue: { si: string; en: string };
+    city: { si: string; en: string };
+    description?: { si: string; en: string };
+    url?: string;
+    bookSlug?: string;
+  };
+}
+const { lang, event: e } = Astro.props;
+const t = useT(lang);
+---
+
+<article class="card p-4">
+  <p class="text-sm text-ink-soft">
+    <span class="badge bg-teal/10 text-teal">{t(`events.type.${e.type}` as I18nKey)}</span>
+    <time datetime={e.start.toISOString()}>{formatDate(lang, e.start)}</time>
+  </p>
+  <h3 class="mt-2 text-lg font-bold">{e.title[lang]}</h3>
+  <p class="text-ink-soft">
+    {e.venue[lang]}, {e.city[lang]}
+  </p>
+  {e.description && <p class="mt-2">{e.description[lang]}</p>}
+  <p class="mt-2 flex flex-wrap gap-4">
+    {e.url && (
+      <a href={e.url} target="_blank" rel="noopener">
+        {t('events.details')} ↗
+      </a>
+    )}
+    {e.bookSlug && <a href={href(lang, `/books/${e.bookSlug}/`)}>{t('books.viewDetails')}</a>}
+  </p>
+</article>

@@ -6,8 +6,9 @@ import { altHref, href, stripLang } from '../lib/paths';
 interface Props {
   lang: Lang;
   altPath?: string | null;
+  togglePath?: string;
 }
-const { lang, altPath } = Astro.props;
+const { lang, altPath, togglePath } = Astro.props;
 const t = useT(lang);
 const current = stripLang(Astro.url.pathname);
 const other: Lang = lang === 'si' ? 'en' : 'si';
@@ -28,9 +29,9 @@ const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWi
   <div class="container-page flex items-center justify-between gap-4 py-3">
     <a href={href(lang, '/')} class="flex flex-col leading-tight text-ink no-underline">
       <span class="font-serif text-lg font-bold sm:text-xl">{t('site.name')}</span>
-      <span class="text-sm text-ink-soft">{t('site.tagline')}</span>
+      <span class="hidden text-sm text-ink-soft sm:block">{t('site.tagline')}</span>
     </a>
-    <nav aria-label={t('site.menu')} class="hidden lg:block">
+    <nav aria-label={t('site.menu')} class="hidden xl:block">
       <ul class="flex items-center gap-1">
         {nav.map((n) => (
           <li>
@@ -38,7 +39,7 @@ const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWi
               href={href(lang, n.path)}
               aria-current={isCurrent(n.path) ? 'page' : undefined}
               class:list={[
-                'rounded px-3 py-2 text-ink no-underline hover:bg-paper-dark',
+                'rounded px-3 py-2 whitespace-nowrap text-ink no-underline hover:bg-paper-dark',
                 isCurrent(n.path) && 'font-semibold text-maroon',
               ]}
             >
@@ -52,10 +53,10 @@ const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWi
       <a href={toggleHref} hreflang={other} lang={other} class="btn-quiet px-3" data-lang-toggle={other}>
         {t('site.langToggle')}
       </a>
-      <a href={href(lang, '/order/')} class="btn-primary hidden px-4 sm:inline-flex">
+      <a href={href(lang, '/order/')} class="btn-primary hidden px-4 whitespace-nowrap sm:inline-flex">
         {t('nav.order')}
       </a>
-      <details class="relative lg:hidden" data-menu>
+      <details class="relative xl:hidden" data-menu>
         <summary class="btn-quiet cursor-pointer list-none px-3" aria-label={t('site.menu')}>
           <svg
             aria-hidden="true"

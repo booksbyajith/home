@@ -1,0 +1,30 @@
+---
+import type { Lang } from '@shared/constants';
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatDate, useT } from '../i18n';
+import { getPage } from '../lib/content';
+
+interface Props {
+  lang: Lang;
+  name: 'privacy' | 'terms';
+}
+const { lang, name } = Astro.props;
+const t = useT(lang);
+const page = (await getPage(lang, name))!;
+const { Content } = await render(page);
+---
+
+<BaseLayout lang={lang} title={page.data.title} description={page.data.description}>
+  <article class="container-page py-10">
+    <div class="prose-page">
+      <h1 class="text-3xl font-bold">{page.data.title}</h1>
+      <p class="mt-1 text-sm text-ink-soft">
+        {t('post.updated')}: {formatDate(lang, page.data.updated)}
+      </p>
+      <div class="prose mt-6">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
