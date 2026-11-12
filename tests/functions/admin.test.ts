@@ -134,24 +134,20 @@ describe('updateBook', () => {
   });
   it('emails pending stock alerts when a book becomes orderable', async () => {
     await db.doc(`books/${CHINESE}`).update({ inStock: false, stock: 0 });
-    await db
-      .doc('stock_alerts/a1')
-      .set({
-        slug: CHINESE,
-        contact: { email: 'wait@example.com', whatsapp: null },
-        lang: 'en',
-        createdAt: Timestamp.now(),
-        notifiedAt: null,
-      });
-    await db
-      .doc('stock_alerts/a2')
-      .set({
-        slug: CHINESE,
-        contact: { email: null, whatsapp: '94770000005' },
-        lang: 'si',
-        createdAt: Timestamp.now(),
-        notifiedAt: null,
-      });
+    await db.doc('stock_alerts/a1').set({
+      slug: CHINESE,
+      contact: { email: 'wait@example.com', whatsapp: null },
+      lang: 'en',
+      createdAt: Timestamp.now(),
+      notifiedAt: null,
+    });
+    await db.doc('stock_alerts/a2').set({
+      slug: CHINESE,
+      contact: { email: null, whatsapp: '94770000005' },
+      lang: 'si',
+      createdAt: Timestamp.now(),
+      notifiedAt: null,
+    });
     const r = await call('updateBook', { slug: CHINESE, inStock: true, stock: 10 }, { idToken: admin });
     expect(r.result).toEqual({ ok: true, alertsEmailed: 1 });
     const mail = (await outbox((d) => d.meta?.event === 'back_in_stock'))[0];
