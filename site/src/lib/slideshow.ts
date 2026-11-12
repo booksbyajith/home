@@ -54,11 +54,23 @@ export function initSlideshow(root: HTMLElement): void {
     updateToggle();
     schedule();
   });
-  root.addEventListener('mouseenter', () => ((hover = true), schedule()));
-  root.addEventListener('mouseleave', () => ((hover = false), schedule()));
-  root.addEventListener('focusin', () => ((focus = true), schedule()));
+  root.addEventListener('mouseenter', () => {
+    hover = true;
+    schedule();
+  });
+  root.addEventListener('mouseleave', () => {
+    hover = false;
+    schedule();
+  });
+  root.addEventListener('focusin', () => {
+    focus = true;
+    schedule();
+  });
   root.addEventListener('focusout', (e) => {
-    if (!root.contains(e.relatedTarget as Node)) ((focus = false), schedule());
+    if (!root.contains(e.relatedTarget as Node)) {
+      focus = false;
+      schedule();
+    }
   });
   root.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') go(index + 1);
@@ -70,7 +82,14 @@ export function initSlideshow(root: HTMLElement): void {
   // Only follow the scroll position when the user is swiping, never during programmatic scrolls.
   let userScrollAt = 0;
   for (const ev of ['pointerdown', 'touchstart', 'wheel'] as const)
-    track.addEventListener(ev, () => ((userScrollAt = Date.now()), (programmaticUntil = 0)), { passive: true });
+    track.addEventListener(
+      ev,
+      () => {
+        userScrollAt = Date.now();
+        programmaticUntil = 0;
+      },
+      { passive: true },
+    );
   track.addEventListener('scroll', () => {
     if (Date.now() < programmaticUntil || Date.now() - userScrollAt > 3000) return;
     window.clearTimeout(scrollTimer);
