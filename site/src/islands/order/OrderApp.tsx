@@ -333,6 +333,13 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
       if (lines.some((l) => orderability(l.book, l.qty) !== 'ok'))
         return setErrors({ cart: 'order.error.outOfStock' });
     }
+    if (step === 0 && !fields.districtId) {
+      // Arriving at the address step with no district yet: pre-select overseas delivery when the
+      // device is outside Sri Lanka (it may not have been known, or was cleared, at page load).
+      const country = guessCountryName(lang);
+      if (country)
+        setFields((f) => (f.districtId ? f : { ...f, districtId: OVERSEAS, country: f.country || country }));
+    }
     if (step === 1) {
       await loadPhoneRules();
       const errs = validateDetails(fields);
