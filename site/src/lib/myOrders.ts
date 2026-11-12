@@ -25,6 +25,8 @@ export interface ReceiptData {
   status: OrderStatus;
   totalMismatch: boolean;
   expectedTotalLKR: number;
+  /** Delivery outside Sri Lanka: postage is agreed later. */
+  overseas?: boolean;
 }
 
 export function myOrders(): MyOrder[] {

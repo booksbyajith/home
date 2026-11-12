@@ -11,6 +11,7 @@ export const CUSTOMER = {
   district: 'colombo',
   postalCode: '00100',
   landmark: 'Near the test tower',
+  country: '',
 };
 
 export async function ready(page: Page) {
@@ -27,6 +28,7 @@ export async function fillDetails(page: Page, c = CUSTOMER) {
   await page.fill('#f-city', c.city);
   await page.fill('#f-postalCode', c.postalCode);
   await page.selectOption('#f-districtId', c.district);
+  if (c.country) await page.fill('#f-country', c.country);
   await page.fill('#f-landmark', c.landmark);
 }
 

@@ -63,6 +63,32 @@ describe('createOrderSchema', () => {
     mutate(o);
     expect(createOrderSchema.safeParse(o).success).toBe(false);
   });
+  it('accepts an overseas order with a country, any postal code and an international mobile', () => {
+    const o: any = validOrder();
+    o.address = { ...o.address, districtId: 'overseas', country: 'Australia', postalCode: '2640' };
+    o.customer = { ...o.customer, mobile: '+61 412 345 678', whatsapp: '+61 412 345 678' };
+    const r = createOrderSchema.parse(o);
+    expect(r.customer.mobile).toBe('61412345678');
+    expect(r.address.country).toBe('Australia');
+  });
+  it.each([
+    [
+      'overseas without a country',
+      (o: any) => (o.address = { ...o.address, districtId: 'overseas', postalCode: 'SW1A 1AA' }),
+    ],
+    [
+      'an international mobile for a Sri Lankan address',
+      (o: any) => (o.customer = { ...o.customer, mobile: '+61412345678' }),
+    ],
+    [
+      'a non-numeric postal code in Sri Lanka',
+      (o: any) => (o.address = { ...o.address, postalCode: 'AB12' }),
+    ],
+  ])('rejects %s', (_n, mutate) => {
+    const o: any = validOrder();
+    mutate(o);
+    expect(createOrderSchema.safeParse(o).success).toBe(false);
+  });
   it('accepts geo', () => {
     const o = { ...validOrder(), geo: { lat: 6.9, lng: 79.8, accuracyM: 12, capturedAt: Date.now() } };
     expect(createOrderSchema.safeParse(o).success).toBe(true);

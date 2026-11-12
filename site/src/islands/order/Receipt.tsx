@@ -91,7 +91,7 @@ export const Receipt = forwardRef<HTMLDivElement, Props>(function Receipt(
         )}
         <div class="flex justify-between">
           <dt>{t('order.summary.delivery')}</dt>
-          <dd>{formatLKR(r.totals.deliveryFeeLKR)}</dd>
+          <dd>{r.overseas ? t('order.summary.deliveryOverseas') : formatLKR(r.totals.deliveryFeeLKR)}</dd>
         </div>
         <div class="flex justify-between border-t-2 border-ink pt-1 text-lg font-bold">
           <dt>{t('receipt.total')}</dt>

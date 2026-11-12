@@ -41,6 +41,7 @@ export async function handleAnonymiseOldOrders(request: CallableRequest<unknown>
         city: '',
         districtId: order.address.districtId,
         postalCode: '',
+        country: order.address.country ?? null,
         landmark: null,
       },
       geo: null,

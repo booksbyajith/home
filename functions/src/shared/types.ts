@@ -136,6 +136,8 @@ export interface OrderDoc {
     city: string;
     districtId: string;
     postalCode: string;
+    /** Only for overseas deliveries (districtId 'overseas'). */
+    country?: string | null;
     landmark: string | null;
   };
   geo: { lat: number; lng: number; accuracyM: number; capturedAt: Ts } | null;

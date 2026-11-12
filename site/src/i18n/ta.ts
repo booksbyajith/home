@@ -191,7 +191,7 @@ export const ta: Dict = {
   'order.cart.unavailable': 'இணையத்தில் ஆர்டர் செய்ய முடியாது',
   'order.field.name': 'முழுப் பெயர்',
   'order.field.mobile': 'கைபேசி எண்',
-  'order.field.mobileHint': 'உதாரணம்: 07X XXX XXXX',
+  'order.field.mobileHint': 'உதாரணம்: 07X XXX XXXX. இலங்கைக்கு வெளியே: + மற்றும் நாட்டுக் குறியீடு.',
   'order.field.whatsappSame': 'என் WhatsApp எண்ணும் இதுவே',
   'order.field.whatsapp': 'WhatsApp எண்',
   'order.field.email': 'மின்னஞ்சல்',
@@ -221,6 +221,12 @@ export const ta: Dict = {
   'order.summary.bundle': 'தொகுப்புத் தள்ளுபடி',
   'order.summary.signed': 'கையொப்பமிட்ட பிரதிகள்',
   'order.summary.delivery': 'விநியோகம்',
+  'order.summary.deliveryOverseas': 'பின்னர் அறிவிக்கப்படும்',
+  'order.field.country': 'நாடு',
+  'order.error.country': 'நாட்டை உள்ளிடவும்.',
+  'order.error.postalCodeOverseas': 'அஞ்சல் குறியீட்டை உள்ளிடவும்.',
+  'order.overseas.note':
+    'இலங்கைக்கு வெளியே விநியோகம்: இப்போது நூல்களுக்கு மட்டும் பணம் செலுத்துங்கள். பொதியை அனுப்பும் முன் தபால் கட்டணம் மற்றும் அனுப்புவதற்கான சிறந்த வழி பற்றி WhatsApp மூலம் உங்களைத் தொடர்பு கொள்வோம்.',
   'order.summary.total': 'செலுத்த வேண்டிய மொத்தம்',
   'order.summary.items': 'உங்கள் ஆர்டர்',
   'order.payment.title': 'வங்கிப் பரிமாற்றம் மூலம் செலுத்துங்கள்',
@@ -254,7 +260,8 @@ export const ta: Dict = {
   'order.draft.slipNotSaved': 'உங்கள் வங்கி ரசீதை இந்தச் சாதனத்தில் சேமிக்க முடியவில்லை. மீண்டும் இணைக்கவும்.',
   'order.error.required': 'இந்தப் புலம் அவசியம்.',
   'order.error.name': 'உங்கள் முழுப் பெயரை உள்ளிடவும்.',
-  'order.error.mobile': 'சரியான இலங்கை கைபேசி எண்ணை உள்ளிடவும்.',
+  'order.error.mobile':
+    'சரியான இலங்கை கைபேசி எண்ணை உள்ளிடவும் (இலங்கைக்கு வெளியே விநியோகத்திற்கு + மற்றும் நாட்டுக் குறியீட்டுடன் தொடங்கவும்).',
   'order.error.whatsapp':
     'சரியான WhatsApp எண்ணை உள்ளிடவும். இலங்கைக்கு வெளியே உள்ள எண்களுக்கு + மற்றும் நாட்டுக் குறியீட்டைப் பயன்படுத்தவும்.',
   'order.error.email': 'சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்.',

@@ -33,6 +33,8 @@ export function deliveryFee(
 ): number {
   if (totalQty <= 0) return 0;
   const d = config.delivery;
+  // Overseas postage is agreed with the customer after the order.
+  if (districtId === 'overseas') return 0;
   const base = d.fees[districtId] ?? d.defaultFeeLKR;
   return Math.max(0, Math.round(base + d.perExtraCopyLKR * (totalQty - 1)));
 }

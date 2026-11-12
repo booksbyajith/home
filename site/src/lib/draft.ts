@@ -14,6 +14,7 @@ export interface DraftFields {
   city: string;
   districtId: string;
   postalCode: string;
+  country: string;
   landmark: string;
   signedCopy: boolean;
   dedicationNote: string;
@@ -48,6 +49,7 @@ export const emptyFields = (): DraftFields => ({
   city: '',
   districtId: '',
   postalCode: '',
+  country: '',
   landmark: '',
   signedCopy: false,
   dedicationNote: '',

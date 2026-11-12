@@ -39,6 +39,30 @@ export function isDistrictId(id: string): boolean {
   return DISTRICT_IDS.includes(id);
 }
 
+/** Pseudo-district for deliveries outside Sri Lanka (postage is agreed with the customer). */
+export const OVERSEAS = 'overseas';
+const OVERSEAS_NAME = { si: 'ශ්‍රී ලංකාවෙන් පිටත', en: 'Outside Sri Lanka', ta: 'இலங்கைக்கு வெளியே' };
+
+/** A Sri Lankan district or OVERSEAS. */
+export function isDeliveryArea(id: string): boolean {
+  return id === OVERSEAS || isDistrictId(id);
+}
+
 export function districtName(id: string, lang: 'si' | 'en' | 'ta'): string {
+  if (id === OVERSEAS) return OVERSEAS_NAME[lang];
   return DISTRICTS.find((d) => d.id === id)?.[lang] ?? id;
+}
+
+/** The last address line: "District 12345", or "Country ZIP" for overseas orders. */
+export function regionLine(
+  a: { districtId: string; postalCode: string; country?: string | null },
+  lang: 'si' | 'en' | 'ta',
+): string {
+  const place = a.districtId === OVERSEAS ? (a.country ?? '') : districtName(a.districtId, lang);
+  return [place, a.postalCode].filter(Boolean).join(' ');
+}
+
+/** A stored phone number for display: Sri Lankan numbers as 07X…, others as +CC…. */
+export function displayPhone(stored: string): string {
+  return /^947\d{8}$/.test(stored) ? `0${stored.slice(2)}` : `+${stored}`;
 }

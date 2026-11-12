@@ -118,6 +118,7 @@ export async function handleCreateOrder(request: CallableRequest<unknown>): Prom
             city: input.address.city,
             districtId: input.address.districtId,
             postalCode: input.address.postalCode,
+            country: input.address.country ?? null,
             landmark: input.address.landmark ?? null,
           },
           geo: input.geo

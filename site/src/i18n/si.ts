@@ -189,7 +189,7 @@ export const si = {
   'order.cart.unavailable': 'මාර්ගගතව ඇණවුම් කළ නොහැක',
   'order.field.name': 'සම්පූර්ණ නම',
   'order.field.mobile': 'ජංගම දුරකථන අංකය',
-  'order.field.mobileHint': 'උදා: 07X XXX XXXX',
+  'order.field.mobileHint': 'උදා: 07X XXX XXXX. ශ්‍රී ලංකාවෙන් පිටත: + සහ රටේ කේතය.',
   'order.field.whatsappSame': 'මගේ WhatsApp අංකයද එයමයි',
   'order.field.whatsapp': 'WhatsApp අංකය',
   'order.field.email': 'ඊමේල්',
@@ -219,6 +219,12 @@ export const si = {
   'order.summary.bundle': 'පැකේජ වට්ටම',
   'order.summary.signed': 'අත්සන් කළ පිටපත්',
   'order.summary.delivery': 'බෙදාහැරීම',
+  'order.summary.deliveryOverseas': 'පසුව දන්වනු ලැබේ',
+  'order.field.country': 'රට',
+  'order.error.country': 'කරුණාකර රට ඇතුළත් කරන්න.',
+  'order.error.postalCodeOverseas': 'කරුණාකර තැපැල් කේතය ඇතුළත් කරන්න.',
+  'order.overseas.note':
+    'ශ්\u200dරී ලංකාවෙන් පිටත බෙදාහැරීම: දැන් පොත් සඳහා පමණක් ගෙවන්න. පාර්සලය යැවීමට පෙර තැපැල් ගාස්තුව සහ යැවිය හැකි හොඳම ක්\u200dරමය පිළිබඳව අපි WhatsApp හරහා ඔබව දැනුවත් කරන්නෙමු.',
   'order.summary.total': 'ගෙවිය යුතු මුළු මුදල',
   'order.summary.items': 'ඔබගේ ඇණවුම',
   'order.payment.title': 'බැංකු මාරුවකින් ගෙවන්න',
@@ -251,7 +257,8 @@ export const si = {
   'order.draft.slipNotSaved': 'ඔබගේ බැංකු රිසිට්පත මෙම උපාංගයේ තබා ගැනීමට නොහැකි විය. කරුණාකර එය නැවත අමුණන්න.',
   'order.error.required': 'මෙම ක්ෂේත්‍රය අවශ්‍යයි.',
   'order.error.name': 'කරුණාකර ඔබගේ සම්පූර්ණ නම ඇතුළත් කරන්න.',
-  'order.error.mobile': 'කරුණාකර නිවැරදි ශ්‍රී ලංකා ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න.',
+  'order.error.mobile':
+    'කරුණාකර නිවැරදි ශ්‍රී ලංකා ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න (ශ්‍රී ලංකාවෙන් පිටත බෙදාහැරීම සඳහා + සහ රටේ කේතයෙන් අරඹන්න).',
   'order.error.whatsapp':
     'කරුණාකර නිවැරදි WhatsApp අංකයක් ඇතුළත් කරන්න. ශ්‍රී ලංකාවෙන් පිටත අංක සඳහා + සහ රටේ කේතය භාවිත කරන්න.',
   'order.error.email': 'කරුණාකර නිවැරදි ඊමේල් ලිපිනයක් ඇතුළත් කරන්න.',

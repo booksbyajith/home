@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeTotals, isOrderable, orderability, formatLKR } from './pricing.js';
+import { computeTotals, deliveryFee, isOrderable, orderability, formatLKR } from './pricing.js';
 
 const config = {
   delivery: {
@@ -97,6 +97,20 @@ describe('computeTotals', () => {
         signedCopy: false,
         config,
       }).deliveryFeeLKR,
+    ).toBe(0);
+  });
+});
+
+describe('overseas delivery', () => {
+  it('charges no delivery fee up front (postage is agreed later)', () => {
+    expect(
+      deliveryFee(
+        {
+          delivery: { fees: {}, defaultFeeLKR: 400, perExtraCopyLKR: 100, estimateDays: { min: 1, max: 3 } },
+        },
+        'overseas',
+        3,
+      ),
     ).toBe(0);
   });
 });

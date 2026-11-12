@@ -1,10 +1,10 @@
 import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import { MAX_QTY_PER_BOOK } from '@shared/constants';
-import { DISTRICTS } from '@shared/districts';
+import { DISTRICTS, OVERSEAS, districtName, regionLine } from '@shared/districts';
 import { maskPhone } from '@shared/mask';
 import { computeTotals, formatLKR, orderability } from '@shared/pricing';
-import { orderAddressSchema, orderCustomerSchema } from '@shared/schemas';
+import { domesticMobileError, orderAddressSchema, orderCustomerSchema } from '@shared/schemas';
 import { buildMapsUrl } from '@shared/templates';
 import type { BookDoc, L10n, OrderItem, PublicConfig, Totals } from '@shared/types';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
@@ -75,6 +75,7 @@ const FIELD_ERROR: Record<string, I18nKey> = {
   email: 'order.error.email',
   postalCode: 'order.error.postalCode',
   districtId: 'order.error.district',
+  country: 'order.error.country',
 };
 
 function validateDetails(f: DraftFields): Record<string, I18nKey> {
@@ -91,12 +92,16 @@ function validateDetails(f: DraftFields): Record<string, I18nKey> {
     city: f.city,
     districtId: f.districtId,
     postalCode: f.postalCode,
+    country: f.districtId === OVERSEAS ? f.country : '',
     landmark: f.landmark,
   });
   for (const issue of [...(c.success ? [] : c.error.issues), ...(a.success ? [] : a.error.issues)]) {
     const key = String(issue.path[0] ?? '');
     if (!errors[key]) errors[key] = FIELD_ERROR[key] ?? 'order.error.required';
   }
+  if (c.success && a.success && domesticMobileError(f.districtId, c.data.mobile))
+    errors.mobile = 'order.error.mobile';
+  if (f.districtId === OVERSEAS && errors.postalCode) errors.postalCode = 'order.error.postalCodeOverseas';
   if (f.whatsappSame && errors.mobile) delete errors.whatsapp;
   return errors;
 }
@@ -107,6 +112,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
   const [step, setStep] = useState(0);
   const [cart, setCart] = useState<{ slug: string; qty: number }[]>([]);
   const [fields, setFields] = useState<DraftFields>(emptyFields());
+  const overseas = fields.districtId === OVERSEAS;
   const [geo, setGeo] = useState<DraftGeo | null>(null);
   const [geoState, setGeoState] = useState<'idle' | 'locating' | GeoError>('idle');
   const [slip, setSlip] = useState<Slip | null>(null);
@@ -366,6 +372,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
           city: fields.city,
           districtId: fields.districtId,
           postalCode: fields.postalCode,
+          country: overseas ? fields.country : '',
           landmark: fields.landmark,
         },
         geo,
@@ -392,6 +399,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
         status: res.status,
         totalMismatch: res.totalMismatch,
         expectedTotalLKR: totals.grandTotalLKR,
+        overseas,
       });
       addMyOrder({
         orderId: res.orderId,
@@ -469,7 +477,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
           {fields.districtId && (
             <div class="flex justify-between">
               <dt>{t('order.summary.delivery')}</dt>
-              <dd>{formatLKR(totals.deliveryFeeLKR)}</dd>
+              <dd>{overseas ? t('order.summary.deliveryOverseas') : formatLKR(totals.deliveryFeeLKR)}</dd>
             </div>
           )}
           <div class="flex justify-between border-t border-line pt-2 text-lg font-bold">
@@ -709,9 +717,9 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
               <Field id="f-postalCode" label={t('order.field.postalCode')} error={err('postalCode')}>
                 <input
                   {...input('postalCode', {
-                    inputMode: 'numeric',
+                    inputMode: overseas ? 'text' : 'numeric',
                     autocomplete: 'postal-code',
-                    maxLength: 5,
+                    maxLength: overseas ? 12 : 5,
                   })}
                 />
               </Field>
@@ -730,8 +738,19 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
                 {DISTRICTS.map((d) => (
                   <option value={d.id}>{d[lang]}</option>
                 ))}
+                <option value={OVERSEAS}>{districtName(OVERSEAS, lang)}</option>
               </select>
             </Field>
+            {overseas && (
+              <>
+                <Field id="f-country" label={t('order.field.country')} error={err('country')}>
+                  <input {...input('country', { autocomplete: 'country-name', maxLength: 60 })} />
+                </Field>
+                <p class="mb-4 rounded-lg bg-warn-bg p-3 text-sm" data-testid="overseas-note">
+                  {t('order.overseas.note')}
+                </p>
+              </>
+            )}
             <Field
               id="f-landmark"
               label={t('order.field.landmark')}
@@ -741,7 +760,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
               <textarea {...input('landmark', { rows: 2, maxLength: 200 })} />
             </Field>
 
-            <div class="mb-6 rounded-md border border-line bg-white p-3" data-testid="geo">
+            <div class="mb-6 rounded-xl border border-line bg-card p-4" data-testid="geo">
               {geoSupported() && !geo && (
                 <button
                   type="button"
@@ -754,15 +773,43 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
                 </button>
               )}
               {geo && (
-                <div class="flex flex-wrap items-center gap-3" data-geo-saved>
-                  <span class="font-semibold text-success">✓ {t('order.geo.saved')}</span>
-                  <span class="text-sm text-ink-soft">{t('order.geo.accuracy', { m: geo.accuracyM })}</span>
-                  <a href={buildMapsUrl(geo.lat, geo.lng)} target="_blank" rel="noopener" data-geo-link>
-                    {t('order.geo.viewMap')} ↗
-                  </a>
-                  <button type="button" class="btn-quiet px-3 py-1 text-sm" onClick={() => setGeo(null)}>
-                    {t('order.geo.remove')}
-                  </button>
+                <div data-geo-saved>
+                  <p class="flex flex-wrap items-baseline gap-x-3">
+                    <span class="font-semibold text-success">✓ {t('order.geo.saved')}</span>
+                    <span class="text-sm text-ink-soft">{t('order.geo.accuracy', { m: geo.accuracyM })}</span>
+                  </p>
+                  <p class="mt-3 flex flex-wrap gap-2">
+                    <a
+                      href={buildMapsUrl(geo.lat, geo.lng)}
+                      target="_blank"
+                      rel="noopener"
+                      class="btn-secondary min-h-10 px-4 py-1 text-sm"
+                      data-geo-link
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path>
+                        <circle cx="12" cy="9.5" r="2.5"></circle>
+                      </svg>
+                      {t('order.geo.viewMap')} ↗
+                    </a>
+                    <button
+                      type="button"
+                      class="btn-quiet min-h-10 px-4 py-1 text-sm"
+                      onClick={() => setGeo(null)}
+                    >
+                      ✕ {t('order.geo.remove')}
+                    </button>
+                  </p>
                 </div>
               )}
               {(geoState === 'denied' || geoState === 'unavailable' || geoState === 'timeout') && (
@@ -923,7 +970,10 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
                   fields.line1,
                   fields.line2,
                   fields.city,
-                  `${DISTRICTS.find((d) => d.id === fields.districtId)?.[lang] ?? ''} ${fields.postalCode}`,
+                  regionLine(
+                    { districtId: fields.districtId, postalCode: fields.postalCode, country: fields.country },
+                    lang,
+                  ),
                 ]
                   .filter((x) => x.trim())
                   .join(', ')}

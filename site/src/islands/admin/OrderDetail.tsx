@@ -1,5 +1,5 @@
 import { l10nText as tl } from '@shared/l10n';
-import { districtName } from '@shared/districts';
+import { OVERSEAS, regionLine } from '@shared/districts';
 import { formatLKR } from '@shared/pricing';
 import { TRANSITIONS, requiredFields, templateKeyFor } from '@shared/status';
 import { bookTitles, buildTrackUrl, buildWaUrl, buildMapsUrl, renderTemplate } from '@shared/templates';
@@ -293,7 +293,7 @@ export function OrderDetail({ orderId }: { orderId: string }) {
           <p data-testid="detail-address">
             {[a.line1, a.line2, a.city].filter(Boolean).join(', ')}
             <br />
-            {districtName(a.districtId, lang)} {a.postalCode}
+            {regionLine(a, lang)}
           </p>
           {a.landmark && <p class="text-sm">{a.landmark}</p>}
           {order.geo && (
@@ -328,8 +328,11 @@ export function OrderDetail({ orderId }: { orderId: string }) {
           <span>{formatLKR(order.totals.grandTotalLKR)}</span>
         </p>
         <p class="text-sm text-ink-soft">
-          {t('order.summary.delivery')}: {formatLKR(order.totals.deliveryFeeLKR)} ·{' '}
-          {t('order.summary.bundle')}: {formatLKR(order.totals.bundleDiscountLKR)}
+          {t('order.summary.delivery')}:{' '}
+          {a.districtId === OVERSEAS
+            ? t('order.summary.deliveryOverseas')
+            : formatLKR(order.totals.deliveryFeeLKR)}{' '}
+          · {t('order.summary.bundle')}: {formatLKR(order.totals.bundleDiscountLKR)}
         </p>
         {order.signedCopy && <p class="mt-2 font-semibold">✍ {t('admin.order.signed')}</p>}
         {order.dedicationNote && (

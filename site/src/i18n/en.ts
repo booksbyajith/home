@@ -191,7 +191,7 @@ export const en: Dict = {
   'order.cart.unavailable': 'Cannot be ordered online',
   'order.field.name': 'Full name',
   'order.field.mobile': 'Mobile number',
-  'order.field.mobileHint': 'For example 07X XXX XXXX',
+  'order.field.mobileHint': 'For example 07X XXX XXXX. Outside Sri Lanka: + and the country code.',
   'order.field.whatsappSame': 'My WhatsApp number is the same',
   'order.field.whatsapp': 'WhatsApp number',
   'order.field.email': 'Email',
@@ -222,6 +222,12 @@ export const en: Dict = {
   'order.summary.bundle': 'Bundle discount',
   'order.summary.signed': 'Signed copies',
   'order.summary.delivery': 'Delivery',
+  'order.summary.deliveryOverseas': 'To be confirmed',
+  'order.field.country': 'Country',
+  'order.error.country': 'Please enter the country.',
+  'order.error.postalCodeOverseas': 'Please enter the postal or ZIP code.',
+  'order.overseas.note':
+    'Delivery outside Sri Lanka: pay for the books now. We will contact you on WhatsApp with the postage cost and the best way to send your parcel before we post it.',
   'order.summary.total': 'Total to pay',
   'order.summary.items': 'Your order',
   'order.payment.title': 'Pay by bank transfer',
@@ -255,7 +261,8 @@ export const en: Dict = {
   'order.draft.slipNotSaved': 'Your bank slip could not be kept on this device. Please attach it again.',
   'order.error.required': 'This field is required.',
   'order.error.name': 'Please enter your full name.',
-  'order.error.mobile': 'Please enter a valid Sri Lankan mobile number.',
+  'order.error.mobile':
+    'Please enter a valid Sri Lankan mobile number (for delivery outside Sri Lanka, start with + and the country code).',
   'order.error.whatsapp':
     'Please enter a valid WhatsApp number. Use + and the country code for numbers outside Sri Lanka.',
   'order.error.email': 'Please enter a valid email address.',

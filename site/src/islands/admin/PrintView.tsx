@@ -1,5 +1,5 @@
 import { l10nText as tl } from '@shared/l10n';
-import { districtName } from '@shared/districts';
+import { displayPhone, regionLine } from '@shared/districts';
 import { formatLKR } from '@shared/pricing';
 import type { OrderDoc } from '@shared/types';
 import { useEffect, useState } from 'preact/hooks';
@@ -29,10 +29,8 @@ export function PrintView({ params }: { params: URLSearchParams }) {
       <p>{o.address.line1}</p>
       {o.address.line2 && <p>{o.address.line2}</p>}
       <p>{o.address.city}</p>
-      <p>
-        {districtName(o.address.districtId, lang)} {o.address.postalCode}
-      </p>
-      <p>📞 0{o.customer.mobile.slice(2)}</p>
+      <p>{regionLine(o.address, lang)}</p>
+      <p>📞 {displayPhone(o.customer.mobile)}</p>
       <p class="mt-1 font-mono text-xs">{o.orderId}</p>
     </div>
   );

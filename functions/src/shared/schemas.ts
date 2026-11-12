@@ -7,7 +7,7 @@ import {
   ORDER_ID_REGEX,
   SLIP_MAX_BYTES,
 } from './constants.js';
-import { isDistrictId } from './districts.js';
+import { OVERSEAS, isDeliveryArea, isDistrictId } from './districts.js';
 import { normaliseLkMobile, normaliseWhatsApp } from './phone.js';
 import { ORDER_STATUSES, SALE_MODES, TEMPLATE_KEYS, WA_EVENTS } from './types.js';
 
@@ -69,24 +69,47 @@ const int = (min: number, max: number) => z.number().int().min(min).max(max);
 
 // ---------- order form (shared with the site) ----------
 
+// Mobile: a Sri Lankan mobile, or an international number for overseas deliveries
+// (createOrderSchema / domesticMobileError check which one applies).
 export const orderCustomerSchema = z.object({
   name: text(2, 80),
-  mobile: lkMobileSchema,
+  mobile: z.string().transform((v, ctx) => {
+    const n = normaliseWhatsApp(v);
+    if (!n) {
+      ctx.addIssue({ code: 'custom', message: 'mobile' });
+      return z.NEVER;
+    }
+    return n;
+  }),
   whatsapp: whatsappSchema,
   email: optEmail,
 });
 
-export const orderAddressSchema = z.object({
-  line1: text(3, 120),
-  line2: optText(120),
-  city: text(2, 60),
-  districtId: z.string().refine(isDistrictId, { message: 'district' }),
-  postalCode: z
-    .string()
-    .trim()
-    .regex(/^\d{5}$/, { message: 'postalCode' }),
-  landmark: optText(200),
-});
+export const orderAddressSchema = z
+  .object({
+    line1: text(3, 120),
+    line2: optText(120),
+    city: text(2, 60),
+    districtId: z.string().refine(isDeliveryArea, { message: 'district' }),
+    // Sri Lanka: 5 digits. Overseas: any common postal/ZIP format.
+    postalCode: z.string().trim().max(12),
+    country: optText(60),
+    landmark: optText(200),
+  })
+  .superRefine((a, ctx) => {
+    const overseas = a.districtId === OVERSEAS;
+    const ok = overseas
+      ? /^[A-Za-z0-9][A-Za-z0-9 -]{1,11}$/.test(a.postalCode)
+      : /^\d{5}$/.test(a.postalCode);
+    if (!ok) ctx.addIssue({ code: 'custom', message: 'postalCode', path: ['postalCode'] });
+    if (overseas && (a.country ?? '').length < 2)
+      ctx.addIssue({ code: 'custom', message: 'country', path: ['country'] });
+  });
+
+/** Deliveries in Sri Lanka need a Sri Lankan mobile (for the courier). */
+export function domesticMobileError(districtId: string, normalisedMobile: string): boolean {
+  return districtId !== OVERSEAS && !/^947\d{8}$/.test(normalisedMobile);
+}
 
 export const geoSchema = z.object({
   lat: z.number().min(-90).max(90),
@@ -99,27 +122,32 @@ export const cartItemSchema = z.object({ slug: slugSchema, qty: int(1, MAX_QTY_P
 
 const MAX_BASE64 = Math.ceil((SLIP_MAX_BYTES * 4) / 3) + 1024;
 
-export const createOrderSchema = z.object({
-  lang: langSchema,
-  items: z
-    .array(cartItemSchema)
-    .min(1)
-    .max(MAX_ORDER_LINES)
-    .refine((a) => new Set(a.map((i) => i.slug)).size === a.length, { message: 'duplicate_slug' })
-    .refine((a) => a.reduce((n, i) => n + i.qty, 0) <= MAX_TOTAL_QTY, { message: 'too_many' }),
-  customer: orderCustomerSchema,
-  address: orderAddressSchema,
-  geo: geoSchema.optional().nullable(),
-  signedCopy: z.boolean(),
-  dedicationNote: optText(300),
-  expectedTotalLKR: int(0, 100_000_000),
-  slip: z.object({
-    fileName: z.string().trim().min(1).max(200),
-    contentType: z.string().trim().max(100),
-    dataBase64: z.string().min(8).max(MAX_BASE64),
-  }),
-  consent: z.literal(true),
-});
+export const createOrderSchema = z
+  .object({
+    lang: langSchema,
+    items: z
+      .array(cartItemSchema)
+      .min(1)
+      .max(MAX_ORDER_LINES)
+      .refine((a) => new Set(a.map((i) => i.slug)).size === a.length, { message: 'duplicate_slug' })
+      .refine((a) => a.reduce((n, i) => n + i.qty, 0) <= MAX_TOTAL_QTY, { message: 'too_many' }),
+    customer: orderCustomerSchema,
+    address: orderAddressSchema,
+    geo: geoSchema.optional().nullable(),
+    signedCopy: z.boolean(),
+    dedicationNote: optText(300),
+    expectedTotalLKR: int(0, 100_000_000),
+    slip: z.object({
+      fileName: z.string().trim().min(1).max(200),
+      contentType: z.string().trim().max(100),
+      dataBase64: z.string().min(8).max(MAX_BASE64),
+    }),
+    consent: z.literal(true),
+  })
+  .superRefine((o, ctx) => {
+    if (domesticMobileError(o.address.districtId, o.customer.mobile))
+      ctx.addIssue({ code: 'custom', message: 'mobile', path: ['customer', 'mobile'] });
+  });
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
 
 export const trackOrderSchema = z.object({

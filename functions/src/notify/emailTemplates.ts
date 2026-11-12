@@ -1,4 +1,4 @@
-import { districtName } from '../shared/districts.js';
+import { OVERSEAS, regionLine } from '../shared/districts.js';
 import { l10nText } from '../shared/l10n.js';
 import { formatLKR } from '../shared/pricing.js';
 import { bookTitles, buildOrderUrl, buildTrackUrl } from '../shared/templates.js';
@@ -165,15 +165,7 @@ export const customerRejected = (order: OrderDoc, siteUrl: string) => {
 export function teamNewOrder(order: OrderDoc, siteUrl: string): EmailContent {
   const adminUrl = `${siteUrl.replace(/\/+$/, '')}/admin/#/orders/${order.orderId}`;
   const a = order.address;
-  const address = [
-    a.line1,
-    a.line2,
-    a.city,
-    `${districtName(a.districtId, 'en')} ${a.postalCode}`,
-    a.landmark,
-  ]
-    .filter(Boolean)
-    .join(', ');
+  const address = [a.line1, a.line2, a.city, regionLine(a, 'en'), a.landmark].filter(Boolean).join(', ');
   const titles = order.items.map((i) => `${i.title.en} / ${i.title.si} × ${i.qty}`);
   const t = order.totals;
   const rows: [string, string][] = [
@@ -182,7 +174,12 @@ export function teamNewOrder(order: OrderDoc, siteUrl: string): EmailContent {
     ['Subtotal', esc(formatLKR(t.subtotalLKR))],
     ['Bundle discount', esc(formatLKR(t.bundleDiscountLKR))],
     ['Signed copy', esc(formatLKR(t.signedSurchargeLKR))],
-    ['Delivery', esc(formatLKR(t.deliveryFeeLKR))],
+    [
+      'Delivery',
+      a.districtId === OVERSEAS
+        ? 'Overseas: postage to be agreed with the customer'
+        : esc(formatLKR(t.deliveryFeeLKR)),
+    ],
     [
       'Total',
       `<strong>${esc(formatLKR(t.grandTotalLKR))}</strong>${order.totalMismatch ? ' ⚠ customer saw ' + esc(formatLKR(order.clientExpectedTotalLKR)) : ''}`,

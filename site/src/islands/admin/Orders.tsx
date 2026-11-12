@@ -25,6 +25,7 @@ export function ordersCsv(rows: Row[]): string {
     { header: 'city', value: (r) => r.address.city },
     { header: 'district', value: (r) => districtName(r.address.districtId, 'en') },
     { header: 'postalCode', value: (r) => r.address.postalCode },
+    { header: 'country', value: (r) => r.address.country ?? '' },
     { header: 'landmark', value: (r) => r.address.landmark },
     { header: 'items', value: (r) => r.items.map((i) => `${i.title.en} x${i.qty}`).join('; ') },
     { header: 'totalQty', value: (r) => r.totalQty },

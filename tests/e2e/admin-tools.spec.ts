@@ -69,7 +69,7 @@ test('CSV export and A4 label sheets', async ({ page }) => {
   expect(csv.charCodeAt(0)).toBe(0xfeff);
   const lines = csv.replace(/\r\n$/, '').split(/\r\n/);
   expect(lines[0]).toBe(
-    '﻿orderId,date,name,mobile,whatsapp,addressLine1,addressLine2,city,district,postalCode,landmark,items,totalQty,totalLKR,status,courier,trackingNo',
+    '﻿orderId,date,name,mobile,whatsapp,addressLine1,addressLine2,city,district,postalCode,country,landmark,items,totalQty,totalLKR,status,courier,trackingNo',
   );
   expect(lines).toHaveLength(10);
   expect(csv).toContain('Customer 3');

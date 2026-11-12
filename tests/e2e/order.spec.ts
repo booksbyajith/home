@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { bucket, db, resetAll } from '../helpers/emulator.js';
 import { watchConsole } from './helpers.js';
-import { attachSlip, fillDetails, ready } from './orderHelpers.js';
+import { adminLogin, makeUser } from './adminHelpers.js';
+import { CUSTOMER, attachSlip, fillDetails, placeOrder, ready } from './orderHelpers.js';
 
 test.beforeEach(async () => {
   await resetAll();
@@ -69,4 +70,24 @@ test('closed ordering blocks checkout', async ({ page }) => {
   await ready(page);
   await expect(page.getByRole('alert').first()).toBeVisible();
   await expect(page.locator('[data-next-step]')).toBeDisabled();
+});
+
+test('overseas order: country field, international mobile, postage to be confirmed', async ({
+  page,
+  context,
+}) => {
+  const orderId = await placeOrder(page, 'order/?book=portuguese-era-1505-1594', {
+    ...CUSTOMER,
+    mobile: '+61 412 345 678',
+    city: 'Albury',
+    district: 'overseas',
+    postalCode: '2640',
+    country: 'Australia',
+  });
+  expect(orderId).toMatch(/^AJ-/);
+  await makeUser('admin@example.com', true);
+  const admin = await context.newPage();
+  await adminLogin(admin);
+  await admin.goto(`admin/#/orders/${orderId}`);
+  await expect(admin.locator('[data-testid="detail-address"]')).toContainText('Australia 2640');
 });
