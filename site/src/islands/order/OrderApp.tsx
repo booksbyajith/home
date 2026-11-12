@@ -888,7 +888,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
                 <h3 id="bank-h" class="font-sans text-lg font-semibold">
                   {t('order.payment.title')}
                 </h3>
-                <dl class="mt-2 space-y-2" data-testid="bank">
+                <dl class="mt-3 space-y-3" data-testid="bank">
                   {(
                     [
                       ['order.payment.bankName', config.bank.bankName],
@@ -902,17 +902,49 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
                   )
                     .filter(([, v]) => v)
                     .map(([k, v]) => (
-                      <div class="flex flex-wrap items-center justify-between gap-2">
-                        <dt class="text-ink-soft">{t(k)}</dt>
-                        <dd class="flex items-center gap-2 font-semibold">
-                          <span data-bank-field={k}>{v}</span>
+                      <div>
+                        <dt class="text-sm text-ink-soft">{t(k)}</dt>
+                        <dd class="flex items-center justify-between gap-3 font-semibold">
+                          <span class="min-w-0 break-words" data-bank-field={k}>
+                            {v}
+                          </span>
                           <button
                             type="button"
-                            class="btn-quiet min-h-9 px-2 py-0 text-sm"
+                            class={`btn-quiet h-10 w-10 shrink-0 border border-line p-0 ${copied === k ? 'text-success' : ''}`}
                             onClick={() => copy(k, v)}
-                            aria-label={`${t('site.copy')}: ${t(k)}`}
+                            aria-label={`${copied === k ? t('site.copied') : t('site.copy')}: ${t(k)}`}
+                            title={copied === k ? t('site.copied') : t('site.copy')}
                           >
-                            {copied === k ? t('site.copied') : t('site.copy')}
+                            {copied === k ? (
+                              <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.4"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                              >
+                                <path d="M5 12.5l4.5 4.5L19 7.5"></path>
+                              </svg>
+                            ) : (
+                              <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                              >
+                                <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+                                <path d="M5 15V6a2 2 0 0 1 2-2h9"></path>
+                              </svg>
+                            )}
                           </button>
                         </dd>
                       </div>
