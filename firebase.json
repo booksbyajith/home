@@ -1,0 +1,38 @@
+{
+  "firestore": {
+    "rules": "firebase/firestore.rules",
+    "indexes": "firebase/firestore.indexes.json",
+    "location": "asia-south1"
+  },
+  "storage": { "rules": "firebase/storage.rules" },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "runtime": "nodejs24",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "src",
+        "**/*.test.ts",
+        ".secret.local",
+        ".secret.local.example",
+        ".env.demo-ajith",
+        ".env.example",
+        "vitest.config.ts"
+      ],
+      "predeploy": ["pnpm --filter functions build"]
+    }
+  ],
+  "emulators": {
+    "auth": { "host": "127.0.0.1", "port": 9099 },
+    "functions": { "host": "127.0.0.1", "port": 5001 },
+    "firestore": { "host": "127.0.0.1", "port": 8080 },
+    "storage": { "host": "127.0.0.1", "port": 9199 },
+    "hub": { "host": "127.0.0.1", "port": 4400 },
+    "logging": { "host": "127.0.0.1", "port": 4500 },
+    "eventarc": { "host": "127.0.0.1", "port": 9299 },
+    "ui": { "enabled": true, "host": "127.0.0.1", "port": 4000 },
+    "singleProjectMode": true
+  }
+}

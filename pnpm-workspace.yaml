@@ -1,0 +1,12 @@
+packages:
+  - site
+  - functions
+  - tests
+useNodeVersion: 24.22.3
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - protobufjs
+ignoredBuiltDependencies:
+  - re2
+  - '@firebase/util'

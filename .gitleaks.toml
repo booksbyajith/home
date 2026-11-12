@@ -1,0 +1,15 @@
+title = "booksbyajith gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Emulator and example placeholders"
+paths = [
+  '''^\.env\.emulator$''',
+  '''^\.env\.example$''',
+  '''^functions/\.secret\.local\.example$''',
+  '''^functions/\.env\.demo-ajith$''',
+  '''^pnpm-lock\.yaml$''',
+]
+regexes = ['''demo-[a-z-]+''']
