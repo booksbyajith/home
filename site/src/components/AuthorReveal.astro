@@ -56,8 +56,6 @@ const notes = t('home.hero.notes').split('|');
     filter: sepia(0) saturate(1) contrast(1.05);
   }
   .notes {
-    /* Only the area around the pointer is uncovered. */
-    mask-image: radial-gradient(circle 300px at var(--mx) var(--my), #000 40%, transparent 100%);
     opacity: var(--near);
     transition: opacity 0.4s ease;
   }
@@ -114,7 +112,6 @@ const notes = t('home.hero.notes').split('|');
   /* Touch screens: no pointer to follow, so the notes and the hidden line appear on their own. */
   @media (hover: none) {
     .notes {
-      mask-image: none;
       opacity: 0;
       animation: fade-in 1.2s ease 3s forwards;
     }

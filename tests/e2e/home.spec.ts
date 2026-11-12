@@ -52,7 +52,10 @@ test.describe('home slideshow', () => {
     await expect(show).toHaveAttribute('data-index', '0');
   });
 
-  test('autoplay advances on screen, and stops while hovered or paused', async ({ page, isMobile }) => {
+  test('autoplay advances on screen, keeps going under the mouse, and stops when paused', async ({
+    page,
+    isMobile,
+  }) => {
     await page.clock.install();
     await page.goto('');
     const show = page.locator('[data-slideshow]');
@@ -64,11 +67,11 @@ test.describe('home slideshow', () => {
     await expect(show).toHaveAttribute('data-index', '1');
     if (!isMobile) {
       await show.hover();
-      await page.clock.runFor(11000);
-      expect(await index(page)).toBe(1);
-      await page.mouse.move(0, 0);
+      await page.clock.runFor(5200);
+      await expect(show).toHaveAttribute('data-index', '2');
     }
     await show.locator('[data-toggle]').click();
+    await expect(show.locator('[data-toggle]')).toHaveAttribute('aria-pressed', 'true');
     const before = await index(page);
     await page.clock.runFor(11000);
     expect(await index(page)).toBe(before);

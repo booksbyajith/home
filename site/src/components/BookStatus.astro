@@ -30,12 +30,12 @@ const direct = d.saleMode === 'direct' && d.priceLKR > 0 && d.inStock;
     unavailable: t('books.unavailable'),
     low: t('books.lowStock'),
   })}
-  class="space-y-3"
+  class:list={compact ? 'space-y-3' : 'flex flex-wrap items-center gap-x-5 gap-y-3'}
 >
   <p class="text-2xl font-bold text-maroon" data-price>
     {d.priceLKR > 0 ? formatLKR(d.priceLKR) : t('books.priceTba')}
   </p>
-  <p class="text-sm font-semibold text-ink-soft" data-availability>
+  <p class="text-sm font-semibold text-ink-soft empty:hidden" data-availability>
     {direct
       ? d.preorder
         ? t('books.preorder')
@@ -70,7 +70,7 @@ const direct = d.saleMode === 'direct' && d.priceLKR > 0 && d.inStock;
     )}
   </div>
   {!compact && (
-    <div data-action="notify" hidden={direct || d.saleMode === 'external'}>
+    <div class="basis-full" data-action="notify" hidden={direct || d.saleMode === 'external'}>
       <slot name="notify" />
     </div>
   )}

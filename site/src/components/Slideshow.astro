@@ -100,13 +100,33 @@ const pos = (i: number) => (i === 0 ? 'center' : i === 1 ? 'right' : i === n - 1
     >
       ›
     </button>
-    <button type="button" class="btn-quiet h-11 px-4 text-sm" data-toggle aria-pressed="false">
-      {t('home.hero.pause')}
+    <button
+      type="button"
+      class="carousel-toggle btn-quiet h-11 w-11 border border-line p-0"
+      data-toggle
+      aria-pressed="false"
+      aria-label={t('home.hero.pause')}
+      title={t('home.hero.pause')}
+    >
+      <svg class="i-pause" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor">
+        <rect x="3" y="2" width="3.5" height="12" rx="1"></rect>
+        <rect x="9.5" y="2" width="3.5" height="12" rx="1"></rect>
+      </svg>
+      <svg class="i-play" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor">
+        <path d="M4 2.5v11a1 1 0 0 0 1.5.86l9-5.5a1 1 0 0 0 0-1.72l-9-5.5A1 1 0 0 0 4 2.5z"></path>
+      </svg>
     </button>
   </div>
 </section>
 
 <style>
+  .carousel-toggle .i-play,
+  [data-playing='false'] .carousel-toggle .i-pause {
+    display: none;
+  }
+  [data-playing='false'] .carousel-toggle .i-play {
+    display: block;
+  }
   .carousel-stage {
     display: grid;
     max-width: 1000px;

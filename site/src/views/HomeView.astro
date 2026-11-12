@@ -58,18 +58,6 @@ const authorIntro = {
             {t('home.hero.explore')}
           </a>
         </p>
-        <a
-          href={href(lang, `/books/${featured.slug}/`)}
-          class="enter enter-4 group mt-10 inline-flex items-center gap-3 rounded-full border border-line bg-card/80 py-1.5 pr-4 pl-1.5 text-left text-ink no-underline shadow-sm transition hover:border-maroon/50"
-        >
-          <span class="block h-11 w-8 shrink-0 overflow-hidden rounded-sm">
-            <Cover path={`/covers/${front.file}`} alt="" sizes="32px" class="h-full w-full object-cover" />
-          </span>
-          <span class="text-sm leading-snug">
-            <span class="block font-semibold text-gold">{t('home.featured.title')}</span>
-            <span class="block font-semibold group-hover:text-maroon">{tl(featured.title, lang)}</span>
-          </span>
-        </a>
       </div>
       <div class="order-1 lg:order-2">
         <AuthorReveal lang={lang} />

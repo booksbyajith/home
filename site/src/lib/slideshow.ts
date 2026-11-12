@@ -1,7 +1,7 @@
 /**
  * Accessible fading carousel: the current book in the centre, its neighbours blurred at the
  * sides. Swipe, arrows, dots, keyboard, and autoplay that runs only while the carousel is on
- * screen and pauses on hover, focus, a hidden tab or reduced motion.
+ * screen and pauses with the pause button, keyboard focus, a hidden tab or reduced motion.
  */
 export function initSlideshow(root: HTMLElement): void {
   const track = root.querySelector<HTMLElement>('[data-track]')!;
@@ -13,7 +13,6 @@ export function initSlideshow(root: HTMLElement): void {
   const n = slides.length;
   let index = 0;
   let userPaused = reduced;
-  let hover = false;
   let focus = false;
   let onScreen = !('IntersectionObserver' in window);
   let timer: number | undefined;
@@ -41,7 +40,7 @@ export function initSlideshow(root: HTMLElement): void {
   const go = (i: number) => setCurrent((i + n) % n);
 
   const running = () =>
-    !userPaused && !hover && !focus && onScreen && document.visibilityState === 'visible';
+    !userPaused && !focus && onScreen && document.visibilityState === 'visible';
   const schedule = () => {
     window.clearInterval(timer);
     timer = undefined;
@@ -51,7 +50,9 @@ export function initSlideshow(root: HTMLElement): void {
   const restart = () => schedule();
 
   const updateToggle = () => {
-    toggle.textContent = userPaused ? root.dataset.labelPlay! : root.dataset.labelPause!;
+    const label = userPaused ? root.dataset.labelPlay! : root.dataset.labelPause!;
+    toggle.setAttribute('aria-label', label);
+    toggle.title = label;
     toggle.setAttribute('aria-pressed', String(userPaused));
     root.dataset.playing = String(!userPaused);
   };
@@ -86,15 +87,10 @@ export function initSlideshow(root: HTMLElement): void {
     updateToggle();
     schedule();
   });
-  root.addEventListener('mouseenter', () => {
-    hover = true;
-    schedule();
-  });
-  root.addEventListener('mouseleave', () => {
-    hover = false;
-    schedule();
-  });
-  root.addEventListener('focusin', () => {
+  // Keyboard focus inside the carousel pauses it (so it doesn't move under the user);
+  // a mouse click on an arrow or dot does not.
+  root.addEventListener('focusin', (e) => {
+    if (!(e.target as HTMLElement).matches(':focus-visible')) return;
     focus = true;
     schedule();
   });
