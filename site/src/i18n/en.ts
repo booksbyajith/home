@@ -7,6 +7,8 @@ export const en: Dict = {
   'site.langToggle': 'සිංහලෙන්',
   'site.langName.si': 'සිංහල',
   'site.langName.en': 'English',
+  'site.langName.ta': 'தமிழ்',
+  'site.language': 'Language',
   'site.menu': 'Menu',
   'site.close': 'Close',
   'site.loading': 'Loading…',

@@ -1,3 +1,4 @@
+import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import { formatLKR } from '@shared/pricing';
 import { forwardRef } from 'preact/compat';
@@ -63,7 +64,7 @@ export const Receipt = forwardRef<HTMLDivElement, Props>(function Receipt(
           {r.items.map((i) => (
             <tr class="border-b border-line">
               <td class="py-2 pr-4" data-testid="receipt-title">
-                {i.title[lang] || i.title.en}
+                {tl(i.title, lang)}
               </td>
               <td class="py-2 text-center">{i.qty}</td>
               <td class="py-2 text-right whitespace-nowrap">{formatLKR(i.lineTotalLKR)}</td>

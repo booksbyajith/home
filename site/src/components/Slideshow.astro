@@ -1,4 +1,5 @@
 ---
+import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import { useT } from '../i18n';
 import type { BookFacts } from '../lib/content';
@@ -56,8 +57,8 @@ const t = useT(lang);
               <p class="font-semibold text-gold">
                 {b.featured ? t('home.featured.title') : t('books.title')}
               </p>
-              <p class="mt-1 font-serif text-2xl font-bold sm:text-4xl">{b.title[lang]}</p>
-              {b.awards[0] && <p class="mt-2 text-ink-soft">🏅 {b.awards[0][lang]}</p>}
+              <p class="mt-1 font-serif text-2xl font-bold sm:text-4xl">{tl(b.title, lang)}</p>
+              {b.awards[0] && <p class="mt-2 text-ink-soft">🏅 {tl(b.awards[0], lang)}</p>}
               <p class="mt-5">
                 <a href={href(lang, `/books/${b.slug}/`)} class="btn-primary">
                   {t('books.viewDetails')}

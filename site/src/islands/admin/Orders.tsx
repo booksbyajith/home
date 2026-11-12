@@ -1,3 +1,5 @@
+import { l10nText as tl } from '@shared/l10n';
+import type { L10n } from '@shared/types';
 import { toCsv } from '@shared/csv';
 import { districtName } from '@shared/districts';
 import { formatLKR } from '@shared/pricing';
@@ -53,9 +55,7 @@ export function Orders() {
       const { db } = await adminFirebase();
       const fs = await import('firebase/firestore');
       const snap = await fs.getDocs(fs.collection(db, 'books'));
-      setBooks(
-        snap.docs.map((d) => ({ slug: d.id, title: (d.get('title') as { si: string; en: string })[lang] })),
-      );
+      setBooks(snap.docs.map((d) => ({ slug: d.id, title: tl(d.get('title') as L10n, lang) })));
     })();
   }, [lang]);
 
@@ -244,7 +244,7 @@ export function Orders() {
                   </span>
                 </div>
                 <p class="text-sm text-ink-soft">
-                  {r.items.map((i) => `${i.title[lang]} ×${i.qty}`).join(', ')}
+                  {r.items.map((i) => `${tl(i.title, lang)} ×${i.qty}`).join(', ')}
                 </p>
               </a>
             </li>

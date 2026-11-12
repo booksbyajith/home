@@ -28,11 +28,27 @@ describe('renderTemplate', () => {
       'Thank you for ordering Finding Sinhabahu, Nimal! 🙏 Your order number is AJ-2611-7K3Q. We will verify your bank transfer shortly and start preparing your book.',
     );
   });
-  it('every default template exists in both languages', () => {
+  it('every default template exists in all three languages with the same variables', () => {
+    const vars = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
     for (const t of Object.values(DEFAULT_TEMPLATES)) {
       expect(t.si.length).toBeGreaterThan(10);
       expect(t.en.length).toBeGreaterThan(10);
+      expect(t.ta!.length).toBeGreaterThan(10);
+      expect(vars(t.ta!)).toEqual(vars(t.en));
+      expect(vars(t.si)).toEqual(vars(t.en));
     }
+  });
+  it('bookTitles uses Tamil titles and falls back to English when missing', () => {
+    expect(
+      bookTitles(
+        [
+          { title: { si: 'සිං', en: 'Eng', ta: 'தமிழ்' } },
+          { title: { si: 'Finding Sinhabahu', en: 'Finding Sinhabahu' } },
+        ],
+        'ta',
+      ),
+    ).toContain('தமிழ்');
+    expect(bookTitles([{ title: { si: 'සිං', en: 'Eng' } }], 'ta')).toBe('Eng');
   });
 });
 

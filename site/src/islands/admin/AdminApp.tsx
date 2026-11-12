@@ -127,10 +127,23 @@ function Shell(p: {
 }) {
   const t = useT();
   const { state, route } = p;
+  const LANG_LABEL: Record<Lang, string> = { si: 'සිංහල', en: 'English', ta: 'தமிழ்' };
   const langBtn = (
-    <button type="button" class="btn-quiet px-3" onClick={() => p.setLang(p.lang === 'si' ? 'en' : 'si')}>
-      {p.lang === 'si' ? 'English' : 'සිංහල'}
-    </button>
+    <span class="flex">
+      {(['si', 'en', 'ta'] as Lang[])
+        .filter((l) => l !== p.lang)
+        .map((l) => (
+          <button
+            type="button"
+            class="btn-quiet px-3"
+            lang={l}
+            onClick={() => p.setLang(l)}
+            data-admin-lang={l}
+          >
+            {LANG_LABEL[l]}
+          </button>
+        ))}
+    </span>
   );
 
   if (state === 'loading') return <p class="p-6">…</p>;

@@ -14,8 +14,13 @@ const out = path.join(site, 'public/og');
 mkdirSync(out, { recursive: true });
 const W = 1200;
 const H = 630;
-const NAME = { si: 'ආචාර්ය අජිත් අමරසිංහ', en: 'Dr. Ajith Amarasinghe' };
-const TAG = { si: 'ශ්‍රී ලංකා ඉතිහාසය පිළිබඳ පර්යේෂණ', en: 'Research on the history of Sri Lanka' };
+const NAME = { si: 'ආචාර්ය අජිත් අමරසිංහ', en: 'Dr. Ajith Amarasinghe', ta: 'கலாநிதி அஜித் அமரசிங்க' };
+const LANGS = ['si', 'en', 'ta'];
+const TAG = {
+  si: 'ශ්‍රී ලංකා ඉතිහාසය පිළිබඳ පර්යේෂණ',
+  en: 'Research on the history of Sri Lanka',
+  ta: 'இலங்கை வரலாறு பற்றிய ஆய்வுகள்',
+};
 
 const scriptMtime = statSync(fileURLToPath(import.meta.url)).mtimeMs;
 const fresh = (file, ...sources) =>
@@ -62,7 +67,7 @@ async function render(file, { title, subtitle, lang, cover }) {
 }
 
 let count = 0;
-for (const lang of ['si', 'en']) {
+for (const lang of LANGS) {
   const f = path.join(out, `default-${lang}.jpg`);
   if (!fresh(f)) await render(f, { title: NAME[lang], subtitle: TAG[lang], lang });
   count++;
@@ -74,11 +79,11 @@ for (const dir of readdirSync(booksDir)) {
   const b = parse(readFileSync(yamlFile, 'utf8'));
   const front = b.covers.find((c) => c.kind === 'front');
   const cover = front ? path.join(site, 'public/covers', front.file) : null;
-  for (const lang of ['si', 'en']) {
+  for (const lang of LANGS) {
     const f = path.join(out, `book-${b.slug}-${lang}.jpg`);
     const award = b.awards?.[0]?.[lang];
     if (!fresh(f, yamlFile, cover))
-      await render(f, { title: b.title[lang], subtitle: award ?? TAG[lang], lang, cover });
+      await render(f, { title: b.title[lang] ?? b.title.en, subtitle: award ?? TAG[lang], lang, cover });
     count++;
   }
 }
@@ -88,7 +93,7 @@ function frontmatter(file) {
   return m ? parse(m[1]) : {};
 }
 for (const kind of ['news', 'blog']) {
-  for (const lang of ['si', 'en']) {
+  for (const lang of LANGS) {
     const dir = path.join(site, 'src/content', kind, lang);
     if (!existsSync(dir)) continue;
     for (const name of readdirSync(dir).filter((n) => /\.mdx?$/.test(n))) {

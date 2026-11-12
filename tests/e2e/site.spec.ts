@@ -15,14 +15,14 @@ test.beforeAll(async () => {
   await resetAll();
 });
 
-test.describe('every route, both languages', () => {
+test.describe('every route, every language', () => {
   test.skip(({ isMobile }) => isMobile, 'route sweep runs once (desktop)');
-  for (const lang of ['si', 'en'] as const) {
+  for (const lang of ['si', 'en', 'ta'] as const) {
     test(`all routes in ${lang}`, async ({ page, request }) => {
       test.setTimeout(180_000);
       const ogChecked = new Set<string>();
       for (const route of ROUTES) {
-        const path = (lang === 'en' ? 'en' + route : route).replace(/^\//, '');
+        const path = (lang === 'si' ? route : lang + route).replace(/^\//, '');
         const con = watchConsole(page);
         const res = await page.goto(path);
         expect(res?.status(), path).toBe(200);
@@ -52,6 +52,24 @@ test.describe('site shell', () => {
     await page.goto('en/news/book-launch-portuguese-era/');
     await page.locator('[data-lang-toggle="si"]').first().click();
     await expect(page).toHaveURL(/\/booksbyajith\/news\/book-launch-portuguese-era\/$/);
+    await page.locator('[data-lang-toggle="ta"]').first().click();
+    await expect(page).toHaveURL(/\/booksbyajith\/ta\/news\/book-launch-portuguese-era\/$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ta');
+    await expect(page.locator('link[rel=alternate][hreflang=en]')).toHaveAttribute(
+      'href',
+      /\/booksbyajith\/en\/news\/book-launch-portuguese-era\/$/,
+    );
+    await page.locator('[data-lang-toggle="en"]').first().click();
+    await expect(page).toHaveURL(/\/booksbyajith\/en\/news\/book-launch-portuguese-era\/$/);
+  });
+
+  test('Tamil book page shows the Tamil title and order button', async ({ page }) => {
+    await page.goto('ta/books/portuguese-era-1505-1594/');
+    await expect(page.locator('h1')).toContainText('இலங்கையில் போர்த்துக்கேயர் காலம்');
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+      'content',
+      /og\/book-portuguese-era-1505-1594-ta\.jpg$/,
+    );
   });
 
   test('book pages carry valid Book JSON-LD and book OG tags', async ({ page }) => {
@@ -84,13 +102,15 @@ test.describe('site shell', () => {
   });
 
   test('feeds, sitemap, robots and manifest are well formed', async ({ request }) => {
-    for (const f of ['rss.xml', 'en/rss.xml']) {
+    for (const f of ['rss.xml', 'en/rss.xml', 'ta/rss.xml']) {
       const x = await (await request.get(f)).text();
       expect(x).toContain('<rss');
       expect(x).toContain('book-launch-portuguese-era');
     }
     const sm = await (await request.get('sitemap.xml')).text();
     expect(sm).toContain('/booksbyajith/en/books/finding-sinhabahu/');
+    expect(sm).toContain('/booksbyajith/ta/books/finding-sinhabahu/');
+    expect(sm).toContain('hreflang="ta"');
     expect(sm).not.toContain('/admin/');
     expect(sm).not.toContain('/order/success/');
     expect(await (await request.get('robots.txt')).text()).toContain('Disallow: /booksbyajith/admin/');

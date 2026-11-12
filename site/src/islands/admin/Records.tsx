@@ -1,5 +1,7 @@
 import { toCsv } from '@shared/csv';
 import { buildOrderUrl, buildWaUrl, renderTemplate } from '@shared/templates';
+import type { Lang } from '@shared/constants';
+import { l10nText as tl } from '@shared/l10n';
 import type { PrivateConfig } from '@shared/types';
 import { useEffect, useState } from 'preact/hooks';
 import { call } from '../../lib/firebase';
@@ -130,9 +132,9 @@ export function Alerts() {
     <div data-screen="alerts">
       {(rows ?? []).map((r) => {
         const c = r.contact as { whatsapp: string | null; email: string | null };
-        const l = (r.lang as 'si' | 'en') ?? 'si';
+        const l = (r.lang as Lang) ?? 'si';
         const text = tpl
-          ? renderTemplate(tpl.back_in_stock[l], {
+          ? renderTemplate(tl(tpl.back_in_stock, l), {
               bookTitles: String(r.slug),
               orderUrl: buildOrderUrl(siteUrl, l, String(r.slug)),
             })

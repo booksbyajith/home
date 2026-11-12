@@ -2,8 +2,8 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-const l10n = z.object({ si: z.string(), en: z.string() });
-const lang = z.enum(['si', 'en']);
+const l10n = z.object({ si: z.string(), en: z.string(), ta: z.string().optional() });
+const lang = z.enum(['si', 'en', 'ta']);
 
 const bookFacts = defineCollection({
   loader: glob({
@@ -41,7 +41,7 @@ const bookFacts = defineCollection({
 });
 
 const bookText = defineCollection({
-  loader: glob({ pattern: 'books/*/{si,en}.md', base: './src/content' }),
+  loader: glob({ pattern: 'books/*/{si,en,ta}.md', base: './src/content' }),
   schema: z.object({ summary: z.string().max(200) }),
 });
 
@@ -58,11 +58,11 @@ const postSchema = z.object({
 });
 
 const blog = defineCollection({
-  loader: glob({ pattern: '{si,en}/*.{md,mdx}', base: './src/content/blog' }),
+  loader: glob({ pattern: '{si,en,ta}/*.{md,mdx}', base: './src/content/blog' }),
   schema: postSchema,
 });
 const news = defineCollection({
-  loader: glob({ pattern: '{si,en}/*.{md,mdx}', base: './src/content/news' }),
+  loader: glob({ pattern: '{si,en,ta}/*.{md,mdx}', base: './src/content/news' }),
   schema: postSchema,
 });
 
@@ -105,7 +105,7 @@ const testimonials = defineCollection({
 });
 
 const faq = defineCollection({
-  loader: glob({ pattern: '{si,en}/*.md', base: './src/content/faq' }),
+  loader: glob({ pattern: '{si,en,ta}/*.md', base: './src/content/faq' }),
   schema: z.object({
     question: z.string(),
     order: z.number(),
@@ -114,7 +114,7 @@ const faq = defineCollection({
 });
 
 const pages = defineCollection({
-  loader: glob({ pattern: '{si,en}/*.md', base: './src/content/pages' }),
+  loader: glob({ pattern: '{si,en,ta}/*.md', base: './src/content/pages' }),
   schema: z.object({ title: z.string(), description: z.string(), updated: z.coerce.date() }),
 });
 

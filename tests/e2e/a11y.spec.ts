@@ -29,6 +29,9 @@ test('public pages have no axe violations', async ({ page }) => {
     'track/',
     'faq/',
     'en/bulk-orders/',
+    'ta/',
+    'ta/books/portuguese-era-1505-1594/',
+    'ta/order/?book=finding-sinhabahu',
   ]) {
     await page.goto(path);
     await page.waitForLoadState('networkidle');

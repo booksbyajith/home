@@ -1,19 +1,24 @@
 ---
 import type { Lang } from '@shared/constants';
 import { useT } from '../i18n';
-import { altHref, href, stripLang } from '../lib/paths';
+import { resolveAlternates, type Alternates } from '../lib/alternates';
+import { LANGS, href, stripLang } from '../lib/paths';
 
 interface Props {
   lang: Lang;
-  altPath?: string | null;
-  togglePath?: string;
+  alternates?: Alternates;
+  fallbackPath?: string;
 }
-const { lang, altPath, togglePath } = Astro.props;
+const { lang, alternates, fallbackPath } = Astro.props;
 const t = useT(lang);
 const current = stripLang(Astro.url.pathname);
-const other: Lang = lang === 'si' ? 'en' : 'si';
-const toggleHref =
-  altPath === null ? href(other, '/') : altPath ? href(other, altPath) : altHref(Astro.url.pathname, other);
+const alts = resolveAlternates(lang, current, alternates);
+const LABEL: Record<Lang, string> = { si: 'සිංහල', en: 'EN', ta: 'தமிழ்' };
+const switcher = LANGS.map((l) => ({
+  l,
+  url: href(l, alts[l] ?? fallbackPath ?? '/'),
+  name: t(`site.langName.${l}`),
+}));
 const nav = [
   { path: '/books/', label: t('nav.books') },
   { path: '/news/', label: t('nav.news') },
@@ -50,9 +55,36 @@ const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWi
       </ul>
     </nav>
     <div class="flex items-center gap-2">
-      <a href={toggleHref} hreflang={other} lang={other} class="btn-quiet px-3" data-lang-toggle={other}>
-        {t('site.langToggle')}
-      </a>
+      <ul
+        class="flex items-center rounded-md border border-line text-sm"
+        aria-label={t('site.language')}
+        role="list"
+      >
+        {switcher.map((x) => (
+          <li>
+            {x.l === lang ? (
+              <span
+                aria-current="true"
+                lang={x.l}
+                class="block rounded-md bg-paper-dark px-2 py-2 font-semibold sm:px-3"
+              >
+                {LABEL[x.l]}
+              </span>
+            ) : (
+              <a
+                href={x.url}
+                hreflang={x.l}
+                lang={x.l}
+                aria-label={LABEL[x.l] === x.name ? undefined : `${LABEL[x.l]} (${x.name})`}
+                class="block min-h-11 px-2 py-2 text-ink no-underline hover:bg-paper-dark sm:px-3"
+                data-lang-toggle={x.l}
+              >
+                {LABEL[x.l]}
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
       <a href={href(lang, '/order/')} class="btn-primary hidden px-4 whitespace-nowrap sm:inline-flex">
         {t('nav.order')}
       </a>

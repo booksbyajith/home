@@ -1,7 +1,8 @@
 import type { Lang } from './constants.js';
 
 export type { Lang };
-export type L10n = { si: string; en: string };
+/** Text in each site language. Tamil is optional and falls back to English (see l10nText). */
+export type L10n = { si: string; en: string; ta?: string };
 /** Firestore Timestamp on the server; plain values in shared code. */
 export type Ts = unknown;
 
@@ -95,7 +96,7 @@ export interface PrivateConfig {
       enabled: boolean;
       graphApiVersion: string;
       templateNames: Record<WaEvent, string>;
-      languageCodes: { si: string; en: string };
+      languageCodes: { si: string; en: string; ta?: string };
     };
   };
   updatedAt?: Ts;

@@ -1,3 +1,4 @@
+import { l10nText as tl } from '@shared/l10n';
 import { ORDER_STATUSES } from '@shared/types';
 import { formatLKR } from '@shared/pricing';
 import type { BookDoc, OrderStatus } from '@shared/types';
@@ -116,7 +117,7 @@ export function Dashboard() {
           <ul>
             {low.map((b) => (
               <li class="text-danger">
-                {b.title[lang]}: {b.stock}
+                {tl(b.title, lang)}: {b.stock}
               </li>
             ))}
           </ul>

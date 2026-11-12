@@ -1,4 +1,5 @@
 ---
+import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import EventCard from '../components/EventCard.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -30,7 +31,7 @@ const shown = upcoming.length ? upcoming.slice(0, 3) : past.slice(0, 2);
                 {p.outlet} · <time datetime={p.date.toISOString()}>{formatDate(lang, p.date)}</time>
               </p>
               <p class="mt-1 font-semibold">{p.title}</p>
-              {p.excerpt && <p class="mt-1 text-ink-soft">{p.excerpt[lang]}</p>}
+              {p.excerpt && <p class="mt-1 text-ink-soft">{tl(p.excerpt, lang)}</p>}
               <a class="mt-2 inline-block" href={p.url} target="_blank" rel="noopener">
                 {t('press.readArticle')} ↗
               </a>

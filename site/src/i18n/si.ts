@@ -6,6 +6,8 @@ export const si = {
   'site.langToggle': 'English',
   'site.langName.si': 'සිංහල',
   'site.langName.en': 'English',
+  'site.langName.ta': 'தமிழ்',
+  'site.language': 'භාෂාව',
   'site.menu': 'මෙනුව',
   'site.close': 'වසන්න',
   'site.loading': 'පූරණය වෙමින්…',

@@ -1,3 +1,4 @@
+import { l10nText as tl } from '@shared/l10n';
 import { districtName } from '@shared/districts';
 import { formatLKR } from '@shared/pricing';
 import { TRANSITIONS, requiredFields, templateKeyFor } from '@shared/status';
@@ -286,7 +287,7 @@ export function OrderDetail({ orderId }: { orderId: string }) {
             </a>
           </p>
           {order.customer.email && <p>✉ {order.customer.email}</p>}
-          <p class="text-sm text-ink-soft">{order.lang === 'si' ? 'සිංහල' : 'English'}</p>
+          <p class="text-sm text-ink-soft">{{ si: 'සිංහල', en: 'English', ta: 'தமிழ்' }[order.lang]}</p>
         </Section>
         <Section title={t('admin.order.address')}>
           <p data-testid="detail-address">
@@ -315,7 +316,7 @@ export function OrderDetail({ orderId }: { orderId: string }) {
           {order.items.map((i) => (
             <li class="flex justify-between">
               <span>
-                {i.title[lang]} × {i.qty}
+                {tl(i.title, lang)} × {i.qty}
                 {i.preorder && ' (pre-order)'}
               </span>
               <span>{formatLKR(i.lineTotalLKR)}</span>

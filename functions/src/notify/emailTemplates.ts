@@ -1,4 +1,5 @@
 import { districtName } from '../shared/districts.js';
+import { l10nText } from '../shared/l10n.js';
 import { formatLKR } from '../shared/pricing.js';
 import { bookTitles, buildOrderUrl, buildTrackUrl } from '../shared/templates.js';
 import type { Lang, L10n, OrderDoc } from '../shared/types.js';
@@ -54,17 +55,41 @@ const T = {
     backBody: 'The book you asked about can be ordered again:',
     orderNow: 'Order now',
   },
+  ta: {
+    siteName: 'கலாநிதி அஜித் அமரசிங்க புத்தகங்கள்',
+    footer: 'இது ஒரு தானியங்கிச் செய்தி. கேள்விகள் இருந்தால் WhatsApp மூலம் எங்களைத் தொடர்பு கொள்ளுங்கள்.',
+    orderId: 'ஆர்டர் எண்',
+    items: 'புத்தகங்கள்',
+    total: 'மொத்தம்',
+    track: 'உங்கள் ஆர்டரைக் கண்காணிக்கவும்',
+    confirmSubject: 'உங்கள் ஆர்டர் கிடைத்தது',
+    confirmBody: 'உங்கள் ஆர்டருக்கு நன்றி. உங்கள் வங்கிப் பரிமாற்றத்தைச் சரிபார்த்து விரைவில் உங்களுக்குத் தெரிவிப்போம்.',
+    verifiedSubject: 'கட்டணம் சரிபார்க்கப்பட்டது',
+    verifiedBody: 'உங்கள் கட்டணம் சரிபார்க்கப்பட்டது. உங்கள் புத்தகத்தை அனுப்புவதற்குத் தயார் செய்து வருகிறோம்.',
+    dispatchedSubject: 'உங்கள் புத்தகம் அனுப்பப்பட்டது',
+    dispatchedBody: 'உங்கள் ஆர்டர் அனுப்பப்பட்டுள்ளது.',
+    courier: 'கூரியர் சேவை',
+    trackingNo: 'கண்காணிப்பு எண்',
+    rejectedSubject: 'உங்கள் கட்டணத்தைச் சரிபார்க்க முடியவில்லை',
+    rejectedBody: 'உங்கள் ஆர்டருக்கான கட்டணத்தைச் சரிபார்க்க முடியவில்லை.',
+    reason: 'காரணம்',
+    reply: 'உதவுவதற்கு WhatsApp மூலம் எங்களைத் தொடர்பு கொள்ளுங்கள்.',
+    hello: 'வணக்கம்',
+    backSubject: 'புத்தகம் மீண்டும் கிடைக்கிறது',
+    backBody: 'நீங்கள் கேட்ட புத்தகத்தை இப்போது மீண்டும் ஆர்டர் செய்யலாம்:',
+    orderNow: 'இப்போதே ஆர்டர் செய்யுங்கள்',
+  },
 } as const;
 
 function itemsHtml(order: OrderDoc, lang: Lang): string {
   return order.items
-    .map((i) => `${esc(i.title[lang] || i.title.en)} × ${i.qty} — ${esc(formatLKR(i.lineTotalLKR))}`)
+    .map((i) => `${esc(l10nText(i.title, lang))} × ${i.qty} — ${esc(formatLKR(i.lineTotalLKR))}`)
     .join('<br>');
 }
 
 function itemsText(order: OrderDoc, lang: Lang): string {
   return order.items
-    .map((i) => `- ${i.title[lang] || i.title.en} x ${i.qty}: ${formatLKR(i.lineTotalLKR)}`)
+    .map((i) => `- ${l10nText(i.title, lang)} x ${i.qty}: ${formatLKR(i.lineTotalLKR)}`)
     .join('\n');
 }
 
@@ -244,7 +269,7 @@ export function teamEnquiry(e: EnquiryForEmail, siteUrl: string): EmailContent {
 export function backInStock(title: L10n, slug: string, lang: Lang, siteUrl: string): EmailContent {
   const t = T[lang];
   const url = buildOrderUrl(siteUrl, lang, slug);
-  const name = title[lang] || title.en;
+  const name = l10nText(title, lang);
   return {
     subject: `${t.backSubject}: ${name}`,
     html: layout(

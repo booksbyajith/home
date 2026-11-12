@@ -9,7 +9,8 @@ import { href } from '../lib/paths';
   title={t('si', 'notFound.title')}
   description={t('si', 'notFound.body')}
   noindex
-  altPath={null}
+  alternates={{ si: null, en: null, ta: null }}
+  fallbackPath="/"
 >
   <section class="container-page py-16 text-center">
     <h1 class="text-3xl font-bold">{t('si', 'notFound.title')}</h1>
@@ -19,14 +20,16 @@ import { href } from '../lib/paths';
         {t('si', 'notFound.home')}
       </a>
     </p>
-    <div lang="en" class="mt-12 border-t border-line pt-10">
-      <h2 class="text-2xl font-bold">{t('en', 'notFound.title')}</h2>
-      <p class="mt-3">{t('en', 'notFound.body')}</p>
-      <p class="mt-6">
-        <a class="btn-secondary" href={href('en', '/')}>
-          {t('en', 'notFound.home')}
-        </a>
-      </p>
-    </div>
+    {(['en', 'ta'] as const).map((l) => (
+      <div lang={l} class="mt-12 border-t border-line pt-10">
+        <h2 class="text-2xl font-bold">{t(l, 'notFound.title')}</h2>
+        <p class="mt-3">{t(l, 'notFound.body')}</p>
+        <p class="mt-6">
+          <a class="btn-secondary" href={href(l, '/')}>
+            {t(l, 'notFound.home')}
+          </a>
+        </p>
+      </div>
+    ))}
   </section>
 </BaseLayout>

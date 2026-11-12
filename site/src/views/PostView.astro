@@ -5,7 +5,7 @@ import Cover from '../components/Cover.astro';
 import ShareButtons from '../components/ShareButtons.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { formatDate, useT } from '../i18n';
-import { postMinutes, postSlug, translationPath, type Post, type PostKind } from '../lib/content';
+import { postMinutes, postSlug, translationAlternates, type Post, type PostKind } from '../lib/content';
 import { absUrl, asset, href } from '../lib/paths';
 
 interface Props {
@@ -17,7 +17,7 @@ const { lang, kind, post } = Astro.props;
 const t = useT(lang);
 const { Content } = await render(post);
 const slug = postSlug(post);
-const alt = await translationPath(kind, post);
+const alternates = await translationAlternates(kind, post);
 const url = absUrl(href(lang, `/${kind}/${slug}/`));
 const d = post.data;
 const jsonLd = {
@@ -40,8 +40,8 @@ const jsonLd = {
   description={d.description}
   ogType="article"
   ogImage={asset(`/og/${kind}-${slug}-${lang}.jpg`)}
-  altPath={alt}
-  togglePath={alt ?? `/${kind}/`}
+  alternates={alternates}
+  fallbackPath={`/${kind}/`}
   jsonLd={jsonLd}
   extraMeta={[
     { property: 'article:published_time', content: d.date.toISOString() },

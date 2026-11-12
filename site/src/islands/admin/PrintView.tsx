@@ -1,3 +1,4 @@
+import { l10nText as tl } from '@shared/l10n';
 import { districtName } from '@shared/districts';
 import { formatLKR } from '@shared/pricing';
 import type { OrderDoc } from '@shared/types';
@@ -71,7 +72,7 @@ export function PrintView({ params }: { params: URLSearchParams }) {
               <tbody>
                 {o.items.map((i) => (
                   <tr class="border-b border-line">
-                    <td class="py-1">{i.title[lang]}</td>
+                    <td class="py-1">{tl(i.title, lang)}</td>
                     <td class="py-1 text-center">× {i.qty}</td>
                     <td class="py-1 text-right">{formatLKR(i.lineTotalLKR)}</td>
                   </tr>

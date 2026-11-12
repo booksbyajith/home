@@ -24,7 +24,8 @@ const intro = t(kind === 'news' ? 'news.intro' : 'blog.intro');
   lang={lang}
   title={title}
   description={intro}
-  altPath={tag ? `/${kind}/` : undefined}
+  alternates={tag ? { si: null, en: null, ta: null } : undefined}
+  fallbackPath={`/${kind}/`}
   noindex={!!tag}
 >
   <section class="container-page py-10">

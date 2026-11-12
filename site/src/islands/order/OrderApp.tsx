@@ -1,3 +1,4 @@
+import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import { MAX_QTY_PER_BOOK } from '@shared/constants';
 import { DISTRICTS } from '@shared/districts';
@@ -395,7 +396,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
       addMyOrder({
         orderId: res.orderId,
         createdAt: res.createdAt,
-        titles: res.items.map((i) => i.title[lang] || i.title.en),
+        titles: res.items.map((i) => tl(i.title, lang)),
         totalLKR: res.totals.grandTotalLKR,
         phoneLast4: fields.mobile.replace(/\D/g, '').slice(-4),
         lang,
@@ -442,7 +443,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
           {lines.map((l) => (
             <li class="flex justify-between gap-3">
               <span>
-                {l.book.title[lang]} × {l.qty}
+                {tl(l.book.title, lang)} × {l.qty}
               </span>
               <span class="whitespace-nowrap">{formatLKR(l.qty * l.book.priceLKR)}</span>
             </li>
@@ -506,8 +507,8 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
             {t('order.notConfigured')} <a href={contactHref}>{t('nav.contact')}</a>
           </div>
         )}
-        {config?.notice && (config.notice[lang] || '').trim() && (
-          <div class="mb-4 rounded-md border border-teal bg-white p-3">{config.notice[lang]}</div>
+        {config?.notice && (tl(config.notice, lang) || '').trim() && (
+          <div class="mb-4 rounded-md border border-teal bg-white p-3">{tl(config.notice, lang)}</div>
         )}
 
         <ol
@@ -558,7 +559,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
                     loading="lazy"
                   />
                   <div class="flex flex-1 flex-col gap-1">
-                    <p class="font-semibold">{b.title[lang]}</p>
+                    <p class="font-semibold">{tl(b.title, lang)}</p>
                     <p class="text-ink-soft">
                       {info.priceLKR > 0 ? formatLKR(info.priceLKR) : t('books.priceTba')}
                       {info.preorder && orderable && (
@@ -586,13 +587,13 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
                         <div
                           class="flex items-center gap-2"
                           role="group"
-                          aria-label={`${t('order.cart.qty')}: ${b.title[lang]}`}
+                          aria-label={`${t('order.cart.qty')}: ${tl(b.title, lang)}`}
                         >
                           <button
                             type="button"
                             class="btn-secondary h-11 w-11 p-0"
                             onClick={() => setQty(b.slug, qty - 1)}
-                            aria-label={t('order.cart.decrease', { title: b.title[lang] })}
+                            aria-label={t('order.cart.decrease', { title: tl(b.title, lang) })}
                           >
                             −
                           </button>
@@ -608,7 +609,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
                             class="btn-secondary h-11 w-11 p-0"
                             onClick={() => setQty(b.slug, qty + 1)}
                             disabled={qty >= max}
-                            aria-label={t('order.cart.increase', { title: b.title[lang] })}
+                            aria-label={t('order.cart.increase', { title: tl(b.title, lang) })}
                           >
                             +
                           </button>
@@ -852,7 +853,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
                     ))}
                 </dl>
                 <h4 class="mt-4 font-semibold">{t('order.payment.instructions')}</h4>
-                <p class="mt-1 whitespace-pre-line">{config.paymentInstructions[lang]}</p>
+                <p class="mt-1 whitespace-pre-line">{tl(config.paymentInstructions, lang)}</p>
               </section>
             )}
             <section aria-labelledby="slip-h">

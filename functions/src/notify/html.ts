@@ -8,7 +8,7 @@ export function esc(s: string | number | null | undefined): string {
 }
 
 /** Single-column, mobile-friendly email shell with inline CSS and system fonts. */
-export function layout(lang: 'si' | 'en', title: string, body: string, footer: string): string {
+export function layout(lang: 'si' | 'en' | 'ta', title: string, body: string, footer: string): string {
   return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title></head>
 <body style="margin:0;padding:0;background:#f8f3e7;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8f3e7;"><tr><td align="center" style="padding:16px;">

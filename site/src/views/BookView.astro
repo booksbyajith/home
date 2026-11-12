@@ -1,4 +1,5 @@
 ---
+import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import { render } from 'astro:content';
 import BookStatus from '../components/BookStatus.astro';
@@ -24,7 +25,7 @@ const testimonials = await getTestimonials(book.slug);
 const press = await getPress(book.slug);
 const front = book.covers.find((c) => c.kind === 'front')!;
 const url = absUrl(href(lang, `/books/${book.slug}/`));
-const title = book.title[lang];
+const title = tl(book.title, lang);
 const description = text?.data.summary ?? title;
 const kindLabel = { front: t('book.cover.front'), back: t('book.cover.back'), inner: t('book.cover.inner') };
 
@@ -32,15 +33,18 @@ const specs: [string, string][] = [];
 if (book.isbn) specs.push([t('book.spec.isbn'), book.isbn]);
 if (book.pages) specs.push([t('book.spec.pages'), String(book.pages)]);
 specs.push([t('book.spec.language'), t(book.originalLanguage === 'si' ? 'book.lang.si' : 'book.lang.en')]);
-if (book.binding) specs.push([t('book.spec.binding'), book.binding[lang]]);
+if (book.binding) specs.push([t('book.spec.binding'), tl(book.binding, lang)]);
 if (book.publisher) specs.push([t('book.spec.publisher'), book.publisher]);
 if (book.firstPublished)
   specs.push([
     t('book.spec.published'),
-    [book.firstPublished, book.publishedPlace?.[lang]].filter(Boolean).join(', '),
+    [book.firstPublished, tl(book.publishedPlace, lang)].filter(Boolean).join(', '),
   ]);
 if (book.launch)
-  specs.push([t('book.spec.launch'), `${formatDate(lang, book.launch.date)}, ${book.launch.venue[lang]}`]);
+  specs.push([
+    t('book.spec.launch'),
+    `${formatDate(lang, book.launch.date)}, ${tl(book.launch.venue, lang)}`,
+  ]);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -92,12 +96,12 @@ const jsonLd = {
         <a
           href={asset(`/covers/${front.file}`)}
           data-lightbox-group="covers"
-          data-alt={front.alt[lang]}
+          data-alt={tl(front.alt, lang)}
           class="block"
         >
           <Cover
             path={`/covers/${front.file}`}
-            alt={front.alt[lang]}
+            alt={tl(front.alt, lang)}
             eager
             sizes="(min-width: 1024px) 420px, 90vw"
             class="mx-auto rounded-md shadow-lg"
@@ -111,12 +115,12 @@ const jsonLd = {
                 <a
                   href={asset(`/covers/${c.file}`)}
                   data-lightbox-group="covers"
-                  data-alt={c.alt[lang]}
+                  data-alt={tl(c.alt, lang)}
                   class="block"
                 >
                   <Cover
                     path={`/covers/${c.file}`}
-                    alt={`${kindLabel[c.kind]}: ${c.alt[lang]}`}
+                    alt={`${kindLabel[c.kind]}: ${tl(c.alt, lang)}`}
                     sizes="100px"
                     class="rounded border border-line"
                   />
@@ -128,11 +132,11 @@ const jsonLd = {
       <div>
         <h1
           class="text-3xl font-bold sm:text-4xl"
-          lang={book.originalLanguage === 'si' && lang === 'en' && title === book.title.si ? 'si' : undefined}
+          lang={book.originalLanguage === 'si' && lang !== 'si' && title === book.title.si ? 'si' : undefined}
         >
           {title}
         </h1>
-        {lang === 'en' && book.title.si !== book.title.en && (
+        {lang !== 'si' && book.title.si !== title && (
           <p class="mt-1 text-lg text-ink-soft" lang="si">
             {book.title.si}
           </p>
@@ -140,7 +144,7 @@ const jsonLd = {
         {book.awards.length > 0 && (
           <ul class="mt-3 flex flex-wrap gap-2" aria-label={t('book.awards')}>
             {book.awards.map((a) => (
-              <li class="badge bg-gold/15 text-ink">🏅 {a[lang]}</li>
+              <li class="badge bg-gold/15 text-ink">🏅 {tl(a, lang)}</li>
             ))}
           </ul>
         )}
@@ -195,7 +199,7 @@ const jsonLd = {
                 >
                   <Cover
                     path={p}
-                    alt={s.alt[lang]}
+                    alt={tl(s.alt, lang)}
                     sizes="(min-width: 1024px) 180px, 45vw"
                     class="rounded border border-line shadow-sm"
                   />
@@ -213,10 +217,10 @@ const jsonLd = {
         <div class="mt-4 grid gap-4 md:grid-cols-2">
           {testimonials.map((q) => (
             <figure class="card p-5">
-              <blockquote class="font-serif text-lg">“{q.quote[lang]}”</blockquote>
+              <blockquote class="font-serif text-lg">“{tl(q.quote, lang)}”</blockquote>
               <figcaption class="mt-3 text-ink-soft">
                 — {q.author}
-                {q.role && `, ${q.role[lang]}`}
+                {q.role && `, ${tl(q.role, lang)}`}
               </figcaption>
             </figure>
           ))}

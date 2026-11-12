@@ -8,7 +8,7 @@ export const GET: APIRoute = () => {
 const VERSION = 'v1';
 const CACHE = 'aj-' + VERSION;
 const BASE = ${JSON.stringify(base)};
-const OFFLINE = { si: BASE + 'offline/', en: BASE + 'en/offline/' };
+const OFFLINE = { si: BASE + 'offline/', en: BASE + 'en/offline/', ta: BASE + 'ta/offline/' };
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
@@ -42,7 +42,7 @@ self.addEventListener('fetch', (event) => {
       try {
         return await fetch(req);
       } catch {
-        const lang = url.pathname.startsWith(BASE + 'en/') ? 'en' : 'si';
+        const lang = url.pathname.startsWith(BASE + 'en/') ? 'en' : url.pathname.startsWith(BASE + 'ta/') ? 'ta' : 'si';
         return (await caches.match(OFFLINE[lang])) || Response.error();
       }
     })());

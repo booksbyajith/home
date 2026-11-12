@@ -13,7 +13,7 @@ export async function feed(lang: Lang) {
     title: t(lang, 'rss.title'),
     description: t(lang, 'rss.description'),
     site: absUrl(href(lang, '/')),
-    customData: `<language>${lang === 'si' ? 'si-LK' : 'en-GB'}</language>`,
+    customData: `<language>${{ si: 'si-LK', en: 'en-GB', ta: 'ta-LK' }[lang]}</language>`,
     items: items.map(({ p, kind }) => ({
       title: p.data.title,
       description: p.data.description,

@@ -21,6 +21,7 @@ import { channelsFor, firestoreLedger, runtimeSettings } from '../notify/runtime
 const CONSENT_TEXT = {
   si: 'නව පොත් සහ සිදුවීම් පිළිබඳ ඊමේල් ලැබීමට මම එකඟ වෙමි. ඕනෑම වේලාවක ඉවත් විය හැක.',
   en: 'I agree to receive emails about new books and events. I can unsubscribe at any time.',
+  ta: 'புதிய புத்தகங்கள் மற்றும் நிகழ்வுகள் பற்றிய மின்னஞ்சல்களைப் பெற ஒப்புக்கொள்கிறேன். எப்போது வேண்டுமானாலும் விலகலாம்.',
 };
 
 async function guardPublic(request: CallableRequest<unknown>, scope: string) {

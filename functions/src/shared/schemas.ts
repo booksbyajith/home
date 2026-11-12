@@ -60,7 +60,11 @@ const optEmail = z
   .transform((v) => (v ? v : undefined));
 
 const l10n = (max: number) =>
-  z.strictObject({ si: z.string().trim().max(max), en: z.string().trim().max(max) });
+  z.strictObject({
+    si: z.string().trim().max(max),
+    en: z.string().trim().max(max),
+    ta: z.string().trim().max(max).optional(),
+  });
 const int = (min: number, max: number) => z.number().int().min(min).max(max);
 
 // ---------- order form (shared with the site) ----------
@@ -229,7 +233,11 @@ export const privateConfigSchema = z.strictObject({
           z.ZodString
         >,
       ),
-      languageCodes: z.strictObject({ si: z.string().trim().max(10), en: z.string().trim().max(10) }),
+      languageCodes: z.strictObject({
+        si: z.string().trim().max(10),
+        en: z.string().trim().max(10),
+        ta: z.string().trim().max(10).optional(),
+      }),
     }),
   }),
 });

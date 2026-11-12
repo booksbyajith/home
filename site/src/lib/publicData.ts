@@ -103,7 +103,7 @@ export interface PublicReview {
   displayName: string;
   rating: number;
   text: string;
-  lang: 'si' | 'en';
+  lang: 'si' | 'en' | 'ta';
   approvedAt: string;
 }
 

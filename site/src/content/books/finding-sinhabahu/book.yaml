@@ -4,6 +4,7 @@ featured: false
 title:
   si: Finding Sinhabahu
   en: Finding Sinhabahu
+  ta: Finding Sinhabahu
 originalLanguage: en
 publisher: Vijitha Yapa Publishers
 isbn: 978-955-665-398-4
@@ -11,37 +12,43 @@ pages: 334
 binding:
   si: මෘදු කවරය
   en: Soft binding
+  ta: மென் அட்டை
 awards:
   - si: ජයග්‍රාහී, රාජ්‍ය සාහිත්‍ය සම්මානය 2020 (සමාජ විද්‍යා)
     en: Winner, State Literary Award 2020 (Social Science)
+    ta: வெற்றியாளர், அரச சாகித்திய விருது 2020 (சமூக விஞ்ஞானம்)
 covers:
   - file: finding-sinhabahu-front.jpg
     kind: front
     alt:
       si: Finding Sinhabahu පොතේ ඉදිරි කවරය
       en: Front cover of Finding Sinhabahu
+      ta: Finding Sinhabahu நூலின் முன் அட்டை
   - file: finding-sinhabahu-back.jpg
     kind: back
     alt:
       si: පිටුපස කවරය
       en: Back cover
+      ta: பின் அட்டை
   - file: finding-sinhabahu-inner-1.jpg
     kind: inner
     alt:
       si: ඇතුළත පිටුවක්
       en: Inside page
+      ta: உள் பக்கம்
   - file: finding-sinhabahu-inner-2.jpg
     kind: inner
     alt:
       si: ඇතුළත පිටුවක්
       en: Inside page
+      ta: உள் பக்கம்
 samples:
   - file: page-01.jpg
-    alt: { si: නියැදි පිටුව 1, en: Sample page 1 }
+    alt: { si: නියැදි පිටුව 1, en: Sample page 1, ta: மாதிரிப் பக்கம் 1 }
   - file: page-02.jpg
-    alt: { si: නියැදි පිටුව 2, en: Sample page 2 }
+    alt: { si: නියැදි පිටුව 2, en: Sample page 2, ta: மாதிரிப் பக்கம் 2 }
   - file: page-03.jpg
-    alt: { si: නියැදි පිටුව 3, en: Sample page 3 }
+    alt: { si: නියැදි පිටුව 3, en: Sample page 3, ta: மாதிரிப் பக்கம் 3 }
 defaults:
   priceLKR: 0
   saleMode: unavailable

@@ -1,4 +1,5 @@
 ---
+import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import Cover from '../components/Cover.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -13,14 +14,16 @@ const { lang } = Astro.props;
 const t = useT(lang);
 const books = await getBooks();
 const texts = await Promise.all(books.map((b) => getBookText(b.slug, lang)));
-const short =
-  lang === 'si'
-    ? 'ආචාර්ය අජිත් අමරසිංහ වෛද්‍ය විශේෂඥයෙකු, ශ්‍රී ලංකා රාජකීය ආසියාතික සංගමයේ සාමාජිකයෙකු සහ ඓතිහාසික පර්යේෂණ කෘති තුනක කතුවරයෙකි.'
-    : 'Dr. Ajith Amarasinghe is a medical specialist, a member of the Royal Asiatic Society of Sri Lanka and the author of three historical research works.';
-const long =
-  lang === 'si'
-    ? 'ආචාර්ය අජිත් අමරසිංහ වෘත්තියෙන් වෛද්‍ය විශේෂඥයෙකු වන අතර ශ්‍රී ලංකා ඉතිහාසය පිළිබඳ පර්යේෂකයෙකි. ශ්‍රී ලංකා රාජකීය ආසියාතික සංගමයේ සාමාජිකයෙකු වන ඔහු ඓතිහාසික පර්යේෂණ කෘති තුනක කතුවරයා වේ. ඔහුගේ Finding Sinhabahu කෘතිය 2020 රාජ්‍ය සාහිත්‍ය සම්මාන උළෙලේදී සමාජ විද්‍යා අංශයේ සම්මානය දිනා ගත් අතර, ලංකාවේ පෘතුගීසි සිටි යුගය (1505-1594) 2026 නොවැම්බර් 11 වන දින කොළඹ මහවැලි කේන්ද්‍රයේදී එළිදක්වන ලදී.'
-    : 'Dr. Ajith Amarasinghe is a medical specialist by profession and a researcher of Sri Lankan history. A member of the Royal Asiatic Society of Sri Lanka, he is the author of three historical research works. His book Finding Sinhabahu won the State Literary Award 2020 in the Social Science category, and ලංකාවේ පෘතුගීසි සිටි යුගය (1505-1594) was launched on 11 November 2026 at the Mahaweli Centre, Colombo.';
+const short = {
+  si: 'ආචාර්ය අජිත් අමරසිංහ වෛද්‍ය විශේෂඥයෙකු, ශ්‍රී ලංකා රාජකීය ආසියාතික සංගමයේ සාමාජිකයෙකු සහ ඓතිහාසික පර්යේෂණ කෘති තුනක කතුවරයෙකි.',
+  en: 'Dr. Ajith Amarasinghe is a medical specialist, a member of the Royal Asiatic Society of Sri Lanka and the author of three historical research works.',
+  ta: 'கலாநிதி அஜித் அமரசிங்க ஒரு மருத்துவ நிபுணர், இலங்கை ராயல் ஆசியச் சங்கத்தின் உறுப்பினர் மற்றும் மூன்று வரலாற்று ஆய்வு நூல்களின் ஆசிரியர்.',
+}[lang];
+const long = {
+  si: 'ආචාර්ය අජිත් අමරසිංහ වෘත්තියෙන් වෛද්‍ය විශේෂඥයෙකු වන අතර ශ්‍රී ලංකා ඉතිහාසය පිළිබඳ පර්යේෂකයෙකි. ශ්‍රී ලංකා රාජකීය ආසියාතික සංගමයේ සාමාජිකයෙකු වන ඔහු ඓතිහාසික පර්යේෂණ කෘති තුනක කතුවරයා වේ. ඔහුගේ Finding Sinhabahu කෘතිය 2020 රාජ්‍ය සාහිත්‍ය සම්මාන උළෙලේදී සමාජ විද්‍යා අංශයේ සම්මානය දිනා ගත් අතර, ලංකාවේ පෘතුගීසි සිටි යුගය (1505-1594) 2026 නොවැම්බර් 11 වන දින කොළඹ මහවැලි කේන්ද්‍රයේදී එළිදක්වන ලදී.',
+  en: 'Dr. Ajith Amarasinghe is a medical specialist by profession and a researcher of Sri Lankan history. A member of the Royal Asiatic Society of Sri Lanka, he is the author of three historical research works. His book Finding Sinhabahu won the State Literary Award 2020 in the Social Science category, and ලංකාවේ පෘතුගීසි සිටි යුගය (1505-1594) was launched on 11 November 2026 at the Mahaweli Centre, Colombo.',
+  ta: 'கலாநிதி அஜித் அமரசிங்க தொழில்ரீதியாக ஒரு மருத்துவ நிபுணரும் இலங்கை வரலாற்று ஆய்வாளருமாவார். இலங்கை ராயல் ஆசியச் சங்கத்தின் உறுப்பினரான அவர் மூன்று வரலாற்று ஆய்வு நூல்களின் ஆசிரியர். அவரது Finding Sinhabahu நூல் 2020 அரச இலக்கிய விருதுகளில் சமூக விஞ்ஞானப் பிரிவில் விருது பெற்றது. ලංකාවේ පෘතුගීසි සිටි යුගය (1505-1594) நூல் 2026 நவம்பர் 11 அன்று கொழும்பு மகாவலி மையத்தில் வெளியிடப்பட்டது.',
+}[lang];
 ---
 
 <BaseLayout lang={lang} title={t('pressKit.title')} description={t('pressKit.intro')}>
@@ -57,11 +60,11 @@ const long =
           <article class="card p-4">
             <Cover
               path={`/covers/${front.file}`}
-              alt={front.alt[lang]}
+              alt={tl(front.alt, lang)}
               sizes="(min-width: 768px) 300px, 80vw"
               class="mx-auto max-h-72 w-auto rounded"
             />
-            <h3 class="mt-3 text-lg font-bold">{b.title[lang]}</h3>
+            <h3 class="mt-3 text-lg font-bold">{tl(b.title, lang)}</h3>
             <dl class="mt-2 text-sm">
               {b.isbn && (
                 <>
@@ -100,7 +103,7 @@ const long =
               )}
             </dl>
             {b.awards.map((a) => (
-              <p class="mt-1 text-sm">🏅 {a[lang]}</p>
+              <p class="mt-1 text-sm">🏅 {tl(a, lang)}</p>
             ))}
             <p class="mt-2 text-sm text-ink-soft">{texts[i]?.data.summary}</p>
             <p class="mt-2">

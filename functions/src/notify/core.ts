@@ -100,7 +100,13 @@ export function planSends(order: OrderDoc, e: NotifyEvent, s: NotifySettings): S
         role: 'customer',
         run: (c) =>
           c.whatsapp(
-            waTemplateMessage(order, ev, name, wa.languageCodes[order.lang], s.templateVars(order)),
+            waTemplateMessage(
+              order,
+              ev,
+              name,
+              wa.languageCodes[order.lang] ?? wa.languageCodes.en,
+              s.templateVars(order),
+            ),
             {
               ...meta,
               role: 'customer',

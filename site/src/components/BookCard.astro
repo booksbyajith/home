@@ -1,4 +1,5 @@
 ---
+import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import { useT } from '../i18n';
 import type { BookFacts } from '../lib/content';
@@ -22,12 +23,14 @@ const url = href(lang, `/books/${book.slug}/`);
     <Cover path={`/covers/${front.file}`} alt="" sizes="160px" class="rounded shadow-md" />
   </a>
   <div class="flex flex-1 flex-col gap-2">
-    <h2 class="text-xl font-bold" lang={book.title[lang] === book.title.si ? 'si' : lang}>
+    <h2 class="text-xl font-bold" lang={tl(book.title, lang) === book.title.si ? 'si' : lang}>
       <a href={url} class="text-ink no-underline hover:underline">
-        {book.title[lang]}
+        {tl(book.title, lang)}
       </a>
     </h2>
-    {book.awards.length > 0 && <p class="badge self-start bg-gold/15 text-ink">🏅 {book.awards[0][lang]}</p>}
+    {book.awards.length > 0 && (
+      <p class="badge self-start bg-gold/15 text-ink">🏅 {tl(book.awards[0], lang)}</p>
+    )}
     {summary && <p class="text-ink-soft">{summary}</p>}
     <BookStatus lang={lang} book={book} compact />
   </div>

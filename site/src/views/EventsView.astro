@@ -1,4 +1,5 @@
 ---
+import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import EventCard from '../components/EventCard.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -16,11 +17,11 @@ const { upcoming, past } = splitEvents(events);
 const jsonLd = events.map((e) => ({
   '@context': 'https://schema.org',
   '@type': 'Event',
-  name: e.title[lang],
+  name: tl(e.title, lang),
   startDate: e.start.toISOString().slice(0, 10),
   endDate: e.end?.toISOString().slice(0, 10),
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-  location: { '@type': 'Place', name: e.venue[lang], address: e.city[lang] },
+  location: { '@type': 'Place', name: tl(e.venue, lang), address: tl(e.city, lang) },
   organizer: { '@type': 'Person', name: 'Ajith Amarasinghe' },
   url: e.url ?? absUrl(href(lang, '/events/')),
 }));

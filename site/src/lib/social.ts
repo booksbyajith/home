@@ -1,3 +1,4 @@
+import { l10nText as tl } from '@shared/l10n';
 import { format } from '../i18n';
 import { fetchPublicConfig } from './publicData';
 
@@ -11,8 +12,8 @@ export function initSocial(): void {
     const story = cfg.social.storyOfWeek;
     if (story?.url) {
       const s = root.querySelector<HTMLElement>('[data-story]')!;
-      s.querySelector('[data-story-title]')!.textContent = story.title[lang];
-      s.querySelector('[data-story-blurb]')!.textContent = story.blurb[lang];
+      s.querySelector('[data-story-title]')!.textContent = tl(story.title, lang);
+      s.querySelector('[data-story-blurb]')!.textContent = tl(story.blurb, lang);
       s.querySelector<HTMLAnchorElement>('[data-story-link]')!.href = story.url;
       s.hidden = false;
     }
@@ -22,7 +23,7 @@ export function initSocial(): void {
     const tpl = document.querySelector<HTMLTemplateElement>('[data-reel-template]')!;
     for (const item of items) {
       const node = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
-      const title = item.title[lang] || item.title.en;
+      const title = tl(item.title, lang);
       node.querySelector('[data-reel-title]')!.textContent = title;
       const btn = node.querySelector<HTMLButtonElement>('[data-reel-play]')!;
       btn.setAttribute('aria-label', format(root.dataset.playLabel ?? '', { title }));

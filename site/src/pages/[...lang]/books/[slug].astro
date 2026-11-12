@@ -1,4 +1,5 @@
 ---
+import { langParam } from '../../../lib/paths';
 import BookView from '../../../views/BookView.astro';
 import { getBooks } from '../../../lib/content';
 import { LANGS } from '../../../lib/paths';
@@ -7,7 +8,7 @@ export async function getStaticPaths() {
   const books = await getBooks();
   return LANGS.flatMap((lang) =>
     books.map((book) => ({
-      params: { lang: lang === 'si' ? undefined : 'en', slug: book.slug },
+      params: { lang: langParam(lang), slug: book.slug },
       props: { lang, book },
     })),
   );

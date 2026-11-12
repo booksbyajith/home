@@ -1,4 +1,5 @@
 ---
+import { langParam } from '../../../lib/paths';
 import PostView from '../../../views/PostView.astro';
 import { getPosts, postLang, postSlug } from '../../../lib/content';
 
@@ -7,7 +8,7 @@ export async function getStaticPaths() {
   return posts.map((post) => {
     const lang = postLang(post);
     return {
-      params: { lang: lang === 'si' ? undefined : 'en', slug: postSlug(post) },
+      params: { lang: langParam(lang), slug: postSlug(post) },
       props: { lang, post },
     };
   });

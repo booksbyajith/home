@@ -1,3 +1,4 @@
+import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import { ORDER_ID_REGEX } from '@shared/constants';
 import { formatLKR } from '@shared/pricing';
@@ -89,7 +90,7 @@ export default function SuccessApp({ lang, dict, trackHref, trackAbsUrl }: Props
               {receipt.items.map((i) => (
                 <li class="flex justify-between gap-3">
                   <span>
-                    {i.title[lang] || i.title.en} × {i.qty}
+                    {tl(i.title, lang)} × {i.qty}
                   </span>
                   <span>{formatLKR(i.lineTotalLKR)}</span>
                 </li>

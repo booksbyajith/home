@@ -266,12 +266,14 @@ On GitHub you can upload files in the browser: open the folder (for example `sit
 
 JPG, under about 600 KB each. To add or remove inside pages, edit the `covers` and `samples` lists in `site/src/content/books/<book>/book.yaml` (pencil icon on GitHub).
 
-## 17. Review the Sinhala text and placeholders
+## 17. Review the Sinhala and Tamil text and placeholders
 
-Please have the author (or a Sinhala editor) check — all can be edited on GitHub with the pencil icon:
+Please have the author (or a Sinhala editor, and a Tamil editor for the Tamil pages) check — all can be edited on GitHub with the pencil icon:
 
-- `site/src/i18n/si.ts` — all interface text.
-- Admin → **Settings → WhatsApp message templates** — the Sinhala versions.
+- `site/src/i18n/si.ts` and `site/src/i18n/ta.ts` — all interface text. The Tamil text is a first translation and should be read by a native Tamil speaker.
+- Admin → **Settings → WhatsApp message templates** — the Sinhala and Tamil versions. Settings saved before Tamil was added have no Tamil text; Tamil customers then get the English message until you fill in the Tamil box.
+- `site/src/content/books/*/book.yaml` — the `ta:` titles of the two Sinhala books are working translations (marked `AUTHOR: please confirm`).
+- `site/src/content/*/ta/` and `site/src/content/books/*/ta.md` — Tamil pages, news, FAQ and book descriptions (marked `TRANSLATION:`).
 - `site/src/content/pages/si/about.md` and `en/about.md` — replace the paragraph marked **"Placeholder — in the author's own words"**.
 - `site/src/content/books/*/si.md` and `en.md` — book descriptions (marked `AUTHOR:`). The English titles of the two Sinhala books are working translations (comments in their `book.yaml`).
 - `site/src/content/blog/*/welcome.md` — placeholder welcome post.

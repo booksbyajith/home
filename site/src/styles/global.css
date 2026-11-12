@@ -3,6 +3,11 @@
 @import '@fontsource/noto-sans-sinhala/700.css';
 @import '@fontsource/noto-serif-sinhala/500.css';
 @import '@fontsource/noto-serif-sinhala/700.css';
+@import '@fontsource/noto-sans-tamil/tamil-400.css';
+@import '@fontsource/noto-sans-tamil/tamil-600.css';
+@import '@fontsource/noto-sans-tamil/tamil-700.css';
+@import '@fontsource/noto-serif-tamil/tamil-500.css';
+@import '@fontsource/noto-serif-tamil/tamil-700.css';
 @import 'tailwindcss';
 
 @theme {
@@ -20,8 +25,9 @@
   --color-danger: #a32020;
   --color-warn-bg: #fff4d6;
 
-  --font-sans: 'Noto Sans Sinhala', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Noto Serif Sinhala', 'Noto Serif', Georgia, 'Times New Roman', serif;
+  --font-sans:
+    'Noto Sans Sinhala', 'Noto Sans Tamil', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Noto Serif Sinhala', 'Noto Serif Tamil', 'Noto Serif', Georgia, 'Times New Roman', serif;
 }
 
 @layer base {
@@ -33,7 +39,8 @@
     line-height: 1.75;
     -webkit-text-size-adjust: 100%;
   }
-  html[lang='en'] {
+  html[lang='en'],
+  html[lang='ta'] {
     line-height: 1.65;
   }
   h1,

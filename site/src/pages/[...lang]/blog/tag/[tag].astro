@@ -1,4 +1,5 @@
 ---
+import { langParam } from '../../../../lib/paths';
 import PostListView from '../../../../views/PostListView.astro';
 import { getPosts } from '../../../../lib/content';
 import { LANGS } from '../../../../lib/paths';
@@ -7,8 +8,7 @@ export async function getStaticPaths() {
   const out = [];
   for (const lang of LANGS) {
     const tags = new Set((await getPosts('blog', lang)).flatMap((p) => p.data.tags));
-    for (const tag of tags)
-      out.push({ params: { lang: lang === 'si' ? undefined : 'en', tag }, props: { lang, tag } });
+    for (const tag of tags) out.push({ params: { lang: langParam(lang), tag }, props: { lang, tag } });
   }
   return out;
 }

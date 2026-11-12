@@ -1,3 +1,4 @@
+import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import { ENQUIRY_KINDS, submitEnquirySchema } from '@shared/schemas';
 import type { L10n } from '@shared/types';
@@ -139,7 +140,7 @@ export default function EnquiryForm({ lang, dict, books }: Props) {
                 setQty((q) => ({ ...q, [b.slug]: (e.currentTarget as HTMLInputElement).value }))
               }
             />
-            <label for={`enq-q-${b.slug}`}>{b.title[lang]}</label>
+            <label for={`enq-q-${b.slug}`}>{tl(b.title, lang)}</label>
           </div>
         ))}
         {errs.includes('books') && (

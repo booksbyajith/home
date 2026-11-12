@@ -1,3 +1,4 @@
+import { l10nText as tl } from '@shared/l10n';
 import type { BookDoc, SaleMode } from '@shared/types';
 import { useEffect, useState } from 'preact/hooks';
 import { call, callError } from '../../lib/firebase';
@@ -34,7 +35,7 @@ function BookEditor({ book }: { book: BookDoc }) {
     }
   };
   return (
-    <Section title={b.title[lang]} id={`book-${b.slug}`}>
+    <Section title={tl(b.title, lang)} id={`book-${b.slug}`}>
       <div class="grid gap-x-4 md:grid-cols-3">
         <NumIn
           label={t('admin.books.price')}

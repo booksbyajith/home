@@ -31,12 +31,17 @@ export async function getPosts(kind: PostKind, lang?: Lang): Promise<Post[]> {
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
-/** Path (language-neutral) of the same post in the other language, or null. */
-export async function translationPath(kind: PostKind, post: Post): Promise<string | null> {
+/** Language-neutral path of this post in each other language (null where no translation exists). */
+export async function translationAlternates(kind: PostKind, post: Post): Promise<Partial<Record<Lang, string | null>>> {
   const key = post.data.translationKey;
-  if (!key) return null;
-  const other = (await getPosts(kind)).find((p) => p.data.translationKey === key && postLang(p) !== postLang(post));
-  return other ? `/${kind}/${postSlug(other)}/` : null;
+  const all = key ? (await getPosts(kind)).filter((p) => p.data.translationKey === key) : [];
+  const out: Partial<Record<Lang, string | null>> = {};
+  for (const l of ['si', 'en', 'ta'] as Lang[]) {
+    if (l === postLang(post)) continue;
+    const other = all.find((p) => postLang(p) === l);
+    out[l] = other ? `/${kind}/${postSlug(other)}/` : null;
+  }
+  return out;
 }
 
 export function postMinutes(p: Post): number {

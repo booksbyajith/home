@@ -9,6 +9,7 @@ export const DEFAULT_PUBLIC_CONFIG: PublicConfig = {
   paymentInstructions: {
     si: 'කරුණාකර ඇණවුමේ මුළු මුදල පහත ගිණුමට බැර කර, බැංකු රිසිට්පතේ ඡායාරූපයක් හෝ PDF එකක් උඩුගත කරන්න.',
     en: 'Please transfer the order total to the account below and upload a photo or PDF of the bank slip.',
+    ta: 'ஆர்டரின் மொத்தத் தொகையைக் கீழே உள்ள கணக்கிற்கு மாற்றி, வங்கி ரசீதின் புகைப்படம் அல்லது PDF ஐப் பதிவேற்றவும்.',
   },
   delivery: { fees: {}, defaultFeeLKR: 0, perExtraCopyLKR: 0, estimateDays: { min: 2, max: 4 } },
   contact: { whatsappNumber: '', orderPhone: '', facebookPageUrl: '' },
@@ -28,7 +29,7 @@ export const DEFAULT_PRIVATE_CONFIG: PrivateConfig = {
       enabled: false,
       graphApiVersion: 'v21.0',
       templateNames: { acknowledged: '', payment_verified: '', dispatched: '', rejected: '' },
-      languageCodes: { si: 'si', en: 'en' },
+      languageCodes: { si: 'si', en: 'en', ta: 'ta' },
     },
   },
 };

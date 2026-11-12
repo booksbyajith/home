@@ -1,7 +1,9 @@
 import type { Lang } from '@shared/constants';
 import { env } from './env';
 
-export const LANGS: readonly Lang[] = ['si', 'en'];
+export const LANGS: readonly Lang[] = ['si', 'en', 'ta'];
+/** URL prefix per language: Sinhala is the default at the root. */
+export const LANG_PREFIX: Record<Lang, string> = { si: '', en: '/en', ta: '/ta' };
 
 /** Normalise to a path that starts and ends with "/" (fragment and query kept). */
 function norm(path: string): string {
@@ -15,7 +17,7 @@ function norm(path: string): string {
 /** Site-internal link with base path and language prefix. href('en', '/books/') -> '/booksbyajith/en/books/' */
 export function href(lang: Lang, path = '/'): string {
   const p = norm(path);
-  return `${env.base}${lang === 'en' ? '/en' : ''}${p}`;
+  return `${env.base}${LANG_PREFIX[lang]}${p}`;
 }
 
 /** Link to a language-neutral path (assets, admin, feeds). */
@@ -32,13 +34,15 @@ export function absUrl(pathWithBase: string): string {
 export function stripLang(pathname: string): string {
   let p = pathname;
   if (env.base && p.startsWith(env.base)) p = p.slice(env.base.length) || '/';
-  if (p === '/en' || p.startsWith('/en/')) p = p.slice(3) || '/';
+  for (const pre of ['/en', '/ta']) if (p === pre || p.startsWith(pre + '/')) p = p.slice(3) || '/';
   return norm(p);
 }
 
 export function langFromPath(pathname: string): Lang {
   const p = env.base && pathname.startsWith(env.base) ? pathname.slice(env.base.length) : pathname;
-  return p === '/en' || p.startsWith('/en/') ? 'en' : 'si';
+  if (p === '/en' || p.startsWith('/en/')) return 'en';
+  if (p === '/ta' || p.startsWith('/ta/')) return 'ta';
+  return 'si';
 }
 
 export function altHref(pathname: string, target: Lang): string {
@@ -47,5 +51,10 @@ export function altHref(pathname: string, target: Lang): string {
 
 /** getStaticPaths helper for the [...lang] folder. */
 export function langPaths() {
-  return LANGS.map((lang) => ({ params: { lang: lang === 'si' ? undefined : 'en' }, props: { lang } }));
+  return LANGS.map((lang) => ({ params: { lang: langParam(lang) }, props: { lang } }));
+}
+
+/** The [...lang] route parameter for a language (undefined = Sinhala at the root). */
+export function langParam(lang: Lang): string | undefined {
+  return lang === 'si' ? undefined : lang;
 }

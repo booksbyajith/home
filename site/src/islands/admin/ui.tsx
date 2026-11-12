@@ -140,7 +140,7 @@ export function L10nIn(p: {
   return (
     <fieldset class="mb-2">
       <legend class="field-label text-sm">{p.label}</legend>
-      <div class="grid gap-x-3 md:grid-cols-2">
+      <div class="grid gap-x-3 md:grid-cols-3">
         <TextIn
           label="සිංහල"
           name={p.name && `${p.name}.si`}
@@ -154,6 +154,13 @@ export function L10nIn(p: {
           area={p.area}
           value={p.value.en}
           onInput={(en) => p.onInput({ ...p.value, en })}
+        />
+        <TextIn
+          label="தமிழ்"
+          name={p.name && `${p.name}.ta`}
+          area={p.area}
+          value={p.value.ta ?? ''}
+          onInput={(ta) => p.onInput({ ...p.value, ta })}
         />
       </div>
     </fieldset>
@@ -202,7 +209,7 @@ export function downloadText(text: string, filename: string, type = 'text/csv;ch
 
 export function fmtDate(lang: Lang, ms: number, time = true) {
   if (!ms) return '—';
-  return new Intl.DateTimeFormat(lang === 'si' ? 'si-LK' : 'en-GB', {
+  return new Intl.DateTimeFormat(lang === 'si' ? 'si-LK' : lang === 'ta' ? 'ta-LK' : 'en-GB', {
     timeZone: 'Asia/Colombo',
     year: 'numeric',
     month: 'short',

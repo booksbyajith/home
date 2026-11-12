@@ -98,7 +98,13 @@ importers:
       '@fontsource/noto-sans-sinhala':
         specifier: 5.3.0
         version: 5.3.0
+      '@fontsource/noto-sans-tamil':
+        specifier: 5.3.0
+        version: 5.3.0
       '@fontsource/noto-serif-sinhala':
+        specifier: 5.3.0
+        version: 5.3.0
+      '@fontsource/noto-serif-tamil':
         specifier: 5.3.0
         version: 5.3.0
       '@tailwindcss/vite':
@@ -883,8 +889,14 @@ packages:
   '@fontsource/noto-sans-sinhala@5.3.0':
     resolution: {integrity: sha512-g52kQSjsB3vHmFbp6zrPfumJxZADhsssOHd3fMkN+hCK1JrpKvSudtJMAAGuVUcrC7r9dqNmmslj7I9VU1dzbw==}
 
+  '@fontsource/noto-sans-tamil@5.3.0':
+    resolution: {integrity: sha512-webid7fyBljiIEJ1hXuey48vCUe2Oq3/EwYjo6XBtXItO9FoUmqy0bEnXA5iE++iC324BTI8QMy80SYtDheCzA==}
+
   '@fontsource/noto-serif-sinhala@5.3.0':
     resolution: {integrity: sha512-2Zpe8xMJ37KFulNYEkZa6J/tEib8JD5Ar+aUpAaAumSA0YvUsv0Rp8XIXcts7g+cxDoEF5RUBdJSAsceSybSeA==}
+
+  '@fontsource/noto-serif-tamil@5.3.0':
+    resolution: {integrity: sha512-Ksc/mqtACXTPzFQac1DF4xi4Cu4YhMYGQavu/DJX/wNxCIoCD/YUtYlK2tFDGs/uvKa8YbPXvGbIZP/j3C+7pQ==}
 
   '@formatjs/ecma402-abstract@2.3.6':
     resolution: {integrity: sha512-HJnTFeRM2kVFVr5gr5kH1XP6K0JcJtE7Lzvtr3FS/so5f1kpsqqqxy5JF+FRaO6H2qmcMfAUIox7AJteieRtVw==}
@@ -7035,7 +7047,11 @@ snapshots:
 
   '@fontsource/noto-sans-sinhala@5.3.0': {}
 
+  '@fontsource/noto-sans-tamil@5.3.0': {}
+
   '@fontsource/noto-serif-sinhala@5.3.0': {}
+
+  '@fontsource/noto-serif-tamil@5.3.0': {}
 
   '@formatjs/ecma402-abstract@2.3.6':
     dependencies:

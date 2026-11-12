@@ -1,4 +1,4 @@
-export const LANGS = ['si', 'en'] as const;
+export const LANGS = ['si', 'en', 'ta'] as const;
 export type Lang = (typeof LANGS)[number];
 export const DEFAULT_LANG: Lang = 'si';
 export const TIMEZONE = 'Asia/Colombo';

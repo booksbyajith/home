@@ -1,9 +1,10 @@
 import type { Lang } from '@shared/constants';
 import { en } from './en';
+import { ta } from './ta';
 import { si, type Dict, type I18nKey } from './si';
 
 export type { Dict, I18nKey, Lang };
-export const dicts: Record<Lang, Dict> = { si, en };
+export const dicts: Record<Lang, Dict> = { si, en, ta };
 
 export function format(text: string, vars?: Record<string, string | number>): string {
   if (!vars) return text;
@@ -28,7 +29,7 @@ export function pick<K extends I18nKey>(lang: Lang, prefixes: string[]): Partial
 
 export function formatDate(lang: Lang, d: Date | string | number, opts?: Intl.DateTimeFormatOptions): string {
   const date = d instanceof Date ? d : new Date(d);
-  return new Intl.DateTimeFormat(lang === 'si' ? 'si-LK' : 'en-GB', {
+  return new Intl.DateTimeFormat(lang === 'si' ? 'si-LK' : lang === 'ta' ? 'ta-LK' : 'en-GB', {
     timeZone: 'Asia/Colombo',
     year: 'numeric',
     month: 'long',
@@ -36,3 +37,6 @@ export function formatDate(lang: Lang, d: Date | string | number, opts?: Intl.Da
     ...opts,
   }).format(date);
 }
+
+/** Locale-appropriate text from a {si, en, ta?} value (Tamil falls back to English). */
+export { l10nText as tl } from '@shared/l10n';

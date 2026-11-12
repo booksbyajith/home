@@ -1,3 +1,4 @@
+import { l10nText as tl } from '@shared/l10n';
 import { DEFAULT_PRIVATE_CONFIG, mergePrivateConfig, mergePublicConfig } from '@shared/defaults';
 import { DISTRICTS } from '@shared/districts';
 import { TEMPLATE_VARS, renderTemplate } from '@shared/templates';
@@ -424,7 +425,7 @@ export function Settings() {
             <p class="text-sm text-ink-soft">
               {t('admin.settings.preview')}:{' '}
               <span class="whitespace-pre-line text-ink">
-                {renderTemplate(priv.templates[k][lang], SAMPLE)}
+                {renderTemplate(tl(priv.templates[k], lang), SAMPLE)}
               </span>
             </p>
           </div>

@@ -1,3 +1,4 @@
+import type { Lang } from '../shared/constants.js';
 import type { BookDoc } from '../shared/types.js';
 import { Timestamp, db } from '../lib/admin.js';
 import { runSends, type Send } from './core.js';
@@ -18,7 +19,7 @@ export async function notifyBackInStock(slug: string): Promise<number> {
   const ledger = firestoreLedger();
   let sent = 0;
   for (const doc of snap.docs) {
-    const a = doc.data() as { contact: { email: string | null }; lang: 'si' | 'en' };
+    const a = doc.data() as { contact: { email: string | null }; lang: Lang };
     if (!a.contact?.email) continue;
     const email = a.contact.email;
     const send: Send = {

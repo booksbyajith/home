@@ -1,4 +1,5 @@
 ---
+import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import { formatDate, useT, type I18nKey } from '../i18n';
 import { href } from '../lib/paths';
@@ -26,11 +27,11 @@ const t = useT(lang);
     <span class="badge bg-teal/10 text-teal">{t(`events.type.${e.type}` as I18nKey)}</span>
     <time datetime={e.start.toISOString()}>{formatDate(lang, e.start)}</time>
   </p>
-  <h3 class="mt-2 text-lg font-bold">{e.title[lang]}</h3>
+  <h3 class="mt-2 text-lg font-bold">{tl(e.title, lang)}</h3>
   <p class="text-ink-soft">
-    {e.venue[lang]}, {e.city[lang]}
+    {tl(e.venue, lang)}, {tl(e.city, lang)}
   </p>
-  {e.description && <p class="mt-2">{e.description[lang]}</p>}
+  {e.description && <p class="mt-2">{tl(e.description, lang)}</p>}
   <p class="mt-2 flex flex-wrap gap-4">
     {e.url && (
       <a href={e.url} target="_blank" rel="noopener">
