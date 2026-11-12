@@ -24,7 +24,7 @@ const rules = [
     id: 'email',
     re: /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g,
     allow: (m) =>
-      /@(example\.(com|org)|users\.noreply\.github\.com|anthropic\.com)$/i.test(m) ||
+      /@(example\.(com|org)|users\.noreply\.github\.com|anthropic\.com|developer\.gserviceaccount\.com|[a-z0-9-]+\.iam\.gserviceaccount\.com)$/i.test(m) ||
       /@(types|astrojs|firebase|fontsource|eslint|playwright|tailwindcss|vitest|lhci|axe-core|vite-pwa|resvg)\//.test(
         m,
       ) ||
