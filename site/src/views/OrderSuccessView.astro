@@ -1,18 +1,37 @@
 ---
 import type { Lang } from '@shared/constants';
+import SuccessApp from '../islands/order/SuccessApp';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { useT } from '../i18n';
+import { pick, useT } from '../i18n';
+import { absUrl, href } from '../lib/paths';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useT(lang);
+const dict = pick(lang, [
+  'success.',
+  'receipt.',
+  'status.',
+  'order.summary.',
+  'site.name',
+  'site.error.generic',
+]);
 ---
 
 <BaseLayout lang={lang} title={t('success.title')} description={t('success.thanks')} noindex>
-  <section class="container-page py-10">
-    <h1 class="text-3xl font-bold">{t('success.title')}</h1>
-    <p class="mt-2 text-lg text-ink-soft">{t('success.thanks')}</p>
+  <section class="container-page py-8">
+    <div class="prose-page">
+      <h1 class="text-3xl font-bold">✓ {t('success.title')}</h1>
+      <p class="mt-2 text-lg">{t('success.thanks')}</p>
+      <SuccessApp
+        client:load
+        lang={lang}
+        dict={dict}
+        trackHref={href(lang, '/track/')}
+        trackAbsUrl={absUrl(href(lang, '/track/'))}
+      />
+    </div>
   </section>
 </BaseLayout>

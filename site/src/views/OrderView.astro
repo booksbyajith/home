@@ -1,18 +1,40 @@
 ---
 import type { Lang } from '@shared/constants';
+import OrderApp, { type OrderBook } from '../islands/order/OrderApp';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { useT } from '../i18n';
+import { pick, useT } from '../i18n';
+import { getBooks } from '../lib/content';
+import { img } from '../lib/images';
+import { href } from '../lib/paths';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useT(lang);
+const books: OrderBook[] = (await getBooks()).map((b) => {
+  const front = b.covers.find((c) => c.kind === 'front')!;
+  const i = img(`/covers/${front.file}`);
+  const small = i.srcset?.split(',')[0]?.trim().split(' ')[0] ?? i.src;
+  const { externalUrl: _x, ...defaults } = b.defaults;
+  return { slug: b.slug, title: b.title, cover: small, defaults };
+});
+const dict = pick(lang, ['order.', 'books.', 'site.copy', 'site.copied', 'nav.contact']);
 ---
 
 <BaseLayout lang={lang} title={t('order.title')} description={t('order.payment.instructions')}>
-  <section class="container-page py-10">
+  <section class="container-page py-8">
     <h1 class="text-3xl font-bold">{t('order.title')}</h1>
-    <p class="mt-2 text-lg text-ink-soft">{t('order.payment.instructions')}</p>
+    <div class="mt-6">
+      <OrderApp
+        client:load
+        lang={lang}
+        dict={dict}
+        books={books}
+        successHref={href(lang, '/order/success/')}
+        privacyHref={href(lang, '/privacy/')}
+        contactHref={href(lang, '/contact/')}
+      />
+    </div>
   </section>
 </BaseLayout>
