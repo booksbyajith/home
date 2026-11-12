@@ -1,0 +1,32 @@
+---
+import type { Lang } from '@shared/constants';
+import { useT } from '../i18n';
+import { env } from '../lib/env';
+
+interface Props {
+  lang: Lang;
+}
+const t = useT(Astro.props.lang);
+---
+
+{env.metaPixelId && (
+  <div
+    data-pixel-consent
+    hidden
+    class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-card p-4 shadow-lg"
+    role="dialog"
+    aria-label={t('consent.pixel.text')}
+  >
+    <div class="container-page flex flex-wrap items-center justify-between gap-3">
+      <p>{t('consent.pixel.text')}</p>
+      <div class="flex gap-2">
+        <button type="button" class="btn-secondary" data-pixel="decline">
+          {t('consent.pixel.decline')}
+        </button>
+        <button type="button" class="btn-primary" data-pixel="accept">
+          {t('consent.pixel.accept')}
+        </button>
+      </div>
+    </div>
+  </div>
+)}

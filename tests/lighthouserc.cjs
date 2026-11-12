@@ -1,0 +1,22 @@
+/* Lighthouse CI: mobile emulation (the default), three runs per URL, median run asserted. */
+const BASE = 'http://127.0.0.1:4321/booksbyajith/';
+module.exports = {
+  ci: {
+    collect: {
+      url: [BASE, `${BASE}books/portuguese-era-1505-1594/`, `${BASE}order/`],
+      numberOfRuns: 3,
+      chromePath: process.env.LHCI_CHROME_PATH,
+      settings: { chromeFlags: '--headless=new --no-sandbox --disable-dev-shm-usage' },
+    },
+    assert: {
+      aggregationMethod: 'median-run',
+      assertions: {
+        'categories:performance': ['error', { minScore: 0.9 }],
+        'categories:accessibility': ['error', { minScore: 0.9 }],
+        'categories:best-practices': ['error', { minScore: 0.9 }],
+        'categories:seo': ['error', { minScore: 0.9 }],
+      },
+    },
+    upload: { target: 'filesystem', outputDir: '../.lighthouseci' },
+  },
+};

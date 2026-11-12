@@ -5,6 +5,7 @@
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
     "@firebase/rules-unit-testing": "6.0.0",
+    "@lhci/cli": "0.16.1",
     "@playwright/test": "1.63.0",
     "@types/node": "^24.19.2",
     "firebase": "13.3.0",

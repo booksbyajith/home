@@ -13,7 +13,7 @@
   --color-ink-soft: #4a4136;
   --color-maroon: #7a1f1f;
   --color-maroon-dark: #5c1616;
-  --color-gold: #9a6b12;
+  --color-gold: #85590c; /* >= 4.9:1 on every paper background */
   --color-teal: #1f4e5f;
   --color-line: #dccfb4;
   --color-success: #1e6b3a;
@@ -45,6 +45,8 @@
   }
   a {
     color: var(--color-maroon);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
     text-underline-offset: 3px;
   }
   a:hover {

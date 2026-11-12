@@ -545,7 +545,10 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
               const orderable = reason === 'ok';
               const max = info.preorder ? MAX_QTY_PER_BOOK : Math.min(MAX_QTY_PER_BOOK, info.stock);
               return (
-                <div class={`card flex gap-3 p-3 ${orderable ? '' : 'opacity-70'}`} data-cart-book={b.slug}>
+                <div
+                  class={`card flex gap-3 p-3 ${orderable ? '' : 'bg-paper-dark'}`}
+                  data-cart-book={b.slug}
+                >
                   <img
                     src={b.cover}
                     alt=""

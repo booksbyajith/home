@@ -4,6 +4,7 @@ import sansSinhala400 from '@fontsource/noto-sans-sinhala/files/noto-sans-sinhal
 import serifSinhala700 from '@fontsource/noto-serif-sinhala/files/noto-serif-sinhala-sinhala-700-normal.woff2?url';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import PixelConsent from '../components/PixelConsent.astro';
 import Seo, { type SeoProps } from '../components/Seo.astro';
 import { useT } from '../i18n';
 import { asset } from '../lib/paths';
@@ -49,9 +50,10 @@ const t = useT(lang);
         <slot name="footer" />
       </Footer>
     )}
+    <PixelConsent lang={lang} />
     <script>
-      import { initConfigLinks } from '../lib/configLinks';
-      initConfigLinks();
+      import { initClient } from '../lib/clientInit';
+      initClient();
     </script>
   </body>
 </html>

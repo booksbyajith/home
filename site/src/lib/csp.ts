@@ -15,7 +15,7 @@ const originOf = (u: string) => {
 /** Content-Security-Policy pieces for Astro's security.csp option. */
 export function cspConfig(env: PublicEnv): CspConfig {
   const pixel = !!env.metaPixelId;
-  const analyticsScript = env.analytics.provider !== 'none' ? originOf(env.analytics.src) : '';
+  const analyticsScript = '';
   const analyticsConnect =
     env.analytics.provider === 'goatcounter'
       ? originOf(env.analytics.endpoint)

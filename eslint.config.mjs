@@ -38,6 +38,10 @@ export default tseslint.config(
     },
   },
   {
+    files: ['**/*.cjs'],
+    languageOptions: { sourceType: 'commonjs', globals: { module: 'writable', require: 'readonly' } },
+  },
+  {
     files: ['**/*.test.ts', 'tests/**/*.ts'],
     rules: { '@typescript-eslint/no-explicit-any': 'off' },
   },

@@ -2,6 +2,7 @@
 import type { Lang } from '@shared/constants';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { useT } from '../i18n';
+import { href } from '../lib/paths';
 
 interface Props {
   lang: Lang;
@@ -11,8 +12,16 @@ const t = useT(lang);
 ---
 
 <BaseLayout lang={lang} title={t('offline.title')} description={t('offline.body')} noindex>
-  <section class="container-page py-10">
-    <h1 class="text-3xl font-bold">{t('offline.title')}</h1>
-    <p class="mt-2 text-lg text-ink-soft">{t('offline.body')}</p>
+  <section class="container-page py-16 text-center" data-offline>
+    <p class="text-5xl" aria-hidden="true">
+      📖
+    </p>
+    <h1 class="mt-4 text-3xl font-bold">{t('offline.title')}</h1>
+    <p class="mx-auto mt-3 max-w-prose text-lg">{t('offline.body')}</p>
+    <p class="mt-6">
+      <a class="btn-primary" href={href(lang, '/')}>
+        {t('site.retry')}
+      </a>
+    </p>
   </section>
 </BaseLayout>
