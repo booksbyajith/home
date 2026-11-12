@@ -27,8 +27,6 @@ samples:
     alt: { si: නියැදි පිටුව 1, en: Sample page 1, ta: மாதிரிப் பக்கம் 1 }
   - file: page-02.jpg
     alt: { si: නියැදි පිටුව 2, en: Sample page 2, ta: மாதிரிப் பக்கம் 2 }
-  - file: page-03.jpg
-    alt: { si: නියැදි පිටුව 3, en: Sample page 3, ta: மாதிரிப் பக்கம் 3 }
 defaults:
   priceLKR: 0
   saleMode: unavailable
