@@ -1,3 +1,4 @@
+import './shared/phoneStrict.js'; // strict international phone numbers for every function
 export { createOrder } from './callables/createOrder.js';
 export { trackOrder } from './callables/trackOrder.js';
 export { updateOrderStatus } from './callables/updateOrderStatus.js';

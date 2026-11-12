@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import './phoneStrict.js';
 import {
   adminUpdateRecordSchema,
   createOrderSchema,

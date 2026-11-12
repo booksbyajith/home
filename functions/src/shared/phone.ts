@@ -17,14 +17,31 @@ export function normaliseLkMobile(input: string): string | null {
   return /^947\d{8}$/.test(s) ? s : null;
 }
 
-/** Normalise a WhatsApp number: a Sri Lankan mobile, or any +international number (8-15 digits). */
+/** Checks an international number written as "+digits"; returns digits without +, or null. */
+export type IntlCheck = (plus: string) => string | null;
+
+// Basic rule until the full phone rules are loaded (see phoneStrict.ts): 8-15 digits.
+const basicIntl: IntlCheck = (plus) => {
+  const digits = plus.slice(1);
+  return /^\d{8,15}$/.test(digits) && !digits.startsWith('0') ? digits : null;
+};
+let intlCheck: IntlCheck = basicIntl;
+
+/** Install the strict international check (phoneStrict.ts). */
+export function setIntlCheck(check: IntlCheck): void {
+  intlCheck = check;
+}
+
+/**
+ * Normalise a WhatsApp number: a Sri Lankan mobile, or an international number written with +
+ * and the country code. With phoneStrict.ts loaded (always on the server), international numbers
+ * must be a valid mobile number for their country. Returns digits without the +.
+ */
 export function normaliseWhatsApp(input: string): string | null {
   const lk = normaliseLkMobile(input);
   if (lk) return lk;
   if (typeof input !== 'string') return null;
   const s = input.trim().replace(STRIP, '');
   if (!s.startsWith('+')) return null;
-  const digits = s.slice(1);
-  if (!/^\d{8,15}$/.test(digits) || digits.startsWith('0')) return null;
-  return digits;
+  return intlCheck(s);
 }

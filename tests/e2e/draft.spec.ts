@@ -15,7 +15,7 @@ test('refresh mid-form restores every field, the step, the cart and the slip', a
   await page.click('[data-next-step]');
   await fillDetails(page, { ...CUSTOMER, line2: 'Flat 3' });
   await page.uncheck('#f-whatsappSame');
-  await page.fill('#f-whatsapp', '+44 7700 900123');
+  await page.fill('#f-whatsapp', '+44 7911 123456');
   await page.check('#f-signedCopy');
   await page.fill('#f-dedicationNote', 'නිමල් සඳහා');
   await page.click('[data-next-step]');
@@ -47,7 +47,7 @@ test('refresh mid-form restores every field, the step, the cart and the slip', a
   await expect(page.locator('#f-districtId')).toHaveValue(CUSTOMER.district);
   await expect(page.locator('#f-landmark')).toHaveValue(CUSTOMER.landmark);
   await expect(page.locator('#f-whatsappSame')).not.toBeChecked();
-  await expect(page.locator('#f-whatsapp')).toHaveValue('+44 7700 900123');
+  await expect(page.locator('#f-whatsapp')).toHaveValue('+44 7911 123456');
   await expect(page.locator('#f-signedCopy')).toBeChecked();
   await expect(page.locator('#f-dedicationNote')).toHaveValue('නිමල් සඳහා');
   await page.click('text=← ');

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { emailSchema } from './email.js';
 import {
   LANGS,
   MAX_ORDER_LINES,
@@ -53,7 +54,7 @@ export const whatsappSchema = z.string().transform((v, ctx) => {
   return n;
 });
 
-export const emailSchema = z.string().trim().toLowerCase().max(120).pipe(z.email());
+export { emailSchema };
 const optEmail = z
   .union([z.literal(''), emailSchema])
   .optional()

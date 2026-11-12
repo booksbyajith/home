@@ -1,5 +1,5 @@
 import type { Lang } from '@shared/constants';
-import { emailSchema } from '@shared/schemas';
+import { emailSchema } from '@shared/email';
 import { useState } from 'preact/hooks';
 import { makeT, type MiniDict } from '../shared/i18n';
 import { Honeypot } from './Honeypot';

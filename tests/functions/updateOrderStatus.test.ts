@@ -68,12 +68,12 @@ describe('updateOrderStatus', () => {
         'createOrder',
         await orderInput({
           lang: 'en',
-          customer: { name: 'English Reader', mobile: '0770000003', whatsapp: '+447700900123' },
+          customer: { name: 'English Reader', mobile: '0770000003', whatsapp: '+447911123456' },
         }),
       )
     ).result.orderId;
     const r = await call('updateOrderStatus', { orderId: en, to: 'acknowledged' }, { idToken: admin });
-    expect(r.result.waUrl.startsWith('https://wa.me/447700900123?text=')).toBe(true);
+    expect(r.result.waUrl.startsWith('https://wa.me/447911123456?text=')).toBe(true);
     expect(decode(r.result.waUrl)).toBe(
       `Thank you for ordering The Portuguese Period in Lanka (1505–1594), English Reader! 🙏 Your order number is ${en}. We will verify your bank transfer shortly and start preparing your book.`,
     );

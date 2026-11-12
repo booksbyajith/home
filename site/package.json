@@ -19,6 +19,7 @@
     "html-to-image": "1.11.13",
     "idb-keyval": "6.3.0",
     "jspdf": "4.2.1",
+    "libphonenumber-js": "^1.13.16",
     "preact": "10.29.8",
     "qrcode": "1.5.4",
     "tailwindcss": "4.3.5",

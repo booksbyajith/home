@@ -129,3 +129,21 @@ test('the country guess also fills a restored draft that has no district yet', a
   await expect(page.locator('#f-country')).toHaveValue('Australia');
   await ctx.close();
 });
+
+test('a mistyped international mobile is caught on the form', async ({ page }) => {
+  await page.goto('order/?book=portuguese-era-1505-1594');
+  await ready(page);
+  await page.click('[data-next-step]');
+  await fillDetails(page, {
+    ...CUSTOMER,
+    mobile: '+61 412 345',
+    district: 'overseas',
+    postalCode: '2640',
+    country: 'Australia',
+  });
+  await page.click('[data-next-step]');
+  await expect(page.locator('#f-mobile')).toHaveAttribute('aria-invalid', 'true');
+  await page.fill('#f-mobile', '+61 412 345 678');
+  await page.click('[data-next-step]');
+  await expect(page.locator('[data-slip-input]')).toBeAttached();
+});

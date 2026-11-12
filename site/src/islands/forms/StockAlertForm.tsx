@@ -1,4 +1,5 @@
 import type { Lang } from '@shared/constants';
+import { loadPhoneRules, usePhoneRules } from '../shared/phoneRules';
 import { emailSchema, whatsappSchema } from '@shared/schemas';
 import { useState } from 'preact/hooks';
 import { Field } from '../shared/Field';
@@ -9,6 +10,7 @@ import { useHydrated } from '../shared/useHydrated';
 
 export default function StockAlertForm({ lang, dict, slug }: { lang: Lang; dict: MiniDict; slug: string }) {
   const t = makeT(dict);
+  usePhoneRules();
   const [whatsapp, setWhatsapp] = useState('');
   const [email, setEmail] = useState('');
   const [consent, setConsent] = useState(false);
@@ -29,8 +31,9 @@ export default function StockAlertForm({ lang, dict, slug }: { lang: Lang; dict:
       data-form="stock-alert"
       data-hydrated={hydrated ? 'true' : 'false'}
       method="post"
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
+        await loadPhoneRules();
         const okW = !whatsapp || whatsappSchema.safeParse(whatsapp).success;
         const okE = !email || emailSchema.safeParse(email).success;
         const ok = okW && okE && !!(whatsapp || email);

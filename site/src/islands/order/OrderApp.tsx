@@ -19,6 +19,7 @@ import {
   type DraftGeo,
 } from '../../lib/draft';
 import { guessCountryName } from '../../lib/guessCountry';
+import { loadPhoneRules, usePhoneRules } from '../shared/phoneRules';
 import { call, callError, orderErrorKey } from '../../lib/firebase';
 import { currentLocation, geoSupported, type GeoError } from '../../lib/geo';
 import { prepareSlip } from '../../lib/imageCompress';
@@ -114,6 +115,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
   const [cart, setCart] = useState<{ slug: string; qty: number }[]>([]);
   const [fields, setFields] = useState<DraftFields>(emptyFields());
   const overseas = fields.districtId === OVERSEAS;
+  usePhoneRules();
   const [geo, setGeo] = useState<DraftGeo | null>(null);
   const [geoState, setGeoState] = useState<'idle' | 'locating' | GeoError>('idle');
   const [slip, setSlip] = useState<Slip | null>(null);
@@ -325,13 +327,14 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
     }
   };
 
-  const next = () => {
+  const next = async () => {
     if (step === 0) {
       if (!lines.length) return setErrors({ cart: 'order.cart.empty' });
       if (lines.some((l) => orderability(l.book, l.qty) !== 'ok'))
         return setErrors({ cart: 'order.error.outOfStock' });
     }
     if (step === 1) {
+      await loadPhoneRules();
       const errs = validateDetails(fields);
       setErrors(errs);
       if (Object.keys(errs).length) {
@@ -355,6 +358,7 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
 
   const submit = async () => {
     if (!consent || !slip || !totals || submitting) return;
+    await loadPhoneRules();
     const errs = validateDetails(fields);
     if (Object.keys(errs).length) {
       setErrors(errs);

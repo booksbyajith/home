@@ -1,4 +1,5 @@
 import { l10nText as tl } from '@shared/l10n';
+import { loadPhoneRules, usePhoneRules } from '../shared/phoneRules';
 import type { Lang } from '@shared/constants';
 import { ENQUIRY_KINDS, submitEnquirySchema } from '@shared/schemas';
 import type { L10n } from '@shared/types';
@@ -18,6 +19,7 @@ interface Props {
 
 export default function EnquiryForm({ lang, dict, books }: Props) {
   const t = makeT(dict);
+  usePhoneRules();
   const [kind, setKind] = useState<(typeof ENQUIRY_KINDS)[number]>('school');
   const [organisation, setOrganisation] = useState('');
   const [contactName, setContactName] = useState('');
@@ -44,8 +46,9 @@ export default function EnquiryForm({ lang, dict, books }: Props) {
       data-form="enquiry"
       data-hydrated={hydrated ? 'true' : 'false'}
       method="post"
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
+        await loadPhoneRules();
         const data = {
           kind,
           organisation,
