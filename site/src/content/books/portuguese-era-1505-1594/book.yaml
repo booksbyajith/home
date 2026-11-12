@@ -1,0 +1,49 @@
+slug: portuguese-era-1505-1594
+order: 1
+featured: true
+title:
+  si: ලංකාවේ පෘතුගීසි සිටි යුගය (1505-1594)
+  # Working English translation of the title. AUTHOR: please confirm.
+  en: The Portuguese Period in Lanka (1505–1594)
+originalLanguage: si
+launch:
+  date: 2026-11-11
+  venue:
+    si: මහවැලි කේන්ද්‍රය, කොළඹ
+    en: Mahaweli Centre, Colombo
+awards: []
+covers:
+  - file: portuguese-era-1505-1594-front.jpg
+    kind: front
+    alt:
+      si: ලංකාවේ පෘතුගීසි සිටි යුගය පොතේ ඉදිරි කවරය
+      en: Front cover of The Portuguese Period in Lanka
+  - file: portuguese-era-1505-1594-back.jpg
+    kind: back
+    alt:
+      si: පිටුපස කවරය
+      en: Back cover
+  - file: portuguese-era-1505-1594-inner-1.jpg
+    kind: inner
+    alt:
+      si: ඇතුළත පිටුවක්
+      en: Inside page
+  - file: portuguese-era-1505-1594-inner-2.jpg
+    kind: inner
+    alt:
+      si: ඇතුළත පිටුවක්
+      en: Inside page
+samples:
+  - file: page-01.jpg
+    alt: { si: නියැදි පිටුව 1, en: Sample page 1 }
+  - file: page-02.jpg
+    alt: { si: නියැදි පිටුව 2, en: Sample page 2 }
+  - file: page-03.jpg
+    alt: { si: නියැදි පිටුව 3, en: Sample page 3 }
+defaults:
+  priceLKR: 4500
+  saleMode: direct
+  stock: 100
+  inStock: true
+  preorder: false
+  signedCopyAvailable: true

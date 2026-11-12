@@ -12,7 +12,10 @@
     "scan": "node scripts/scan.mjs",
     "typecheck": "pnpm --filter functions typecheck && pnpm --filter tests exec tsc --noEmit",
     "test:unit": "pnpm --filter functions test",
-    "test:rules": "firebase emulators:exec --only firestore,storage --project demo-ajith \"pnpm --filter tests exec vitest run -c vitest.rules.config.ts\""
+    "test:rules": "firebase emulators:exec --only firestore,storage --project demo-ajith \"pnpm --filter tests exec vitest run -c vitest.rules.config.ts\"",
+    "build:functions": "node scripts/ensure-local-env.mjs && pnpm --filter functions build",
+    "test:functions": "pnpm build:functions && firebase emulators:exec --only auth,firestore,storage,functions --project demo-ajith \"pnpm --filter tests exec vitest run -c vitest.functions.config.ts\"",
+    "seed": "node scripts/seed.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -1,0 +1,53 @@
+{
+  "config": {
+    "public": {
+      "ordersOpen": true,
+      "notice": null,
+      "bank": {
+        "accountName": "Demo Account Holder",
+        "accountNumber": "000000000000",
+        "bankName": "Demo Bank",
+        "branch": "Demo Branch",
+        "branchCode": "000",
+        "swift": null
+      },
+      "delivery": {
+        "fees": { "colombo": 350, "gampaha": 400, "jaffna": 600 },
+        "defaultFeeLKR": 450,
+        "perExtraCopyLKR": 100,
+        "estimateDays": { "min": 2, "max": 4 }
+      },
+      "contact": {
+        "whatsappNumber": "94770000000",
+        "orderPhone": "94770000000",
+        "facebookPageUrl": "https://www.facebook.com/example"
+      },
+      "social": {
+        "reels": [
+          {
+            "url": "https://www.facebook.com/reel/000000000000000",
+            "title": { "si": "ඉතිහාස කතාව", "en": "A history story" }
+          }
+        ],
+        "videos": [],
+        "storyOfWeek": {
+          "url": "https://www.facebook.com/reel/000000000000001",
+          "title": { "si": "සතියේ කතාව", "en": "Story of the week" },
+          "blurb": { "si": "පෘතුගීසි යුගයේ කතාවක්.", "en": "A story from the Portuguese period." }
+        }
+      },
+      "bundle": { "enabled": true, "minQty": 2, "percentOff": 10 },
+      "signedCopy": { "enabled": true, "surchargeLKR": 500 },
+      "couriers": [
+        { "name": "Demo Courier", "trackingUrlTemplate": "https://courier.example.com/track?n={trackingNo}" },
+        { "name": "Sri Lanka Post", "trackingUrlTemplate": null }
+      ]
+    },
+    "private": {}
+  },
+  "books": {
+    "portuguese-era-1505-1594": { "priceLKR": 4500, "stock": 100, "saleMode": "direct", "inStock": true },
+    "finding-sinhabahu": { "priceLKR": 2500, "stock": 10, "saleMode": "direct", "inStock": true },
+    "chinese-expedition": { "priceLKR": 1800, "stock": 0, "saleMode": "direct", "inStock": true }
+  }
+}

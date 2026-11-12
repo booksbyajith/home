@@ -1,0 +1,49 @@
+slug: chinese-expedition
+order: 3
+featured: false
+title:
+  si: ලක් ඉතිහාසයෙන් වසන් වූ චීන මෙහෙයුම
+  # Working English translation of the title. AUTHOR: please confirm.
+  en: The Chinese Expedition Hidden from Lankan History
+originalLanguage: si
+isbn: '9789554185104'
+firstPublished: '2014'
+publishedPlace:
+  si: කොළඹ
+  en: Colombo
+awards: []
+covers:
+  - file: chinese-expedition-front.jpg
+    kind: front
+    alt:
+      si: ලක් ඉතිහාසයෙන් වසන් වූ චීන මෙහෙයුම පොතේ ඉදිරි කවරය
+      en: Front cover of The Chinese Expedition Hidden from Lankan History
+  - file: chinese-expedition-back.jpg
+    kind: back
+    alt:
+      si: පිටුපස කවරය
+      en: Back cover
+  - file: chinese-expedition-inner-1.jpg
+    kind: inner
+    alt:
+      si: ඇතුළත පිටුවක්
+      en: Inside page
+  - file: chinese-expedition-inner-2.jpg
+    kind: inner
+    alt:
+      si: ඇතුළත පිටුවක්
+      en: Inside page
+samples:
+  - file: page-01.jpg
+    alt: { si: නියැදි පිටුව 1, en: Sample page 1 }
+  - file: page-02.jpg
+    alt: { si: නියැදි පිටුව 2, en: Sample page 2 }
+  - file: page-03.jpg
+    alt: { si: නියැදි පිටුව 3, en: Sample page 3 }
+defaults:
+  priceLKR: 0
+  saleMode: unavailable
+  stock: 0
+  inStock: false
+  preorder: false
+  signedCopyAvailable: true

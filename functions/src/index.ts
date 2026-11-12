@@ -1,3 +1,2 @@
-import { onCall } from 'firebase-functions/v2/https';
-
-export const ping = onCall({ region: 'asia-south1' }, () => ({ ok: true }));
+export { createOrder } from './callables/createOrder.js';
+export { trackOrder } from './callables/trackOrder.js';

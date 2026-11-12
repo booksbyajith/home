@@ -17,3 +17,4 @@ test-results
 .lighthouseci
 .firebase
 *.tsbuildinfo
+*-debug.log
