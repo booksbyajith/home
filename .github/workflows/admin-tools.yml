@@ -1,0 +1,93 @@
+name: Admin tools (secrets, seed data, admin access)
+
+# Browser-only replacements for the terminal steps in MANUAL_SETUP.md.
+# Every value comes from repository secrets/variables; nothing is printed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: What to do
+        type: choice
+        options:
+          - sync-secrets
+          - seed
+          - grant-admins
+          - revoke-admins
+        default: sync-secrets
+
+permissions:
+  contents: read
+
+concurrency:
+  group: admin-tools
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Sync function secrets into Secret Manager
+        if: inputs.task == 'sync-secrets'
+        env:
+          PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          TEAM_EMAILS: ${{ secrets.TEAM_EMAILS }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          WA_TOKEN: ${{ secrets.WA_TOKEN }}
+          WA_PHONE_NUMBER_ID: ${{ secrets.WA_PHONE_NUMBER_ID }}
+        run: |
+          set -euo pipefail
+          gcloud services enable secretmanager.googleapis.com --project "$PROJECT"
+          put() {
+            printf '%s' "$2" | pnpm exec firebase functions:secrets:set "$1" --data-file - --project "$PROJECT" --force --non-interactive > /dev/null
+            echo "$1: saved"
+          }
+          for name in SMTP_HOST SMTP_PORT SMTP_USER SMTP_PASS MAIL_FROM TEAM_EMAILS; do
+            value="${!name}"
+            if [ -z "$value" ]; then echo "::error::Repository secret $name is missing"; exit 1; fi
+            put "$name" "$value"
+          done
+          for name in TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID WA_TOKEN WA_PHONE_NUMBER_ID; do
+            value="${!name}"
+            put "$name" "${value:-disabled}"
+          done
+          # HASH_SALT is generated once and never replaced (changing it would orphan stored hashes).
+          if gcloud secrets describe HASH_SALT --project "$PROJECT" > /dev/null 2>&1; then
+            echo "HASH_SALT: already exists, kept"
+          else
+            put HASH_SALT "$(openssl rand -hex 32)"
+          fi
+
+      - name: Seed books and settings (creates missing documents only)
+        if: inputs.task == 'seed'
+        run: |
+          pnpm build:functions
+          node scripts/seed.mjs --project "${{ vars.FIREBASE_PROJECT_ID }}"
+
+      - name: Grant or revoke admin access for ADMIN_EMAILS
+        if: inputs.task == 'grant-admins' || inputs.task == 'revoke-admins'
+        env:
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
+          FLAG: ${{ inputs.task == 'revoke-admins' && '--revoke' || '' }}
+        run: |
+          set -euo pipefail
+          if [ -z "$ADMIN_EMAILS" ]; then echo "::error::Repository secret ADMIN_EMAILS is missing"; exit 1; fi
+          IFS=',' read -ra emails <<< "$ADMIN_EMAILS"
+          for e in "${emails[@]}"; do
+            e="$(echo "$e" | xargs)"
+            [ -n "$e" ] && node scripts/grant-admin.mjs "$e" --project "$PROJECT" $FLAG
+          done

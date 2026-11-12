@@ -6,7 +6,7 @@ Bilingual (Sinhala / English) author website with direct book ordering, order tr
 - **Backend:** Firebase — Auth (Google sign-in, admins only), Firestore, Storage, Cloud Functions v2 (Node 24, `asia-south1`), App Check.
 - **Everything runs locally on the Firebase Emulator Suite.** No real Firebase project is needed to develop or test.
 
-Setting up the real accounts and going live is described step by step in [`MANUAL_SETUP.md`](MANUAL_SETUP.md). The full design, data model and decisions are in [`PLAN.md`](PLAN.md).
+Setting up the real accounts and going live is described step by step in [`MANUAL_SETUP.md`](MANUAL_SETUP.md); it needs only a browser. The **Admin tools** workflow (`.github/workflows/admin-tools.yml`) copies secrets into Secret Manager, seeds data and grants admin access, so no terminal is required. The full design, data model and decisions are in [`PLAN.md`](PLAN.md).
 
 ## Repository layout
 

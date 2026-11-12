@@ -1,95 +1,132 @@
 # Manual setup — going live
 
-This is the **only** list of manual steps. Everything else (code, tests, workflows) is already done. Work through the steps in order; each one says what to do and what you should see.
+This is the **only** list of manual steps. Everything is done in a **web browser**: the Firebase console, the Google Cloud console and GitHub. You do **not** need a terminal, Git or Node.js on your computer. The tasks that used to need a terminal (secrets, seed data, admin access) now run as a GitHub Actions workflow called **Admin tools**.
 
-Allow about **1–2 hours**. You will switch between the Firebase console, the Google Cloud console, GitHub and a terminal.
+Values used throughout (change them if yours differ):
 
-**Placeholders used below:** `<project-id>` is your Firebase project ID (for example `booksbyajith-12345`), `<project-number>` is its numeric project number, `<owner>` is the GitHub account or organisation that owns this repository.
-
----
-
-## 1. Before you start
-
-You need:
-
-- A Google account to own the Firebase project (the author's or the team's).
-- A payment card for the Firebase **Blaze** (pay-as-you-go) plan. A small site like this normally stays within the free allowance; the budget alert in step 2 warns you if it doesn't.
-- An email account that can send by **SMTP** (for example a Google Workspace or Gmail account with an app password, or Zoho / Brevo / Mailgun). You need: host, port, user name, password and a "from" address.
-- The **Google account(s) that will use the admin panel**.
-- On your computer: Node.js 22+, pnpm 10 (`corepack enable`), Git, and the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) (`gcloud`).
-
-```bash
-git clone https://github.com/<owner>/booksbyajith.git
-```
-
-```bash
-cd booksbyajith && pnpm install
-```
-
-Values you will collect, and where each one goes:
-
-| Value | From step | Goes into |
-|---|---|---|
-| Firebase project ID and number | 2 | GitHub variables, commands |
-| Web app config (apiKey, authDomain, …) | 5 | GitHub variables |
-| reCAPTCHA v3 site key | 6 | GitHub variable `PUBLIC_RECAPTCHA_SITE_KEY` |
-| Service account JSON key | 7 | GitHub secret `FIREBASE_SERVICE_ACCOUNT` |
-| SMTP details, team email addresses | 10 | Secret Manager (via script) |
-| Bank details, phone numbers, prices | 15 | Admin → Settings / Books |
+| Name | Value |
+|---|---|
+| Firebase / Google Cloud project ID | `booksbyajith` |
+| Project number | `338840294291` |
+| GitHub repository | `booksbyajith/home` |
+| Website address | `https://booksbyajith.github.io/home/` |
+| Site origin (no path) | `https://booksbyajith.github.io` |
+| Storage bucket | `booksbyajith.firebasestorage.app` |
 
 ---
 
-## 2. Create the Firebase project, Blaze plan and budget alert
+## Progress so far
 
-1. Open <https://console.firebase.google.com> → **Create a project**. Name it (for example `booksbyajith`). Google Analytics is not needed; you can turn it off.
-2. In the project, click the gear icon → **Project settings**. Note the **Project ID** and **Project number**.
-3. Bottom-left **Spark plan → Upgrade** → choose **Blaze** and link a billing account.
-4. Open <https://console.cloud.google.com/billing> → your billing account → **Budgets & alerts** → **Create budget**:
-   - Scope: this project only.
-   - Amount: for example **USD 10** per month.
+| Step | Status |
+|---|---|
+| 1. Firebase project `booksbyajith` | ✅ done |
+| 2. **Blaze plan** | ❌ **blocking — see step 2** |
+| 3. Firestore in `asia-south1` | ✅ done |
+| 3. Storage | ❌ needs Blaze (step 2) |
+| 4. Google sign-in | ✅ enabled — authorised domain still to add |
+| 5. Web app registered | ✅ done |
+| 6. reCAPTCHA / App Check | ❌ domain error — see step 6 |
+| 7. Deploy service account | ⚠ created in the wrong project — redo, see step 7 |
+| 8. Signed URLs | to do (now browser-only) |
+| 9. GitHub variables | ✅ mostly done — two fixes, see step 9 |
+| 10–23 | to do |
+
+---
+
+## 1. Code in the `booksbyajith/home` repository
+
+The code is currently in `iamarasinghe96/booksbyajith` on the branch `claude/vibrant-darwin-7s0i1a`. It needs to be in **`booksbyajith/home`** on the branch **`main`**, because the website and workflows run from there.
+
+**Easiest:** give Claude access to `booksbyajith/home` and ask it to push the code there:
+
+1. Make sure the Claude GitHub App is installed on the `booksbyajith` account: <https://github.com/apps/claude/installations/select_target> → choose **booksbyajith** → allow **home**.
+2. In the Claude Code session settings, add the repository `booksbyajith/home` (or start a new session with it selected), and say "push the code to booksbyajith/home main".
+
+**Without Claude (all in the browser):**
+
+1. Open <https://github.com/new/import>.
+2. "Your old repository's clone URL": `https://github.com/iamarasinghe96/booksbyajith`. If that repository is private, enter your GitHub user name and a [personal access token](https://github.com/settings/tokens) as the password.
+3. Owner: **booksbyajith**. Name: **home** (if `home` already exists and is empty, delete it first in its **Settings → Danger zone**). Click **Begin import**.
+4. In the imported repository, open **Branches**, find `claude/vibrant-darwin-7s0i1a`, open a **pull request into `main`** and merge it. (If `main` doesn't exist yet, go to **Settings → General → Default branch** and switch it to `claude/vibrant-darwin-7s0i1a`, then rename that branch to `main` on the **Branches** page.)
+
+**Expected:** `booksbyajith/home` → `main` shows the folders `site`, `functions`, `firebase`, `scripts`, `tests` and `.github`. Do steps 9 onwards in **this** repository.
+
+---
+
+## 2. Blaze plan (required) ❗
+
+The order system **cannot run on the free Spark plan**. Firebase only allows these on Blaze:
+
+- **Cloud Functions** — they create orders, check prices and stock, send emails and change order status. Without them nobody can place an order.
+- **Secret Manager** — where the email password is kept.
+- **Cloud Storage** — where bank slips are stored (since October 2024 new Storage buckets need Blaze).
+
+Blaze is pay-as-you-go but includes the same free allowance as Spark. A site of this size normally costs **nothing or a few cents a month**; the budget alert below emails you long before any real cost.
+
+**Your billing account has reached its limit of linked projects.** Fix that in one of these ways (quickest first):
+
+- **A. Unlink an old project.** <https://console.cloud.google.com/billing> → your billing account → **Account management** → find a project you no longer use (for example the accidental `github-deploy-…` project from step 7, if it is linked) → **⋮ → Disable billing**. This frees a slot immediately.
+- **B. Create a second billing account.** <https://console.cloud.google.com/billing> → **Create account** → add the same or another card. Each billing account has its own project limit.
+- **C. Ask for a higher limit.** <https://support.google.com/code/contact/billing_quota_increase> — Google usually answers within a few days.
+
+Then:
+
+1. Firebase console → project **booksbyajith** → bottom-left **Spark → Upgrade** → **Blaze** → choose the billing account.
+2. <https://console.cloud.google.com/billing> → your billing account → **Budgets & alerts** → **Create budget**:
+   - Projects: **booksbyajith** only.
+   - Amount: **USD 5** (or LKR equivalent) per month.
    - Alert thresholds: **50 %, 90 %, 100 %**, email to billing admins.
 
-**Expected:** the Firebase console shows "Blaze" and the budget appears in the list.
+**Expected:** the Firebase console shows **Blaze**, and the budget appears in the list.
 
-## 3. Create Firestore and Storage in `asia-south1` (Mumbai)
+> If you decide you will never use Blaze, the brief's ordering system (server-side price checks, rate limiting, emails, private bank slips) cannot be delivered as designed. Tell Claude and it can propose a reduced, Spark-only version and explain exactly what is lost.
 
-1. Firebase console → **Build → Firestore Database → Create database**.
-   - Edition: Standard. Database ID: `(default)`.
-   - **Location: `asia-south1 (Mumbai)`**. This cannot be changed later.
-   - Start in **production mode** (the real rules are deployed in step 11).
-2. **Build → Storage → Get started** → location **`asia-south1`** → production mode.
+## 3. Storage (after step 2)
 
-**Expected:** Firestore shows an empty database; Storage shows an empty bucket named like `<project-id>.firebasestorage.app`. Note the bucket name for step 9.
+Firebase console → **Build → Storage → Get started** → location **`asia-south1`** → **production mode**.
 
-## 4. Enable Google sign-in and authorised domains
+Storage is needed: it holds the customers' bank slips privately (only admins can open them, through links that expire after 5 minutes).
 
-1. **Build → Authentication → Get started → Sign-in method → Google → Enable**. Choose the project support email and save.
-2. **Authentication → Settings → Authorized domains → Add domain**: `<owner>.github.io` (and your custom domain later, step 18).
+**Expected:** an empty bucket named `booksbyajith.firebasestorage.app`.
 
-**Expected:** Google shows "Enabled"; the domain is listed next to `localhost` and `<project-id>.firebaseapp.com`.
+## 4. Authorised domain for sign-in
 
-## 5. Register the web app
+Firebase console → **Authentication → Settings → Authorized domains → Add domain** → enter exactly:
 
-1. **Project settings → General → Your apps → Web (`</>`)**. Nickname `site`. Do **not** tick Firebase Hosting.
-2. Copy the values from the `firebaseConfig` snippet: `apiKey`, `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, `appId`.
+```
+booksbyajith.github.io
+```
 
-These values are public by design (security comes from the rules and App Check), but they are still kept out of the code and set as GitHub variables in step 9.
+Only the host name: no `https://`, no `/home`. GitHub Pages serves every repository of the `booksbyajith` account from this one host; `/home` is only the path.
+
+**Expected:** `booksbyajith.github.io` is listed next to `localhost` and `booksbyajith.firebaseapp.com`.
+
+## 5. Web app — done ✅
+
+You already have the config. (These values are public by design; it is fine that they appear in the website. Security comes from the rules and App Check.)
 
 ## 6. App Check with reCAPTCHA v3
 
-1. Open <https://www.google.com/recaptcha/admin/create>:
-   - Type: **reCAPTCHA v3**. Domains: `<owner>.github.io` (add the custom domain later).
-   - Copy the **site key** and the **secret key**.
-2. Firebase console → **Build → App Check → Apps** → your web app → **reCAPTCHA** → paste the **secret key** → Save.
-3. **App Check → APIs**: leave **Cloud Firestore**, **Cloud Storage** and **Authentication** as **Unenforced**.
-   The public pages read prices and settings from Firestore without App Check, and the security rules already block everything else. The Cloud Functions enforce App Check in their own code, so nothing needs enforcing here.
+Your error came from typing a full address. The domain box wants **only the host name**:
 
-**Expected:** the web app shows "reCAPTCHA" as registered provider. Keep the **site key** for step 9.
+1. Open <https://www.google.com/recaptcha/admin/create>.
+   - Label: `booksbyajith`.
+   - Type: **Score based (v3)**.
+   - Domains: type `booksbyajith.github.io` and press Enter. (Not `https://…`, not `/home/`.)
+   - Google Cloud project: choose **booksbyajith** if asked.
+   - Submit, then copy the **site key** and the **secret key**.
+2. Firebase console → **Build → App Check → Apps** → your web app → **reCAPTCHA** → paste the **secret key** → **Save**.
+3. **App Check → APIs**: leave Cloud Firestore, Cloud Storage and Authentication as **Unenforced**. (The Cloud Functions check App Check themselves.)
 
-## 7. Service account for deployments
+**Expected:** the web app shows reCAPTCHA as registered. Keep the **site key** for step 9.
 
-1. Open <https://console.cloud.google.com/iam-admin/serviceaccounts?project=<project-id>> → **Create service account**. Name: `github-deploy`.
-2. Grant these roles:
+## 7. Service account for deployments (redo)
+
+The account you created, `iam-admin@github-deploy-514511.iam.gserviceaccount.com`, was created in a **separate new project** (`github-deploy-514511`), so it has no access to `booksbyajith`. Create it inside `booksbyajith` instead:
+
+1. Open <https://console.cloud.google.com/iam-admin/serviceaccounts?project=booksbyajith> — check the project picker at the top says **booksbyajith**.
+2. **+ Create service account**. Name: `github-deploy`. **Create and continue**.
+3. Add these roles (type each name in the role search box):
    - Firebase Admin
    - Cloud Functions Admin
    - Cloud Run Admin
@@ -101,149 +138,123 @@ These values are public by design (security comes from the rules and App Check),
    - Cloud Build Editor
    - Eventarc Admin
    - Service Usage Admin
-3. Open the new account → **Keys → Add key → Create new key → JSON**. A `.json` file downloads. Keep it private; do not commit it.
+   - Firebase Authentication Admin
+4. **Done**. Click the new account → **Keys → Add key → Create new key → JSON → Create**. A `.json` file downloads. Keep it private.
 
-**Expected:** the account is listed with the roles above and one key.
+**Expected:** the account's email ends with `@booksbyajith.iam.gserviceaccount.com`.
 
-## 8. Allow signed URLs for bank slips
+Then tidy up the accidental project: <https://console.cloud.google.com/cloud-resource-manager> → tick `github-deploy-514511` → **Delete**. (If it was linked to billing, this also frees a billing slot for step 2.)
 
-Admins view bank slips through short-lived signed URLs. The functions' runtime account must be allowed to sign them. In a terminal:
+## 8. Allow signed URLs for bank slips (browser only, after step 11)
 
-```bash
-gcloud auth login
-```
+Do this after the first functions deploy (step 11), because the account it changes is created by that deploy.
 
-```bash
-gcloud services enable iamcredentials.googleapis.com --project <project-id>
-```
+1. Open <https://console.cloud.google.com/apis/library/iamcredentials.googleapis.com?project=booksbyajith> → **Enable**.
+2. Open <https://console.cloud.google.com/iam-admin/serviceaccounts?project=booksbyajith>.
+3. Click **Default compute service account** (`338840294291-compute@developer.gserviceaccount.com`).
+4. Tab **Principals with access** (or **Permissions**) → **Grant access**.
+   - New principals: `338840294291-compute@developer.gserviceaccount.com` (the same account — it signs on its own behalf).
+   - Role: **Service Account Token Creator**.
+   - **Save**.
 
-```bash
-gcloud iam service-accounts add-iam-policy-binding <project-number>-compute@developer.gserviceaccount.com --member="serviceAccount:<project-number>-compute@developer.gserviceaccount.com" --role="roles/iam.serviceAccountTokenCreator" --project <project-id>
-```
+**Expected:** the account is listed with the role "Service Account Token Creator". Admins can now open bank slips.
 
-**Expected:** the command prints the updated policy containing `roles/iam.serviceAccountTokenCreator`. (If the compute service account does not exist yet, do this step after the first functions deploy in step 11 and run it again.)
+## 9. GitHub settings in `booksbyajith/home`
 
-## 9. GitHub repository settings
-
-In the repository on GitHub:
+Yes — everything in this step must be in **`booksbyajith/home`**, because that is where the site and workflows run. If you set variables in the old repository, set them again here.
 
 1. **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-2. **Settings → Secrets and variables → Actions → Secrets → New repository secret**:
-   - `FIREBASE_SERVICE_ACCOUNT` = the full contents of the JSON key from step 7.
-3. **Settings → Secrets and variables → Actions → Variables → New repository variable** for each:
+2. **Settings → Secrets and variables → Actions → Variables** — fix these two and add the missing ones:
 
 | Variable | Value |
 |---|---|
-| `FIREBASE_PROJECT_ID` | `<project-id>` |
-| `PUBLIC_FIREBASE_API_KEY` | `apiKey` from step 5 |
-| `PUBLIC_FIREBASE_AUTH_DOMAIN` | `authDomain` |
-| `PUBLIC_FIREBASE_PROJECT_ID` | `projectId` |
-| `PUBLIC_FIREBASE_STORAGE_BUCKET` | `storageBucket` |
-| `PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | `messagingSenderId` |
-| `PUBLIC_FIREBASE_APP_ID` | `appId` |
-| `PUBLIC_RECAPTCHA_SITE_KEY` | site key from step 6 |
-| `PUBLIC_FUNCTIONS_REGION` | `asia-south1` |
-| `SITE_URL` | `https://<owner>.github.io/booksbyajith` (no trailing slash) |
-| `ALLOWED_ORIGINS` | `https://<owner>.github.io` |
-| `STORAGE_BUCKET` | the bucket name from step 3 |
-| `PUBLIC_ANALYTICS_PROVIDER` | `none` (see step 21) |
+| `ALLOWED_ORIGINS` | `https://booksbyajith.github.io` ← fix: replace the `<owner>` placeholder |
+| `SITE_URL` | `https://booksbyajith.github.io/home` ✅ (no trailing slash) |
+| `FIREBASE_PROJECT_ID` | `booksbyajith` ✅ |
+| `PUBLIC_FIREBASE_PROJECT_ID` | `booksbyajith` ← **missing**, add it |
+| `PUBLIC_FIREBASE_API_KEY` | ✅ |
+| `PUBLIC_FIREBASE_AUTH_DOMAIN` | ✅ |
+| `PUBLIC_FIREBASE_STORAGE_BUCKET` | ✅ |
+| `PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | ✅ |
+| `PUBLIC_FIREBASE_APP_ID` | ✅ |
+| `PUBLIC_FUNCTIONS_REGION` | ✅ `asia-south1` |
+| `PUBLIC_ANALYTICS_PROVIDER` | ✅ `none` |
+| `PUBLIC_RECAPTCHA_SITE_KEY` | site key from step 6 ← add |
+| `STORAGE_BUCKET` | `booksbyajith.firebasestorage.app` ← add (after step 3) |
 
-`PUBLIC_USE_EMULATORS` must **not** be set (the workflow sets it to `false`).
+3. **Settings → Secrets and variables → Actions → Secrets → New repository secret** for each:
 
-**Expected:** 13 variables and 1 secret listed.
-
-## 10. Set the function secrets
-
-Secrets live in Google Secret Manager, never in the repository. Log in once with an account that owns the project:
-
-```bash
-pnpm exec firebase login
-```
-
-Then run the script; it asks for each value with hidden input:
-
-```bash
-pnpm exec node scripts/set-secrets.mjs --project <project-id>
-```
-
-| Secret | What to enter |
+| Secret | Value |
 |---|---|
-| `SMTP_HOST` | e.g. `smtp.gmail.com` |
-| `SMTP_PORT` | `465` (SSL) or `587` (STARTTLS) |
-| `SMTP_USER` | SMTP user name |
-| `SMTP_PASS` | SMTP password or app password |
-| `MAIL_FROM` | e.g. `Dr. Ajith Amarasinghe Books <orders@your-domain>` |
-| `TEAM_EMAILS` | comma-separated addresses that get new-order emails |
-| `HASH_SALT` | press Enter to generate a random value |
-| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | press Enter to skip (step 19) |
-| `WA_TOKEN`, `WA_PHONE_NUMBER_ID` | press Enter to skip (step 20) |
+| `FIREBASE_SERVICE_ACCOUNT` | open the JSON file from step 7 in Notepad/TextEdit, copy **everything**, paste |
+| `SMTP_HOST` | `smtp.mail.yahoo.com` |
+| `SMTP_PORT` | `465` |
+| `SMTP_USER` | the books Yahoo email address |
+| `SMTP_PASS` | a Yahoo **app password** (not the normal password) — see below |
+| `MAIL_FROM` | `Dr. Ajith Amarasinghe Books <the books Yahoo email address>` — Yahoo only sends from its own address |
+| `TEAM_EMAILS` | addresses that receive new-order emails, separated by commas (can include the Yahoo address) |
+| `ADMIN_EMAILS` | the Google account(s) that will use the admin panel, separated by commas |
 
-**Expected:** "saved" after each one. Skipped optional secrets are stored as `disabled`.
+**Yahoo app password:** sign in to Yahoo Mail → profile picture → **Account info** → **Account security** → turn on **2-step verification** if it is off → **Generate app password** (or "Manage app passwords") → name it `booksbyajith website` → copy the 16-letter password into `SMTP_PASS`.
+
+These are GitHub *secrets*: nobody can read them back, and they never appear in logs or in the code.
+
+**Expected:** 13 variables and 8 secrets.
+
+## 10. Copy the secrets into Google Secret Manager
+
+GitHub → **Actions → Admin tools (secrets, seed data, admin access) → Run workflow** → task **sync-secrets** → **Run workflow**.
+
+**Expected:** a green run whose log shows `SMTP_HOST: saved`, …, `HASH_SALT: saved` (or "already exists, kept" on later runs). Optional Telegram and WhatsApp secrets you haven't set are saved as `disabled`. Run this again whenever you change one of the GitHub secrets, then redeploy functions (step 11).
 
 ## 11. Deploy rules, indexes and functions
 
-GitHub → **Actions → Deploy Firebase (rules, indexes, functions) → Run workflow** (leave all three boxes ticked).
+GitHub → **Actions → Deploy Firebase (rules, indexes, functions) → Run workflow** (leave all three ticked).
 
-**Expected:** the run finishes green and the Firebase console → Functions lists **16 functions** in `asia-south1`: `createOrder`, `trackOrder`, `updateOrderStatus`, `addOrderNote`, `getSlipUrl`, `updateSettings`, `updateBook`, `moderateReview`, `adminUpdateRecord`, `anonymiseOldOrders`, `subscribeNewsletter`, `unsubscribeNewsletter`, `requestStockAlert`, `submitEnquiry`, `submitReview` and the trigger `onOrderAudit`.
+**Expected:** a green run, and Firebase console → **Functions** lists **16 functions** in `asia-south1`.
 
-The first deploy of a new project often fails while Google enables APIs ("API not enabled", "Eventarc service agent"). Wait 5 minutes and run the workflow again. Then repeat step 8 if it reported that the compute service account did not exist.
+The first deploy of a new project often fails while Google switches on its services ("API not enabled", "Eventarc service agent", "permission denied … retry"). **Wait 5 minutes and run it again**; this can take two or three tries. Then do **step 8**.
 
 ## 12. Seed the books and settings
 
-Create Application Default Credentials for your account, then seed (it only creates missing documents):
+GitHub → **Actions → Admin tools → Run workflow** → task **seed**.
 
-```bash
-gcloud auth application-default login
-```
-
-```bash
-pnpm build:functions
-```
-
-```bash
-pnpm seed --project <project-id>
-```
-
-**Expected:** "Created: books/portuguese-era-1505-1594, books/finding-sinhabahu, books/chinese-expedition, config/public, config/private". Running it again prints "Nothing to create".
+**Expected:** the log shows `Created: books/portuguese-era-1505-1594, books/finding-sinhabahu, books/chinese-expedition, config/public, config/private`. Running it again shows "Nothing to create" (it never overwrites).
 
 ## 13. Deploy the website
 
-Merge the work into `main` (or GitHub → **Actions → Deploy site to GitHub Pages → Run workflow**).
+GitHub → **Actions → Deploy site to GitHub Pages → Run workflow** (it also runs automatically on every push to `main`).
 
-**Expected:** the run is green and the site opens at `https://<owner>.github.io/booksbyajith/`. The order page says ordering is not open yet; that is correct until step 15.
+**Expected:** a green run and the site at **<https://booksbyajith.github.io/home/>**. The order page says ordering is not open yet — correct until step 15.
 
 ## 14. Grant admin access
 
-For each person who will use the admin panel:
+1. Each admin opens **<https://booksbyajith.github.io/home/admin/>** → **Sign in with Google**. They see **"Not authorised"** — that creates their account.
+2. Make sure their Google address is in the `ADMIN_EMAILS` secret (step 9).
+3. GitHub → **Actions → Admin tools → Run workflow** → task **grant-admins**.
+4. They click **Check again** (or sign out and in).
 
-1. They open `https://<owner>.github.io/booksbyajith/admin/`, click **Sign in with Google** and sign in. They will see **"Not authorised"**. That creates their account.
-2. You run (with the credentials from step 12):
+**Expected:** the admin dashboard appears. If the run says "User not found", that person has not signed in once yet (step 14.1).
 
-   ```bash
-   pnpm exec node scripts/grant-admin.mjs <their-google-email> --project <project-id>
-   ```
-
-3. They click **Check again** (or sign out and in).
-
-**Expected:** the admin dashboard appears. To remove access later, run the same command with `--revoke`. Admin email addresses are never stored in the code.
+To remove someone: temporarily set `ADMIN_EMAILS` to **only that person**, run the task **revoke-admins**, then put the remaining admins back into `ADMIN_EMAILS`.
 
 ## 15. Fill in the settings and prices
 
 In the admin panel:
 
-1. **Settings → Bank details:** bank, branch, account name, account number, and payment instructions in both languages. Save.
-2. **Settings → Delivery fees:** default fee, extra per additional copy, delivery days, and any district that differs from the default. Save.
-3. **Settings → Contact numbers and links:** WhatsApp number (used for the "Message us" buttons), order phone number, Facebook page URL. Save.
-4. **Settings → Couriers:** add each courier, with a tracking URL containing `{trackingNo}` if the courier has one. Save.
-5. Optional: **Videos and reels**, **Story of the week**, **Bundle discount**, **Signed copies**.
-6. **Books:** for each book set price, stock and sale mode (**Order on this site**, **External link** with a URL, or **Not available**) and tick **Available to order**. Save each.
+1. **Settings → Bank details:** bank, branch, account name, account number, payment instructions (Sinhala and English). Save.
+2. **Settings → Delivery fees:** default fee, extra per additional copy, delivery days, and any districts that differ. Save.
+3. **Settings → Contact numbers and links:** WhatsApp number, order phone number, Facebook page URL. Save.
+4. **Settings → Couriers:** add each courier (tracking URL with `{trackingNo}` if the courier has one). Save.
+5. Optional: Videos and reels, Story of the week, Bundle discount, Signed copies.
+6. **Books:** for each book set price, stock and sale mode, tick **Available to order**. Save each.
 7. **Settings → Ordering:** tick **Orders open**. Save.
 
-**Expected:** the public order page shows the books, prices and your bank details.
+**Expected:** the public order page shows the books, prices and bank details.
 
 ## 16. Upload the real images
 
-Replace the placeholder files **with the same file names**, commit and push to `main`. Recommended sizes (JPG, under ~600 KB each):
+On GitHub you can upload files in the browser: open the folder (for example `site/public/covers`) → **Add file → Upload files** → drag the images in → **Commit changes**. Use **exactly the same file names** as the placeholders; the site redeploys automatically.
 
 | File | Size | Shown on |
 |---|---|---|
@@ -251,64 +262,50 @@ Replace the placeholder files **with the same file names**, commit and push to `
 | `site/public/covers/portuguese-era-1505-1594-back.jpg` | 1200 × 1800 | book gallery |
 | `site/public/covers/portuguese-era-1505-1594-inner-1.jpg` | 1200 × 1800 | book gallery |
 | `site/public/covers/portuguese-era-1505-1594-inner-2.jpg` | 1200 × 1800 | book gallery |
-| `site/public/covers/finding-sinhabahu-front.jpg` | 1200 × 1800 | as above |
-| `site/public/covers/finding-sinhabahu-back.jpg` | 1200 × 1800 | |
-| `site/public/covers/finding-sinhabahu-inner-1.jpg` | 1200 × 1800 | |
-| `site/public/covers/finding-sinhabahu-inner-2.jpg` | 1200 × 1800 | |
-| `site/public/covers/chinese-expedition-front.jpg` | 1200 × 1800 | |
-| `site/public/covers/chinese-expedition-back.jpg` | 1200 × 1800 | |
-| `site/public/covers/chinese-expedition-inner-1.jpg` | 1200 × 1800 | |
-| `site/public/covers/chinese-expedition-inner-2.jpg` | 1200 × 1800 | |
-| `site/public/samples/<slug>/page-01.jpg` … `page-03.jpg` (for each of the three slugs) | 1200 × 1700 | "Look inside" |
+| `site/public/covers/finding-sinhabahu-front.jpg` / `-back.jpg` / `-inner-1.jpg` / `-inner-2.jpg` | 1200 × 1800 | as above |
+| `site/public/covers/chinese-expedition-front.jpg` / `-back.jpg` / `-inner-1.jpg` / `-inner-2.jpg` | 1200 × 1800 | as above |
+| `site/public/samples/<book>/page-01.jpg` … `page-03.jpg` (folders `portuguese-era-1505-1594`, `finding-sinhabahu`, `chinese-expedition`) | 1200 × 1700 | "Look inside" |
 | `site/public/author/author-portrait.jpg` | 1200 × 1500 | About, Home, Press kit |
-| `site/public/icons/*` (optional) | as existing | browser tab and home-screen icon |
+| `site/public/icons/*` (optional) | as existing | browser tab and phone home screen |
 
-To add or remove inside pages or samples, edit the `covers` and `samples` lists in `site/src/content/books/<slug>/book.yaml`.
-
-**Expected:** after the Pages workflow finishes, the new covers appear and link previews on Facebook use them (Facebook caches previews; use the [Sharing Debugger](https://developers.facebook.com/tools/debug/) to refresh).
+JPG, under about 600 KB each. To add or remove inside pages, edit the `covers` and `samples` lists in `site/src/content/books/<book>/book.yaml` (pencil icon on GitHub).
 
 ## 17. Review the Sinhala text and placeholders
 
-Please have the author (or a Sinhala editor) check:
+Please have the author (or a Sinhala editor) check — all can be edited on GitHub with the pencil icon:
 
 - `site/src/i18n/si.ts` — all interface text.
-- **Admin → Settings → WhatsApp message templates** — the Sinhala versions.
+- Admin → **Settings → WhatsApp message templates** — the Sinhala versions.
 - `site/src/content/pages/si/about.md` and `en/about.md` — replace the paragraph marked **"Placeholder — in the author's own words"**.
-- `site/src/content/books/*/{si,en}.md` — book descriptions (marked `AUTHOR:`). The English titles of the two Sinhala books are working translations (see the comments in their `book.yaml`).
+- `site/src/content/books/*/si.md` and `en.md` — book descriptions (marked `AUTHOR:`). The English titles of the two Sinhala books are working translations (comments in their `book.yaml`).
 - `site/src/content/blog/*/welcome.md` — placeholder welcome post.
-- `site/src/content/pages/*/privacy.md` and `terms.md` — privacy policy, delivery and returns. Check the retention period matches **Settings → Remove personal data after (months)**.
+- `site/src/content/pages/*/privacy.md` and `terms.md` — privacy policy, delivery and returns.
 - `site/src/content/faq/` — answers about payment, delivery and returns.
 
-## 18. Optional: custom domain
+## 18. Optional: custom domain (e.g. `books.example.lk`)
 
-1. GitHub → **Settings → Pages → Custom domain** → enter e.g. `books.example.lk` → Save. Create the DNS records GitHub shows (a `CNAME` to `<owner>.github.io`, or `A` records for an apex domain). Tick **Enforce HTTPS** when available.
-2. Update GitHub variables: `SITE_URL` = `https://books.example.lk` (no path), `ALLOWED_ORIGINS` = `https://books.example.lk`.
-3. Firebase → Authentication → Settings → **Authorized domains** → add the domain.
-4. reCAPTCHA admin → your key → **Domains** → add the domain.
-5. Run the **Deploy Firebase** workflow (functions only is enough) and then the **Deploy site** workflow.
-
-**Expected:** the site works at the new domain; links in WhatsApp messages and emails use it.
+1. `booksbyajith/home` → **Settings → Pages → Custom domain** → enter the domain → Save. At your domain registrar, create the DNS record GitHub shows (a `CNAME` pointing to `booksbyajith.github.io`). Tick **Enforce HTTPS** when it becomes available.
+2. Update variables: `SITE_URL` = `https://books.example.lk` (no `/home`), `ALLOWED_ORIGINS` = `https://books.example.lk`.
+3. Firebase → Authentication → Authorized domains → add `books.example.lk`.
+4. reCAPTCHA admin → your key → Domains → add `books.example.lk`.
+5. Run **Deploy Firebase** (functions only) and then **Deploy site**.
 
 ## 19. Optional: Telegram alerts for new orders
 
 1. In Telegram, message **@BotFather** → `/newbot` → follow the prompts → copy the **token**.
-2. Create a group for the team, add the bot, and send any message in the group.
-3. Open `https://api.telegram.org/bot<token>/getUpdates` in a browser and copy `chat.id` (a negative number for groups).
-4. Set the two secrets, then redeploy functions (workflow, functions only):
+2. Create a team group, add the bot, send any message in the group.
+3. Open `https://api.telegram.org/bot<token>/getUpdates` in a browser and copy `chat` → `id` (a negative number).
+4. Add GitHub secrets `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`, run **Admin tools → sync-secrets**, then **Deploy Firebase** (functions only).
 
-   ```bash
-   pnpm exec node scripts/set-secrets.mjs --project <project-id> --only TELEGRAM_BOT_TOKEN,TELEGRAM_CHAT_ID
-   ```
-
-**Expected:** new orders produce a Telegram message with the order number, books, total and district (no names, phones or addresses).
+**Expected:** new orders produce a Telegram message with order number, books, total and district (no names, phones or addresses).
 
 ## 20. Optional: WhatsApp Cloud API (automatic messages)
 
-The admin panel already opens WhatsApp with each message ready to send. This optional step sends them automatically instead.
+The admin panel already opens WhatsApp with each message ready to send. This only makes sending automatic.
 
-1. <https://developers.facebook.com> → **Create app** → type **Business** → add **WhatsApp**. Add and verify your business phone number. Copy the **Phone number ID**.
+1. <https://developers.facebook.com> → **Create app** → **Business** → add **WhatsApp**. Add and verify the business phone number. Copy the **Phone number ID**.
 2. In Meta Business Settings create a **System user** with a **permanent token** that has `whatsapp_business_messaging`.
-3. In WhatsApp Manager → **Message templates**, create and get approved four templates (category Utility), in Sinhala and English, with body parameters in this exact order:
+3. In WhatsApp Manager → **Message templates**, get four Utility templates approved (Sinhala and English) with body parameters in this order:
 
    | Event | Parameters `{{1}}`, `{{2}}`, … |
    |---|---|
@@ -317,21 +314,16 @@ The admin panel already opens WhatsApp with each message ready to send. This opt
    | dispatched | order number, book titles, courier, tracking number, tracking URL |
    | rejected | order number, reason |
 
-4. Set the secrets and redeploy functions:
-
-   ```bash
-   pnpm exec node scripts/set-secrets.mjs --project <project-id> --only WA_TOKEN,WA_PHONE_NUMBER_ID
-   ```
-
+4. Add GitHub secrets `WA_TOKEN` and `WA_PHONE_NUMBER_ID`, run **Admin tools → sync-secrets**, then **Deploy Firebase** (functions only).
 5. Admin → **Settings → Notifications → WhatsApp Cloud API**: tick **Enabled**, set the Graph API version (e.g. `v21.0`) and the four template names. Save.
 
 ## 21. Optional: analytics
 
-Cookieless and privacy-friendly. Choose one, set the GitHub variables, then rerun the **Deploy site** workflow.
+Cookieless. Set the GitHub variables, then run **Deploy site**.
 
-- **GoatCounter:** sign up at <https://www.goatcounter.com>, pick a code. `PUBLIC_ANALYTICS_PROVIDER=goatcounter`, `PUBLIC_ANALYTICS_ENDPOINT=https://<code>.goatcounter.com`.
-- **Plausible:** add the site at <https://plausible.io>. `PUBLIC_ANALYTICS_PROVIDER=plausible`, `PUBLIC_ANALYTICS_SRC=https://plausible.io/js/script.js`, `PUBLIC_ANALYTICS_ENDPOINT=<your site domain>`.
-- **Meta Pixel (off by default):** set `PUBLIC_META_PIXEL_ID`. Visitors then see a consent banner and the pixel loads only if they accept.
+- **GoatCounter:** sign up at <https://www.goatcounter.com>. `PUBLIC_ANALYTICS_PROVIDER` = `goatcounter`, `PUBLIC_ANALYTICS_ENDPOINT` = `https://<your-code>.goatcounter.com`.
+- **Plausible:** `PUBLIC_ANALYTICS_PROVIDER` = `plausible`, `PUBLIC_ANALYTICS_SRC` = `https://plausible.io/js/script.js`, `PUBLIC_ANALYTICS_ENDPOINT` = `booksbyajith.github.io`.
+- **Meta Pixel (off by default):** set `PUBLIC_META_PIXEL_ID`. Visitors see a consent banner and the pixel loads only if they accept.
 
 ## 22. Live test order
 
@@ -343,11 +335,11 @@ Do this once with real money and your own phone:
 - [ ] Success page: download the **JPG** and **PDF** receipts; check the Sinhala text and that the QR code opens the tracking page.
 - [ ] Check the **team email** arrives with the slip attached, and the **customer confirmation** email.
 - [ ] Admin: open the order, view the slip, open the Google Maps link.
-- [ ] Press **Acknowledge** → WhatsApp opens with the message → send it to yourself.
+- [ ] **Acknowledge** → WhatsApp opens with the message → send it to yourself.
 - [ ] **Payment verified** → WhatsApp message and "payment verified" email.
 - [ ] **Dispatch** with a courier and tracking number → WhatsApp message and email; the tracking page shows the courier and number.
 - [ ] **Mark delivered**.
-- [ ] Place a second test order, **Reject** it with a reason (email arrives), then **Reopen** it, then **Cancel** it. Check Admin → Books: the stock went down and back up correctly.
+- [ ] Second test order: **Reject** with a reason (email arrives) → **Reopen** → **Cancel**. Check Admin → Books: stock went down and back up.
 - [ ] Export orders to **CSV** and print a **label**.
 - [ ] Track the first order on another device using the order number and the last 4 digits.
 - [ ] Subscribe to the newsletter, then delete the test subscriber in the admin panel.
@@ -357,12 +349,15 @@ Do this once with real money and your own phone:
 
 | Problem | What to do |
 |---|---|
-| "Not authorised" after running `grant-admin.mjs` | Click **Check again**, or sign out and in. The claim applies to new sign-ins. |
-| Every order/track/form call fails with `unauthenticated` | App Check: the reCAPTCHA site key (variable) and secret key (App Check console) must be from the same key, and the site's domain must be listed on the reCAPTCHA key. Rebuild the site after changing the variable. |
-| Browser console shows CORS errors calling functions | `ALLOWED_ORIGINS` must match the site's origin exactly (scheme + host, no path). Redeploy functions after changing it. |
-| Bank slip won't open in admin | Repeat step 8 (signed URLs) and check `STORAGE_BUCKET`. |
-| Emails don't arrive | Admin dashboard shows "Failed notifications". Check the SMTP secrets (step 10), the spam folder, and that the SMTP account allows sending as `MAIL_FROM`. Redeploy functions after changing secrets. |
-| Deploy fails: "secret … not found" | Run step 10 again; every secret must exist (optional ones as `disabled`). |
-| Deploy fails: "query requires an index" in admin | Run the Deploy Firebase workflow with **indexes** ticked and wait a few minutes for the indexes to build. |
+| reCAPTCHA says "domain is invalid" | Enter only `booksbyajith.github.io` — no `https://`, no path, no slash. |
+| "Not authorised" after **grant-admins** | Click **Check again**, or sign out and in. |
+| **grant-admins** says "User not found" | That person must sign in once at `/home/admin/` first. Check the spelling in `ADMIN_EMAILS`. |
+| Every order/track/form action fails with `unauthenticated` | The reCAPTCHA site key (variable) and secret key (App Check) must be from the same key, and `booksbyajith.github.io` must be on that key. Run **Deploy site** after changing the variable. |
+| Browser shows CORS errors | `ALLOWED_ORIGINS` must be exactly `https://booksbyajith.github.io`. Run **Deploy Firebase** (functions) after changing it. |
+| Bank slip won't open in admin | Do step 8 and check `STORAGE_BUCKET`. |
+| Emails don't arrive | Admin dashboard shows "Failed notifications". Check the Yahoo app password and that `MAIL_FROM` uses the Yahoo address. Re-run **sync-secrets**, then **Deploy Firebase** (functions). Check spam folders. |
+| Deploy fails: "billing account … required" / "Blaze" | Step 2 is not finished. |
+| Deploy fails: "secret … not found" | Run **Admin tools → sync-secrets** first. |
+| Admin shows "query requires an index" | Run **Deploy Firebase** with indexes ticked and wait a few minutes. |
 | Order page says ordering is not open | Admin → Settings → Ordering → **Orders open**, and the bank account number must be filled in. |
-| Site build fails: "Missing or invalid public build configuration" | A GitHub variable from step 9 is missing or misspelled. |
+| Site build fails: "Missing or invalid public build configuration" | A variable from step 9 is missing or misspelled (most often `PUBLIC_FIREBASE_PROJECT_ID`). |
