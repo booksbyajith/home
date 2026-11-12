@@ -58,3 +58,10 @@ export const PUBLIC_CALLABLE = {
   maxInstances: 10,
   memory: '256MiB' as const,
 } as const;
+
+export const ADMIN_CALLABLE = {
+  region: REGION,
+  enforceAppCheck: true,
+  maxInstances: 10,
+  memory: '256MiB' as const,
+} as const;
