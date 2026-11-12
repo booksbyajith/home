@@ -48,12 +48,12 @@ const jsonLd = {
     ...d.tags.map((tg) => ({ property: 'article:tag', content: tg })),
   ]}
 >
-  <article class="container-page py-10">
+  <article class="container-page pt-12 pb-10 md:pt-16">
     <div class="prose-page">
       <p class="text-sm">
         <a href={href(lang, `/${kind}/`)}>{t(kind === 'news' ? 'news.title' : 'blog.title')}</a>
       </p>
-      <h1 class="mt-2 text-3xl font-bold sm:text-4xl">{d.title}</h1>
+      <h1 class="page-title mt-2">{d.title}</h1>
       <p class="mt-2 text-ink-soft">
         {t('post.published')}: <time datetime={d.date.toISOString()}>{formatDate(lang, d.date)}</time>
         {d.updated && (
@@ -71,7 +71,7 @@ const jsonLd = {
           <Cover
             path={d.cover}
             alt={d.coverAlt ?? ''}
-            eager
+            priority
             sizes="(min-width: 768px) 360px, 70vw"
             class="max-h-[480px] w-auto rounded-md shadow-md"
           />

@@ -3,6 +3,7 @@ import type { Lang } from '@shared/constants';
 import { useT } from '../i18n';
 import { resolveAlternates, type Alternates } from '../lib/alternates';
 import { LANGS, href, stripLang } from '../lib/paths';
+import Cover from './Cover.astro';
 
 interface Props {
   lang: Lang;
@@ -27,16 +28,32 @@ const nav = [
   { path: '/about/', label: t('nav.about') },
   { path: '/contact/', label: t('nav.contact') },
 ];
+// Tamil menu labels are long: keep the full menu for wider screens.
+const wideNav = lang === 'ta';
 const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWith(p));
 ---
 
-<header class="border-b border-line bg-paper/95">
-  <div class="container-page flex items-center justify-between gap-4 py-3">
-    <a href={href(lang, '/')} class="flex flex-col leading-tight text-ink no-underline">
-      <span class="font-serif text-lg font-bold sm:text-xl">{t('site.name')}</span>
-      <span class="hidden text-sm text-ink-soft sm:block">{t('site.tagline')}</span>
+<header class="site-header sticky top-0 z-40 border-b border-line/70 bg-paper/85 backdrop-blur-md">
+  <div class="container-page flex h-16 items-center justify-between gap-3 sm:h-[4.5rem]">
+    <a href={href(lang, '/')} class="group flex min-w-0 items-center gap-3 text-ink no-underline">
+      <span class="block h-10 w-10 shrink-0 overflow-hidden rounded-full border border-line bg-sepia/60 sm:h-11 sm:w-11">
+        <Cover
+          path="/author/author-halftone.webp"
+          alt=""
+          sizes="44px"
+          eager
+          class="h-full w-full scale-[1.55] object-cover object-[52%_22%]"
+        />
+      </span>
+      <span class="hidden min-w-0 flex-col leading-tight sm:flex">
+        <span class="brand-name truncate font-serif text-xl font-semibold group-hover:text-maroon">
+          {t('site.name')}
+        </span>
+        <span class="hidden truncate text-xs tracking-wide text-ink-soft 2xl:block">{t('site.tagline')}</span>
+      </span>
+      <span class="sr-only sm:hidden">{t('site.name')}</span>
     </a>
-    <nav aria-label={t('site.menu')} class="hidden xl:block">
+    <nav aria-label={t('site.menu')} class:list={['hidden', wideNav ? '2xl:block' : 'xl:block']}>
       <ul class="flex items-center gap-1">
         {nav.map((n) => (
           <li>
@@ -44,8 +61,8 @@ const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWi
               href={href(lang, n.path)}
               aria-current={isCurrent(n.path) ? 'page' : undefined}
               class:list={[
-                'rounded px-3 py-2 whitespace-nowrap text-ink no-underline hover:bg-paper-dark',
-                isCurrent(n.path) && 'font-semibold text-maroon',
+                'nav-link px-3 py-2 whitespace-nowrap text-ink no-underline',
+                isCurrent(n.path) && 'text-maroon',
               ]}
             >
               {n.label}
@@ -54,9 +71,9 @@ const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWi
         ))}
       </ul>
     </nav>
-    <div class="flex items-center gap-2">
+    <div class="flex shrink-0 items-center gap-2">
       <ul
-        class="flex items-center rounded-md border border-line text-sm"
+        class="flex items-center rounded-full border border-line bg-card/70 p-0.5 text-sm"
         aria-label={t('site.language')}
         role="list"
       >
@@ -66,7 +83,7 @@ const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWi
               <span
                 aria-current="true"
                 lang={x.l}
-                class="block rounded-md bg-paper-dark px-2 py-2 font-semibold sm:px-3"
+                class="lang-label flex min-h-9 items-center rounded-full bg-maroon px-2.5 font-semibold text-white sm:px-3"
               >
                 {LABEL[x.l]}
               </span>
@@ -76,7 +93,7 @@ const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWi
                 hreflang={x.l}
                 lang={x.l}
                 aria-label={LABEL[x.l] === x.name ? undefined : `${LABEL[x.l]} (${x.name})`}
-                class="block min-h-11 px-2 py-2 text-ink no-underline hover:bg-paper-dark sm:px-3"
+                class="lang-label flex min-h-9 items-center rounded-full px-2.5 text-ink no-underline transition-colors hover:bg-paper-dark sm:px-3"
                 data-lang-toggle={x.l}
               >
                 {LABEL[x.l]}
@@ -85,24 +102,31 @@ const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWi
           </li>
         ))}
       </ul>
-      <a href={href(lang, '/order/')} class="btn-primary hidden px-4 whitespace-nowrap sm:inline-flex">
+      <a href={href(lang, '/order/')} class="btn-primary hidden px-5 whitespace-nowrap sm:inline-flex">
         {t('nav.order')}
       </a>
-      <details class="relative xl:hidden" data-menu>
-        <summary class="btn-quiet cursor-pointer list-none px-3" aria-label={t('site.menu')}>
+      <details class:list={['relative', wideNav ? '2xl:hidden' : 'xl:hidden']} data-menu>
+        <summary
+          class="btn-quiet h-11 w-11 cursor-pointer list-none border border-line p-0"
+          aria-label={t('site.menu')}
+        >
           <svg
             aria-hidden="true"
-            width="24"
-            height="24"
+            width="22"
+            height="22"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.8"
+            stroke-linecap="round"
           >
-            <path d="M3 6h18M3 12h18M3 18h18"></path>
+            <path d="M4 7h16M4 12h16M4 17h10"></path>
           </svg>
         </summary>
-        <nav aria-label={t('site.menu')} class="card absolute right-0 z-30 mt-2 w-64 p-2 shadow-lg">
+        <nav
+          aria-label={t('site.menu')}
+          class="card absolute right-0 z-30 mt-3 w-[min(20rem,calc(100vw-2rem))] origin-top-right p-2"
+        >
           <ul>
             {[
               { path: '/', label: t('nav.home') },
@@ -114,9 +138,12 @@ const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWi
                 <a
                   href={href(lang, n.path)}
                   aria-current={current === n.path ? 'page' : undefined}
-                  class="block rounded px-3 py-2 text-ink no-underline hover:bg-paper-dark"
+                  class="flex items-center justify-between rounded-xl px-4 py-3 text-ink no-underline transition-colors hover:bg-paper-dark aria-[current=page]:bg-paper-dark aria-[current=page]:font-semibold aria-[current=page]:text-maroon"
                 >
                   {n.label}
+                  <span aria-hidden="true" class="text-gold">
+                    ›
+                  </span>
                 </a>
               </li>
             ))}
@@ -126,3 +153,47 @@ const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWi
     </div>
   </div>
 </header>
+
+<style>
+  /* Other languages' names use the system font, so a page never downloads another script's font just for a label. */
+  .lang-label:not([aria-current]) {
+    font-family: var(--font-system);
+  }
+  .nav-link {
+    position: relative;
+    transition: color 0.2s;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.25rem;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease-out-soft);
+  }
+  .nav-link:hover::after,
+  .nav-link[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+  .nav-link:hover {
+    color: var(--color-maroon);
+  }
+  html[lang='si'] .brand-name,
+  html[lang='ta'] .brand-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+  [data-menu][open] nav {
+    animation: menu-in 0.25s var(--ease-out-soft);
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.98);
+    }
+  }
+</style>

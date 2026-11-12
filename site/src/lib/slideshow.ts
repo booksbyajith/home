@@ -1,4 +1,8 @@
-/** Accessible scroll-snap carousel: swipe, arrows, dots, autoplay with pause on hover/focus/hidden tab/reduced motion. */
+/**
+ * Accessible fading carousel: the current book in the centre, its neighbours blurred at the
+ * sides. Swipe, arrows, dots, keyboard, and autoplay that runs only while the carousel is on
+ * screen and pauses on hover, focus, a hidden tab or reduced motion.
+ */
 export function initSlideshow(root: HTMLElement): void {
   const track = root.querySelector<HTMLElement>('[data-track]')!;
   const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
@@ -6,39 +10,45 @@ export function initSlideshow(root: HTMLElement): void {
   const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]')!;
   const interval = Number(root.dataset.interval) || 5000;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const n = slides.length;
   let index = 0;
   let userPaused = reduced;
   let hover = false;
   let focus = false;
+  let onScreen = !('IntersectionObserver' in window);
   let timer: number | undefined;
+
+  const posOf = (s: number, i: number) => {
+    if (s === i) return 'center';
+    if (n > 1 && s === (i + 1) % n) return 'right';
+    if (n > 2 && s === (i - 1 + n) % n) return 'left';
+    return 'hidden';
+  };
 
   const setCurrent = (i: number) => {
     index = i;
     root.dataset.index = String(i);
-    dots.forEach((d, n) => d.setAttribute('aria-current', n === i ? 'true' : 'false'));
-    slides.forEach((s, n) => {
-      s.setAttribute('aria-hidden', n === i ? 'false' : 'true');
+    dots.forEach((d, k) => d.setAttribute('aria-current', k === i ? 'true' : 'false'));
+    slides.forEach((s, k) => {
+      s.dataset.pos = posOf(k, i);
+      s.setAttribute('aria-hidden', k === i ? 'false' : 'true');
       s.querySelectorAll<HTMLElement>('a, button').forEach((el) => {
-        if (el.getAttribute('aria-hidden') !== 'true') el.tabIndex = n === i ? 0 : -1;
+        if (el.getAttribute('aria-hidden') !== 'true') el.tabIndex = k === i ? 0 : -1;
       });
     });
   };
 
-  let programmaticUntil = 0;
-  const go = (i: number) => {
-    const n = (i + slides.length) % slides.length;
-    programmaticUntil = Date.now() + 1200;
-    track.scrollTo({ left: slides[n].offsetLeft - track.offsetLeft, behavior: reduced ? 'auto' : 'smooth' });
-    setCurrent(n);
-  };
+  const go = (i: number) => setCurrent((i + n) % n);
 
-  const running = () => !userPaused && !hover && !focus && document.visibilityState === 'visible';
+  const running = () =>
+    !userPaused && !hover && !focus && onScreen && document.visibilityState === 'visible';
   const schedule = () => {
     window.clearInterval(timer);
     timer = undefined;
     track.setAttribute('aria-live', running() ? 'off' : 'polite');
     if (running()) timer = window.setInterval(() => go(index + 1), interval);
   };
+  const restart = () => schedule();
 
   const updateToggle = () => {
     toggle.textContent = userPaused ? root.dataset.labelPlay! : root.dataset.labelPause!;
@@ -46,9 +56,31 @@ export function initSlideshow(root: HTMLElement): void {
     root.dataset.playing = String(!userPaused);
   };
 
-  root.querySelector('[data-prev]')!.addEventListener('click', () => go(index - 1));
-  root.querySelector('[data-next]')!.addEventListener('click', () => go(index + 1));
-  dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+  root.querySelector('[data-prev]')!.addEventListener('click', () => {
+    go(index - 1);
+    restart();
+  });
+  root.querySelector('[data-next]')!.addEventListener('click', () => {
+    go(index + 1);
+    restart();
+  });
+  dots.forEach((d, i) =>
+    d.addEventListener('click', () => {
+      go(i);
+      restart();
+    }),
+  );
+  // A click on a blurred side cover brings that book to the centre instead of leaving the page.
+  root.querySelectorAll<HTMLElement>('[data-slide-cover]').forEach((a) =>
+    a.addEventListener('click', (e) => {
+      const i = Number(a.dataset.slideCover);
+      if (i !== index) {
+        e.preventDefault();
+        go(i);
+        restart();
+      }
+    }),
+  );
   toggle.addEventListener('click', () => {
     userPaused = !userPaused;
     updateToggle();
@@ -78,26 +110,34 @@ export function initSlideshow(root: HTMLElement): void {
   });
   document.addEventListener('visibilitychange', schedule);
 
-  let scrollTimer: number | undefined;
-  // Only follow the scroll position when the user is swiping, never during programmatic scrolls.
-  let userScrollAt = 0;
-  for (const ev of ['pointerdown', 'touchstart', 'wheel'] as const)
-    track.addEventListener(
-      ev,
-      () => {
-        userScrollAt = Date.now();
-        programmaticUntil = 0;
-      },
-      { passive: true },
-    );
-  track.addEventListener('scroll', () => {
-    if (Date.now() < programmaticUntil || Date.now() - userScrollAt > 3000) return;
-    window.clearTimeout(scrollTimer);
-    scrollTimer = window.setTimeout(() => {
-      const i = Math.round(track.scrollLeft / track.clientWidth);
-      if (i !== index && slides[i]) setCurrent(i);
-    }, 100);
+  // Swipe: a horizontal drag of 40px or more moves one book.
+  let startX: number | null = null;
+  let startY = 0;
+  track.addEventListener('pointerdown', (e) => {
+    startX = e.clientX;
+    startY = e.clientY;
   });
+  const end = (e: PointerEvent) => {
+    if (startX === null) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    startX = null;
+    if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy)) {
+      go(index + (dx < 0 ? 1 : -1));
+      restart();
+    }
+  };
+  track.addEventListener('pointerup', end);
+  track.addEventListener('pointercancel', () => (startX = null));
+
+  // Autoplay (and the side blur) only while the carousel is on screen.
+  root.dataset.visible = String(onScreen);
+  if (!onScreen)
+    new IntersectionObserver(([e]) => {
+      onScreen = e.isIntersecting;
+      root.dataset.visible = String(onScreen);
+      schedule();
+    }).observe(root);
 
   setCurrent(0);
   updateToggle();

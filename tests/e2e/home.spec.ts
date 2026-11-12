@@ -33,18 +33,33 @@ test.describe('home slideshow', () => {
     await page.goto('');
     const show = page.locator('[data-slideshow]');
     await show.locator('[data-toggle]').click();
-    await page.locator('[data-track]').evaluate((el) => {
-      el.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
-      el.scrollTo({ left: el.clientWidth * 2, behavior: 'instant' as ScrollBehavior });
-    });
-    await expect(show).toHaveAttribute('data-index', '2');
+    const swipe = (from: number, to: number) =>
+      page.locator('[data-track]').evaluate(
+        (el, [f, t]) => {
+          const r = el.getBoundingClientRect();
+          const y = r.top + r.height / 2;
+          const opts = { bubbles: true, pointerType: 'touch', clientY: y };
+          el.dispatchEvent(new PointerEvent('pointerdown', { ...opts, clientX: r.left + r.width * f }));
+          el.dispatchEvent(new PointerEvent('pointerup', { ...opts, clientX: r.left + r.width * t }));
+        },
+        [from, to],
+      );
+    await swipe(0.7, 0.2); // swipe left: next book
+    await expect(show).toHaveAttribute('data-index', '1');
+    await swipe(0.2, 0.7); // swipe right: previous book
+    await expect(show).toHaveAttribute('data-index', '0');
+    await swipe(0.5, 0.48); // a tap is not a swipe
+    await expect(show).toHaveAttribute('data-index', '0');
   });
 
-  test('autoplay advances, and stops while hovered or paused', async ({ page, isMobile }) => {
+  test('autoplay advances on screen, and stops while hovered or paused', async ({ page, isMobile }) => {
     await page.clock.install();
     await page.goto('');
     const show = page.locator('[data-slideshow]');
     await page.mouse.move(0, 0);
+    // Autoplay only runs while the carousel is on screen.
+    await show.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+    await expect(show).toHaveAttribute('data-visible', 'true');
     await page.clock.runFor(5200);
     await expect(show).toHaveAttribute('data-index', '1');
     if (!isMobile) {

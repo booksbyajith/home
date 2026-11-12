@@ -1,68 +1,145 @@
 @import '@fontsource/noto-sans-sinhala/400.css';
-@import '@fontsource/noto-sans-sinhala/600.css';
 @import '@fontsource/noto-sans-sinhala/700.css';
 @import '@fontsource/noto-serif-sinhala/500.css';
 @import '@fontsource/noto-serif-sinhala/700.css';
 @import '@fontsource/noto-sans-tamil/tamil-400.css';
-@import '@fontsource/noto-sans-tamil/tamil-600.css';
 @import '@fontsource/noto-sans-tamil/tamil-700.css';
 @import '@fontsource/noto-serif-tamil/tamil-500.css';
 @import '@fontsource/noto-serif-tamil/tamil-700.css';
+@import '@fontsource/figtree/latin-400.css';
+@import '@fontsource/figtree/latin-600.css';
+@import '@fontsource/cormorant-garamond/latin-600.css';
+@import '@fontsource/cormorant-garamond/latin-700.css';
+@import '@fontsource/cormorant-garamond/latin-500-italic.css';
 @import 'tailwindcss';
 
+/*
+  Design tokens. Parchment white and ancient brown. Token names are kept from the
+  first design (e.g. "maroon" is now the primary brown) so every page and the
+  admin panel pick up the new palette without renaming classes.
+*/
 @theme {
-  --color-paper: #f8f3e7;
-  --color-paper-dark: #efe6d2;
-  --color-card: #fffdf8;
-  --color-ink: #1f1b16;
-  --color-ink-soft: #4a4136;
-  --color-maroon: #7a1f1f;
-  --color-maroon-dark: #5c1616;
-  --color-gold: #85590c; /* >= 4.9:1 on every paper background */
+  --color-paper: #fbf7ef;
+  --color-paper-dark: #f1e8d6;
+  --color-card: #fffdf9;
+  --color-ink: #2b1d12;
+  --color-ink-soft: #5e4b39;
+  --color-maroon: #6f4626; /* primary: ancient brown */
+  --color-maroon-dark: #4f3119;
+  --color-gold: #845d16; /* >= 4.5:1 on every paper background */
+  --color-gold-light: #d9b46a; /* on dark brown only */
+  --color-sepia: #e9dcc0;
+  --color-night: #2b1d12;
   --color-teal: #1f4e5f;
-  --color-line: #dccfb4;
+  --color-line: #e2d4bb;
   --color-success: #1e6b3a;
   --color-danger: #a32020;
   --color-warn-bg: #fff4d6;
 
   --font-sans:
-    'Noto Sans Sinhala', 'Noto Sans Tamil', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Noto Serif Sinhala', 'Noto Serif Tamil', 'Noto Serif', Georgia, 'Times New Roman', serif;
+    'Figtree', 'Noto Sans Sinhala', 'Noto Sans Tamil', system-ui, -apple-system, 'Segoe UI', Roboto,
+    sans-serif;
+  --font-serif:
+    'Cormorant Garamond', 'Noto Serif Sinhala', 'Noto Serif Tamil', 'Noto Serif', Georgia, 'Times New Roman',
+    serif;
+  --font-system: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
+  :root {
+    /* Cormorant has a small x-height; Sinhala and Tamil headings run larger and longer. */
+    --display-scale: 1;
+    --display-weight: 600;
+    --heading-leading: 1.12;
+  }
+  /* Each language loads only the fonts it needs: Sinhala pages use the Noto Sinhala fonts'
+     own Latin letters rather than two extra Latin families. */
+  html[lang='si'] {
+    --font-sans: 'Noto Sans Sinhala', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-serif: 'Noto Serif Sinhala', Georgia, 'Times New Roman', serif;
+    --display-scale: 0.86;
+    --display-weight: 700;
+    --heading-leading: 1.4;
+  }
+  html[lang='ta'] {
+    --font-sans: 'Noto Sans Tamil', 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-serif: 'Noto Serif Tamil', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --display-scale: 0.78;
+    --display-weight: 700;
+    --heading-leading: 1.45;
+  }
   html {
     background: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-size: 106.25%; /* 17px */
-    line-height: 1.75;
+    line-height: 1.8;
     -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
   }
-  html[lang='en'],
-  html[lang='ta'] {
+  html[lang='en'] {
     line-height: 1.65;
+  }
+  html[lang='ta'] {
+    line-height: 1.75;
+  }
+  body {
+    position: relative;
+    isolation: isolate;
+    overflow-x: clip;
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgb(217 180 106 / 0.16), transparent 70%),
+      radial-gradient(900px 500px at -10% 30%, rgb(111 70 38 / 0.06), transparent 70%), var(--color-paper);
+  }
+  /* A faint antique map of Sri Lanka behind every page. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url('../assets/map-bg.svg') no-repeat left -18vw bottom -10vh / min(760px, 110vw) auto;
+    opacity: 0.06;
   }
   h1,
   h2,
   h3 {
     font-family: var(--font-serif);
-    line-height: 1.35;
+    font-weight: var(--display-weight);
+    line-height: var(--heading-leading);
     color: var(--color-ink);
+    text-wrap: balance;
+    font-variant-numeric: lining-nums;
+  }
+  /* Cormorant's x-height is small: size Latin headings by x-height so they read like the body. */
+  html[lang='en'] :is(h1, h2, h3, .font-serif) {
+    letter-spacing: -0.01em;
+    font-size-adjust: 0.47;
   }
   a {
     color: var(--color-maroon);
     text-decoration: underline;
     text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+    text-underline-offset: 4px;
+    transition:
+      color 0.2s,
+      text-decoration-color 0.2s;
   }
   a:hover {
     color: var(--color-maroon-dark);
+    text-decoration-color: currentColor;
   }
   :focus-visible {
     outline: 3px solid var(--color-teal);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: 4px;
+  }
+  ::selection {
+    background: var(--color-sepia);
+    color: var(--color-ink);
   }
   img {
     max-width: 100%;
@@ -78,36 +155,40 @@
       scroll-behavior: auto !important;
       transition-duration: 0.01ms !important;
       animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
     }
   }
 }
 
 @utility container-page {
-  @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6;
+  @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8;
 }
 @utility prose-page {
   @apply mx-auto w-full max-w-[72ch];
 }
 @utility btn {
-  @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-md px-5 py-2 font-semibold no-underline transition-colors;
+  @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full px-6 py-2 font-semibold no-underline transition-all duration-200;
 }
 @utility btn-primary {
-  @apply btn bg-maroon text-white hover:bg-maroon-dark hover:text-white;
+  @apply btn bg-maroon text-white shadow-[0_6px_18px_-8px_rgb(79_49_25/0.7)] hover:-translate-y-px hover:bg-maroon-dark hover:text-white hover:shadow-[0_10px_24px_-10px_rgb(79_49_25/0.8)];
 }
 @utility btn-secondary {
-  @apply btn border border-maroon bg-transparent text-maroon hover:bg-paper-dark;
+  @apply btn border border-maroon/70 bg-card/60 text-maroon hover:-translate-y-px hover:border-maroon hover:bg-paper-dark hover:text-maroon-dark;
 }
 @utility btn-quiet {
   @apply btn text-ink-soft hover:bg-paper-dark hover:text-ink;
 }
 @utility card {
-  @apply rounded-lg border border-line bg-card;
+  @apply rounded-2xl border border-line/80 bg-card shadow-[0_1px_2px_rgb(43_29_18/0.04),0_12px_32px_-18px_rgb(43_29_18/0.25)];
+}
+@utility card-hover {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_2px_4px_rgb(43_29_18/0.05),0_22px_44px_-20px_rgb(43_29_18/0.35)];
 }
 @utility field-label {
   @apply mb-1 block font-semibold;
 }
 @utility field-input {
-  @apply block min-h-11 w-full rounded-md border border-ink-soft/60 bg-white px-3 py-2 text-ink;
+  @apply block min-h-11 w-full rounded-lg border border-ink-soft/50 bg-white px-3 py-2 text-ink transition-colors focus:border-maroon;
 }
 @utility field-hint {
   @apply mt-1 text-sm text-ink-soft;
@@ -118,11 +199,44 @@
 @utility badge {
   @apply inline-block rounded-full px-3 py-0.5 text-sm font-semibold;
 }
+/* Small heading above a section title. */
+@utility eyebrow {
+  @apply text-sm font-semibold tracking-[0.18em] text-gold uppercase;
+}
+/* Display sizes that adapt to the script (see --display-scale). */
+@utility display-xl {
+  font-size: calc(clamp(2.6rem, 6vw, 4.6rem) * var(--display-scale));
+}
+@utility display-lg {
+  font-size: calc(clamp(2.1rem, 4.4vw, 3.4rem) * var(--display-scale));
+}
+@utility display-md {
+  font-size: calc(clamp(1.75rem, 3vw, 2.4rem) * var(--display-scale));
+}
+@utility page-title {
+  font-size: calc(clamp(2.2rem, 5vw, 3.6rem) * var(--display-scale));
+  @apply font-serif;
+}
+/* Ornamental rule: line, diamond, line. */
+@utility ornament {
+  @apply flex items-center gap-3 text-gold;
+  &::before,
+  &::after {
+    content: '';
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, transparent, currentColor);
+  }
+  &::after {
+    background: linear-gradient(90deg, currentColor, transparent);
+  }
+}
 
 @layer components {
   :is(.btn, .btn-primary, .btn-secondary, .btn-quiet):is([disabled], [aria-disabled='true']) {
     cursor: not-allowed;
     opacity: 0.6;
+    transform: none;
   }
   .field-input[aria-invalid='true'] {
     border-color: var(--color-danger);
@@ -138,11 +252,41 @@
     white-space: nowrap;
     border-width: 0;
   }
+  /* Letter-spacing and capitals are for Latin only; they break Sinhala and Tamil letters apart. */
+  html:not([lang='en']) .eyebrow {
+    letter-spacing: 0.01em;
+    text-transform: none;
+    font-size: 0.95rem;
+  }
+  /* Page titles get a short ornamental underline. */
+  .page-title::after {
+    content: '';
+    display: block;
+    width: 4.5rem;
+    height: 10px;
+    margin-top: 0.6rem;
+    background:
+      linear-gradient(var(--color-gold), var(--color-gold)) left center / 100% 1px no-repeat,
+      linear-gradient(45deg, transparent 40%, var(--color-gold) 40% 60%, transparent 60%) center / 10px 10px
+        no-repeat;
+  }
+  .text-center .page-title::after,
+  .page-title.text-center::after {
+    margin-inline: auto;
+  }
   .prose :where(h2) {
-    @apply mt-10 mb-3 text-2xl font-bold;
+    @apply mt-10 mb-3 text-3xl;
   }
   .prose :where(h3) {
-    @apply mt-8 mb-2 text-xl font-bold;
+    @apply mt-8 mb-2 text-2xl;
+  }
+  html[lang='si'] .prose :where(h2),
+  html[lang='ta'] .prose :where(h2) {
+    @apply text-2xl;
+  }
+  html[lang='si'] .prose :where(h3),
+  html[lang='ta'] .prose :where(h3) {
+    @apply text-xl;
   }
   .prose :where(p, ul, ol, blockquote) {
     @apply my-4;
@@ -154,10 +298,86 @@
     @apply list-decimal pl-6;
   }
   .prose :where(blockquote) {
-    @apply border-l-4 border-gold pl-4 text-ink-soft italic;
+    @apply rounded-r-lg border-l-4 border-gold bg-paper-dark/60 py-2 pl-4 text-ink-soft italic;
   }
   .prose :where(img) {
-    @apply my-6 rounded-md;
+    @apply my-6 rounded-xl;
+  }
+  /* ---- Motion ---- */
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes rise {
+    from {
+      transform: translateY(28px);
+    }
+    to {
+      transform: none;
+    }
+  }
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes spin-in {
+    from {
+      opacity: 0;
+      transform: rotate(-120deg) scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  /* Sections fade up as they scroll into view. Pure CSS, so nothing stays hidden if scripts fail;
+     browsers without scroll-driven animations simply show the content. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      [data-reveal] {
+        animation: fade-up linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 55%;
+      }
+    }
+  }
+  /* Intro animations wait until the page has loaded (see clientInit), so they don't compete
+     with fonts and images on slow phones. Without scripts they simply run straight away. */
+  @media (scripting: enabled) {
+    html:not(.is-ready) :is(.enter, .hero-map, .hero-map *, .author-reveal, .author-reveal *) {
+      animation-play-state: paused !important;
+    }
+  }
+  /* Hero entrance: movement only, so text is painted (and readable) from the first frame. */
+  .enter {
+    animation: rise 0.9s var(--ease-out-soft) both;
+  }
+  .enter-1 {
+    animation-delay: 0.1s;
+  }
+  .enter-2 {
+    animation-delay: 0.25s;
+  }
+  .enter-3 {
+    animation-delay: 0.4s;
+  }
+  .enter-4 {
+    animation-delay: 0.55s;
   }
 }
 

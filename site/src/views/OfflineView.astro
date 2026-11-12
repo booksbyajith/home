@@ -12,11 +12,11 @@ const t = useT(lang);
 ---
 
 <BaseLayout lang={lang} title={t('offline.title')} description={t('offline.body')} noindex>
-  <section class="container-page py-16 text-center" data-offline>
+  <section class="container-page pt-16 pb-12 text-center md:pt-24" data-offline>
     <p class="text-5xl" aria-hidden="true">
       📖
     </p>
-    <h1 class="mt-4 text-3xl font-bold">{t('offline.title')}</h1>
+    <h1 class="page-title mt-4">{t('offline.title')}</h1>
     <p class="mx-auto mt-3 max-w-prose text-lg">{t('offline.body')}</p>
     <p class="mt-6">
       <a class="btn-primary" href={href(lang, '/')}>

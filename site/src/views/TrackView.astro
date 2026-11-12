@@ -13,8 +13,8 @@ const dict = pick(lang, ['track.', 'status.']);
 ---
 
 <BaseLayout lang={lang} title={t('track.title')} description={t('track.intro')}>
-  <section class="container-page py-8">
-    <h1 class="text-3xl font-bold">{t('track.title')}</h1>
+  <section class="container-page pt-12 pb-10 md:pt-16">
+    <h1 class="page-title">{t('track.title')}</h1>
     <p class="mt-2 max-w-prose text-lg text-ink-soft">{t('track.intro')}</p>
     <div class="mt-6">
       <TrackApp client:load lang={lang} dict={dict} />

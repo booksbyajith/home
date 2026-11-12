@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Builds responsive WebP variants of covers, sample pages and the author portrait into
+// Builds responsive AVIF and WebP variants of covers, sample pages and the author portrait into
 // site/public/_gen/ and writes site/src/generated/images.json with each source's size.
 import { existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
@@ -30,10 +30,23 @@ for (const d of DIRS) {
       meta.width && meta.width <= 960 ? [meta.width] : [],
     )) {
       const target = path.join(out, rel.replace(/\.[a-z]+$/i, `-${w}.webp`));
+      const avifTarget = target.replace(/\.webp$/, '.avif');
       const srcTime = statSync(file).mtimeMs;
-      if (!existsSync(target) || statSync(target).mtimeMs < srcTime) {
+      const stale = (t) => !existsSync(t) || statSync(t).mtimeMs < srcTime;
+      // AVIF first in <picture>: about half the size of WebP for these images.
+      if (stale(avifTarget)) {
+        mkdirSync(path.dirname(avifTarget), { recursive: true });
+        await sharp(file).resize({ width: w }).avif({ quality: 55, effort: 4 }).toFile(avifTarget);
+      }
+      if (stale(target)) {
         mkdirSync(path.dirname(target), { recursive: true });
-        await sharp(file).resize({ width: w }).webp({ quality: 78 }).toFile(target);
+        // Fine paper and cloth textures compress badly; if a variant is over budget, a very light
+        // denoise (invisible at this size) roughly halves it.
+        const budget = w * 200;
+        let buf = await sharp(file).resize({ width: w }).webp({ quality: 76, effort: 6 }).toBuffer();
+        if (buf.length > budget)
+          buf = await sharp(file).resize({ width: w }).blur(0.8).webp({ quality: 72, effort: 6 }).toBuffer();
+        writeFileSync(target, buf);
       }
       variants.push(w);
     }

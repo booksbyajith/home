@@ -15,9 +15,9 @@ const dict = pick(lang, ['bulk.', 'form.', 'order.field.optional']);
 ---
 
 <BaseLayout lang={lang} title={t('bulk.title')} description={t('bulk.intro')}>
-  <section class="container-page py-8">
+  <section class="container-page pt-12 pb-10 md:pt-16">
     <div class="prose-page">
-      <h1 class="text-3xl font-bold">{t('bulk.title')}</h1>
+      <h1 class="page-title">{t('bulk.title')}</h1>
       <p class="mt-2 text-lg">{t('bulk.intro')}</p>
       <div class="mt-6">
         <EnquiryForm client:visible lang={lang} dict={dict} books={books} />

@@ -23,8 +23,8 @@ const dict = pick(lang, ['order.', 'books.', 'site.copy', 'site.copied', 'nav.co
 ---
 
 <BaseLayout lang={lang} title={t('order.title')} description={t('order.payment.instructions')}>
-  <section class="container-page py-8">
-    <h1 class="text-3xl font-bold">{t('order.title')}</h1>
+  <section class="container-page pt-12 pb-10 md:pt-16">
+    <h1 class="page-title">{t('order.title')}</h1>
     <div class="mt-6">
       <OrderApp
         client:load

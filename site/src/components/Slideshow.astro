@@ -12,66 +12,71 @@ interface Props {
 }
 const { lang, books } = Astro.props;
 const t = useT(lang);
+const n = books.length;
+// Server-rendered positions for the first slide, so the layout is right before scripts run.
+const pos = (i: number) => (i === 0 ? 'center' : i === 1 ? 'right' : i === n - 1 ? 'left' : 'hidden');
 ---
 
 <section
   aria-roledescription="carousel"
   aria-label={t('home.hero.label')}
-  class="relative"
+  class="relative overflow-x-clip py-2"
   data-slideshow
+  data-index="0"
   data-interval="5000"
   data-label-pause={t('home.hero.pause')}
   data-label-play={t('home.hero.play')}
 >
-  <div
-    class="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-    data-track
-    aria-live="off"
-  >
+  <div class="carousel-stage relative mx-auto" data-track aria-live="off">
     {books.map((b, i) => {
       const front = b.covers.find((c) => c.kind === 'front')!;
       return (
         <div
           role="group"
           aria-roledescription="slide"
-          aria-label={t('home.hero.slideOf', { n: i + 1, total: books.length })}
-          class="w-full shrink-0 snap-start"
+          aria-label={t('home.hero.slideOf', { n: i + 1, total: n })}
+          aria-hidden={i === 0 ? 'false' : 'true'}
+          class="carousel-slide"
           data-slide
+          data-pos={pos(i)}
         >
-          <div class="container-page grid items-center gap-6 py-8 md:grid-cols-[minmax(0,320px)_1fr] md:py-12">
-            <a
-              href={href(lang, `/books/${b.slug}/`)}
-              class="mx-auto block w-48 sm:w-60 md:w-full"
-              tabindex="-1"
-              aria-hidden="true"
-            >
-              <Cover
-                path={`/covers/${front.file}`}
-                alt=""
-                eager={i === 0}
-                sizes="(min-width: 768px) 320px, 240px"
-                class="rounded-md shadow-xl"
-              />
-            </a>
-            <div class="text-center md:text-left">
-              <p class="font-semibold text-gold">
-                {b.featured ? t('home.featured.title') : t('books.title')}
-              </p>
-              <p class="mt-1 font-serif text-2xl font-bold sm:text-4xl">{tl(b.title, lang)}</p>
-              {b.awards[0] && <p class="mt-2 text-ink-soft">🏅 {tl(b.awards[0], lang)}</p>}
-              <p class="mt-5">
-                <a href={href(lang, `/books/${b.slug}/`)} class="btn-primary">
-                  {t('books.viewDetails')}
-                </a>
-              </p>
-            </div>
+          <a
+            href={href(lang, `/books/${b.slug}/`)}
+            class="carousel-cover block"
+            tabindex="-1"
+            aria-hidden="true"
+            data-slide-cover={i}
+          >
+            <Cover
+              path={`/covers/${front.file}`}
+              alt=""
+              sizes="(min-width: 768px) 300px, 210px"
+              class="w-full rounded-md shadow-[0_24px_50px_-20px_rgb(43_29_18/0.6)]"
+            />
+          </a>
+          <div class="carousel-text mx-auto mt-8 max-w-xl text-center">
+            <p class="eyebrow">{b.featured ? t('home.featured.title') : t('books.title')}</p>
+            <p class="display-md mt-2 font-serif font-[var(--display-weight)] text-ink">
+              {tl(b.title, lang)}
+            </p>
+            {b.awards[0] && <p class="mt-2 text-ink-soft">🏅 {tl(b.awards[0], lang)}</p>}
+            <p class="mt-5 flex flex-wrap justify-center gap-3">
+              <a href={href(lang, `/books/${b.slug}/`)} class="btn-primary">
+                {t('books.viewDetails')}
+              </a>
+            </p>
           </div>
         </div>
       );
     })}
   </div>
-  <div class="container-page flex items-center justify-center gap-3 pb-4">
-    <button type="button" class="btn-quiet h-11 w-11 p-0 text-2xl" data-prev aria-label={t('home.hero.prev')}>
+  <div class="mt-6 flex items-center justify-center gap-2">
+    <button
+      type="button"
+      class="btn-quiet h-11 w-11 border border-line p-0 text-2xl"
+      data-prev
+      aria-label={t('home.hero.prev')}
+    >
       ‹
     </button>
     <div class="flex gap-1" role="group" aria-label={t('home.hero.label')}>
@@ -80,20 +85,103 @@ const t = useT(lang);
           type="button"
           class="group flex h-11 w-8 items-center justify-center"
           data-dot={i}
-          aria-label={t('home.hero.slideOf', { n: i + 1, total: books.length })}
+          aria-label={t('home.hero.slideOf', { n: i + 1, total: n })}
+          aria-current={i === 0 ? 'true' : 'false'}
         >
-          <span class="block h-3 w-3 rounded-full border-2 border-maroon group-aria-[current=true]:bg-maroon" />
+          <span class="block h-2.5 w-2.5 rotate-45 border border-maroon transition-all duration-300 group-aria-[current=true]:scale-125 group-aria-[current=true]:bg-maroon" />
         </button>
       ))}
     </div>
-    <button type="button" class="btn-quiet h-11 w-11 p-0 text-2xl" data-next aria-label={t('home.hero.next')}>
+    <button
+      type="button"
+      class="btn-quiet h-11 w-11 border border-line p-0 text-2xl"
+      data-next
+      aria-label={t('home.hero.next')}
+    >
       ›
     </button>
-    <button type="button" class="btn-quiet h-11 px-3 text-sm" data-toggle aria-pressed="false">
+    <button type="button" class="btn-quiet h-11 px-4 text-sm" data-toggle aria-pressed="false">
       {t('home.hero.pause')}
     </button>
   </div>
 </section>
+
+<style>
+  .carousel-stage {
+    display: grid;
+    max-width: 1000px;
+    touch-action: pan-y;
+  }
+  .carousel-slide {
+    grid-area: 1 / 1;
+    will-change: transform, opacity;
+    transition:
+      opacity 0.9s var(--ease-out-soft),
+      transform 0.9s var(--ease-out-soft),
+      filter 0.9s var(--ease-out-soft);
+  }
+  .carousel-cover {
+    width: min(300px, 58vw);
+    margin-inline: auto;
+    transition: transform 0.9s var(--ease-out-soft);
+  }
+  .carousel-cover :global(img) {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  .carousel-text {
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s var(--ease-out-soft);
+  }
+  .carousel-slide[data-pos='center'] {
+    z-index: 3;
+    opacity: 1;
+  }
+  .carousel-slide[data-pos='left'],
+  .carousel-slide[data-pos='right'] {
+    z-index: 2;
+    opacity: 0.55;
+    cursor: pointer;
+  }
+  /* The blur is only applied while the carousel is on screen: it is costly to keep around. */
+  [data-visible='true'] .carousel-slide:is([data-pos='left'], [data-pos='right']) {
+    filter: blur(3px) saturate(0.7);
+  }
+  .carousel-slide[data-pos='left'] {
+    transform: translateX(-34%) scale(0.72);
+  }
+  .carousel-slide[data-pos='right'] {
+    transform: translateX(34%) scale(0.72);
+  }
+  .carousel-slide[data-pos='hidden'] {
+    z-index: 1;
+    opacity: 0;
+    transform: scale(0.6);
+    pointer-events: none;
+  }
+  .carousel-slide:not([data-pos='center']) .carousel-text {
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    visibility: hidden;
+  }
+  .carousel-slide:not([data-pos='center']) .carousel-cover {
+    pointer-events: auto;
+  }
+  @media (max-width: 639px) {
+    .carousel-slide[data-pos='left'] {
+      transform: translateX(-46%) scale(0.62);
+    }
+    .carousel-slide[data-pos='right'] {
+      transform: translateX(46%) scale(0.62);
+    }
+    .carousel-slide[data-pos='left'],
+    .carousel-slide[data-pos='right'] {
+      opacity: 0.4;
+    }
+  }
+</style>
 
 <script>
   import { initSlideshow } from '../lib/slideshow';

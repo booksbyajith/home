@@ -28,8 +28,8 @@ const jsonLd = events.map((e) => ({
 ---
 
 <BaseLayout lang={lang} title={t('events.title')} description={t('press.intro')} jsonLd={jsonLd}>
-  <section class="container-page py-10">
-    <h1 class="text-3xl font-bold">{t('events.title')}</h1>
+  <section class="container-page pt-12 pb-10 md:pt-16">
+    <h1 class="page-title">{t('events.title')}</h1>
     <h2 class="mt-8 text-2xl font-bold">{t('events.upcoming')}</h2>
     {upcoming.length === 0 && <p class="mt-2 text-ink-soft">{t('events.none')}</p>}
     <div class="mt-4 grid gap-4 md:grid-cols-2">

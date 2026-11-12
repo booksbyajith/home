@@ -16,9 +16,9 @@ const { Content } = await render(page);
 ---
 
 <BaseLayout lang={lang} title={page.data.title} description={page.data.description}>
-  <article class="container-page py-10">
+  <article class="container-page pt-12 pb-10 md:pt-16">
     <div class="prose-page">
-      <h1 class="text-3xl font-bold">{page.data.title}</h1>
+      <h1 class="page-title">{page.data.title}</h1>
       <p class="mt-1 text-sm text-ink-soft">
         {t('post.updated')}: {formatDate(lang, page.data.updated)}
       </p>

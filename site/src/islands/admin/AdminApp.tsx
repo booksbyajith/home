@@ -226,7 +226,7 @@ function Shell(p: {
           <ul class="relative grid grid-cols-3 gap-1 sm:grid-cols-5 lg:grid-cols-9 lg:gap-0" data-admin-tabs>
             <li
               aria-hidden="true"
-              class="pointer-events-none absolute inset-y-0 left-0 hidden rounded bg-maroon transition-transform duration-300 ease-out motion-reduce:transition-none lg:block"
+              class="pointer-events-none absolute inset-y-0 left-0 hidden rounded-full bg-maroon transition-transform duration-300 ease-out motion-reduce:transition-none lg:block"
               style={{ width: `${100 / NAV.length}%`, transform: `translateX(${activeIndex * 100}%)` }}
               data-tab-indicator
             />
@@ -237,7 +237,7 @@ function Shell(p: {
                   <a
                     href={`#${h}`}
                     aria-current={active ? 'page' : undefined}
-                    class={`flex min-h-12 items-center justify-center rounded px-1 py-1 text-center text-sm leading-tight no-underline transition-colors duration-300 xl:text-base ${
+                    class={`flex min-h-12 items-center justify-center rounded-full px-2 py-1 text-center text-sm leading-tight [overflow-wrap:anywhere] no-underline transition-colors duration-300 xl:text-base ${
                       active ? 'bg-maroon text-white lg:bg-transparent' : 'text-ink hover:bg-paper'
                     }`}
                     title={t(k)}

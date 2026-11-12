@@ -10,10 +10,10 @@ const t = useT(lang);
 ---
 
 <div data-social data-lang={lang} data-play-label={t('home.reels.play')}>
-  <section class="container-page mt-14" data-story hidden aria-labelledby="story-h">
+  <section class="container-page mt-24" data-story hidden aria-labelledby="story-h">
     <div class="card grid gap-4 p-6 md:grid-cols-[1fr_auto] md:items-center">
       <div>
-        <h2 id="story-h" class="text-2xl font-bold">
+        <h2 id="story-h" class="display-md">
           {t('home.story.title')}
         </h2>
         <p class="mt-2 text-lg font-semibold" data-story-title></p>
@@ -24,8 +24,8 @@ const t = useT(lang);
       </a>
     </div>
   </section>
-  <section class="container-page mt-14" data-reels hidden aria-labelledby="reels-h">
-    <h2 id="reels-h" class="text-2xl font-bold">
+  <section class="container-page mt-24" data-reels hidden aria-labelledby="reels-h">
+    <h2 id="reels-h" class="display-md">
       {t('home.reels.title')}
     </h2>
     <ul class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-reel-list></ul>

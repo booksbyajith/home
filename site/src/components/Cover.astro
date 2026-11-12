@@ -7,6 +7,8 @@ interface Props {
   sizes?: string;
   class?: string;
   eager?: boolean;
+  /** Fetch first: only for the page's main image (its largest paint). */
+  priority?: boolean;
 }
 const {
   path,
@@ -14,19 +16,21 @@ const {
   sizes = '(min-width: 1024px) 320px, 60vw',
   class: className = '',
   eager = false,
+  priority = false,
 } = Astro.props;
 const i = img(path);
 ---
 
 <picture>
+  {i.avifSrcset && <source type="image/avif" srcset={i.avifSrcset} sizes={sizes} />}
   {i.srcset && <source type="image/webp" srcset={i.srcset} sizes={sizes} />}
   <img
     src={i.src}
     alt={alt}
     width={i.width}
     height={i.height}
-    loading={eager ? 'eager' : 'lazy'}
-    fetchpriority={eager ? 'high' : undefined}
+    loading={eager || priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : undefined}
     decoding="async"
     class={className}
   />

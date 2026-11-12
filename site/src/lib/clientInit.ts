@@ -32,6 +32,11 @@ function pixel() {
 }
 
 export function initClient(): void {
+  // Start the intro animations once everything on the first screen has loaded.
+  const ready = () => requestAnimationFrame(() => document.documentElement.classList.add('is-ready'));
+  if (document.readyState === 'complete') ready();
+  else window.addEventListener('load', ready, { once: true });
+
   initConfigLinks();
   trackPageView();
   pixel();

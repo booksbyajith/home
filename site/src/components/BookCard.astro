@@ -18,13 +18,18 @@ const front = book.covers.find((c) => c.kind === 'front')!;
 const url = href(lang, `/books/${book.slug}/`);
 ---
 
-<article class="card flex flex-col gap-4 p-4 sm:flex-row">
+<article class="card card-hover group flex flex-col gap-5 p-5 sm:flex-row sm:p-6">
   <a href={url} class="block w-40 shrink-0 self-center sm:self-start" tabindex="-1" aria-hidden="true">
-    <Cover path={`/covers/${front.file}`} alt="" sizes="160px" class="rounded shadow-md" />
+    <Cover
+      path={`/covers/${front.file}`}
+      alt=""
+      sizes="160px"
+      class="rounded-md shadow-lg transition-transform duration-500 group-hover:-rotate-2"
+    />
   </a>
   <div class="flex flex-1 flex-col gap-2">
-    <h2 class="text-xl font-bold" lang={tl(book.title, lang) === book.title.si ? 'si' : lang}>
-      <a href={url} class="text-ink no-underline hover:underline">
+    <h2 class="text-2xl leading-snug" lang={tl(book.title, lang) === book.title.si ? 'si' : lang}>
+      <a href={url} class="text-ink no-underline hover:text-maroon">
         {tl(book.title, lang)}
       </a>
     </h2>

@@ -62,5 +62,8 @@ test('refresh mid-form restores every field, the step, the cart and the slip', a
   await page.reload();
   await ready(page);
   await expect(page.locator('[data-testid="draft-banner"]')).toBeHidden();
-  expect(await page.evaluate(() => localStorage.getItem('aj.orderDraft.v1'))).not.toContain('Colombo');
+  // The draft is either removed or replaced by an empty one; either way the old address is gone.
+  expect((await page.evaluate(() => localStorage.getItem('aj.orderDraft.v1'))) ?? '').not.toContain(
+    'Colombo',
+  );
 });

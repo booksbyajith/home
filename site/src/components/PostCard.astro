@@ -16,28 +16,36 @@ const t = useT(lang);
 const url = href(lang, `/${kind}/${postSlug(post)}/`);
 ---
 
-<article class="card flex h-full flex-col overflow-hidden">
+<article class="card card-hover group relative flex h-full flex-col overflow-hidden">
   {post.data.cover && (
-    <a href={url} tabindex="-1" aria-hidden="true" class="block aspect-[16/9] overflow-hidden bg-paper-dark">
+    <a href={url} tabindex="-1" aria-hidden="true" class="block aspect-[16/10] overflow-hidden bg-paper-dark">
       <Cover
         path={post.data.cover}
         alt=""
         sizes="(min-width: 1024px) 380px, 90vw"
-        class="h-full w-full object-cover"
+        class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
       />
     </a>
   )}
-  <div class="flex flex-1 flex-col p-4">
-    <p class="text-sm text-ink-soft">
-      <span class="badge bg-paper-dark text-ink">{t(kind === 'news' ? 'news.title' : 'blog.title')}</span>
-      <time datetime={post.data.date.toISOString()}>{formatDate(lang, post.data.date)}</time> ·{' '}
-      {t('post.readingTime', { min: postMinutes(post) })}
+  <div class="flex flex-1 flex-col p-5">
+    <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-soft">
+      <span class="eyebrow text-xs">{t(kind === 'news' ? 'news.title' : 'blog.title')}</span>
+      <span aria-hidden="true" class="text-gold">
+        ◆
+      </span>
+      <time datetime={post.data.date.toISOString()}>{formatDate(lang, post.data.date)}</time>
+      <span aria-hidden="true">·</span>
+      <span>{t('post.readingTime', { min: postMinutes(post) })}</span>
     </p>
-    <H class="mt-2 text-xl font-bold">
-      <a href={url} class="text-ink no-underline hover:underline">
+    <H class="mt-3 text-2xl leading-snug">
+      <a href={url} class="text-ink no-underline group-hover:text-maroon">
+        <span class="absolute inset-0 z-[1]" aria-hidden="true"></span>
         {post.data.title}
       </a>
     </H>
-    <p class="mt-2 text-ink-soft">{post.data.description}</p>
+    <p class="mt-2 line-clamp-3 text-ink-soft">{post.data.description}</p>
+    <p class="mt-auto pt-4 text-sm font-semibold text-maroon" aria-hidden="true">
+      <span class="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+    </p>
   </div>
 </article>

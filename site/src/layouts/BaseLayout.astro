@@ -2,6 +2,9 @@
 import '../styles/global.css';
 import sansSinhala400 from '@fontsource/noto-sans-sinhala/files/noto-sans-sinhala-sinhala-400-normal.woff2?url';
 import serifSinhala700 from '@fontsource/noto-serif-sinhala/files/noto-serif-sinhala-sinhala-700-normal.woff2?url';
+import sansTamil400 from '@fontsource/noto-sans-tamil/files/noto-sans-tamil-tamil-400-normal.woff2?url';
+import figtree400 from '@fontsource/figtree/files/figtree-latin-400-normal.woff2?url';
+import cormorant600 from '@fontsource/cormorant-garamond/files/cormorant-garamond-latin-600-normal.woff2?url';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import PixelConsent from '../components/PixelConsent.astro';
@@ -13,6 +16,12 @@ type Props = SeoProps & { mainClass?: string; bare?: boolean };
 const props = Astro.props as Props;
 const { lang, mainClass = '', bare = false } = props;
 const t = useT(lang);
+// Preload only the fonts the first screen of this language needs.
+const preloads = {
+  si: [sansSinhala400, serifSinhala700],
+  en: [figtree400, cormorant600],
+  ta: [sansTamil400, figtree400],
+}[lang];
 ---
 
 <!doctype html>
@@ -20,10 +29,11 @@ const t = useT(lang);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#7a1f1f" />
+    <meta name="theme-color" content="#6f4626" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <link rel="preload" href={sansSinhala400} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={serifSinhala700} as="font" type="font/woff2" crossorigin />
+    {preloads.map((f) => (
+      <link rel="preload" href={f} as="font" type="font/woff2" crossorigin />
+    ))}
     <link rel="icon" href={asset('/icons/favicon.svg')} type="image/svg+xml" />
     <link rel="icon" href={asset('/icons/favicon-32.png')} sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href={asset('/icons/apple-touch-icon.png')} />
@@ -38,7 +48,10 @@ const t = useT(lang);
     <slot name="head" />
   </head>
   <body class="flex min-h-screen flex-col">
-    <a href="#main" class="sr-only-focusable absolute top-2 left-2 z-50 rounded bg-ink px-4 py-2 text-white">
+    <a
+      href="#main"
+      class="sr-only-focusable absolute top-2 left-2 z-50 rounded-full bg-ink px-4 py-2 text-white"
+    >
       {t('site.skipToContent')}
     </a>
     {!bare && <Header lang={lang} alternates={props.alternates} fallbackPath={props.fallbackPath} />}

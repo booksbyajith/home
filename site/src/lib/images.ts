@@ -8,7 +8,17 @@ const m = manifest as Record<string, Entry>;
 export function img(publicPath: string) {
   const e = m[publicPath];
   const src = asset(publicPath);
-  if (!e) return { src, width: 1200, height: 1800, srcset: undefined as string | undefined };
-  const webp = e.variants.map((w) => `${asset(publicPath.replace(/\.[a-z]+$/i, `-${w}.webp`).replace(/^\//, '/_gen/'))} ${w}w`);
-  return { src, width: e.width, height: e.height, srcset: webp.length ? webp.join(', ') : undefined };
+  if (!e)
+    return {
+      src,
+      width: 1200,
+      height: 1800,
+      srcset: undefined as string | undefined,
+      avifSrcset: undefined as string | undefined,
+    };
+  const set = (ext: string) =>
+    e.variants
+      .map((w) => `${asset(publicPath.replace(/\.[a-z]+$/i, `-${w}.${ext}`).replace(/^\//, '/_gen/'))} ${w}w`)
+      .join(', ') || undefined;
+  return { src, width: e.width, height: e.height, srcset: set('webp'), avifSrcset: set('avif') };
 }

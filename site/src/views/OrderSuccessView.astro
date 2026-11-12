@@ -21,9 +21,9 @@ const dict = pick(lang, [
 ---
 
 <BaseLayout lang={lang} title={t('success.title')} description={t('success.thanks')} noindex>
-  <section class="container-page py-8">
+  <section class="container-page pt-12 pb-10 md:pt-16">
     <div class="prose-page">
-      <h1 class="text-3xl font-bold">✓ {t('success.title')}</h1>
+      <h1 class="page-title">✓ {t('success.title')}</h1>
       <p class="mt-2 text-lg">{t('success.thanks')}</p>
       <SuccessApp
         client:load

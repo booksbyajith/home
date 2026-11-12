@@ -28,8 +28,8 @@ const intro = t(kind === 'news' ? 'news.intro' : 'blog.intro');
   fallbackPath={`/${kind}/`}
   noindex={!!tag}
 >
-  <section class="container-page py-10">
-    <h1 class="text-3xl font-bold">{title}</h1>
+  <section class="container-page pt-12 pb-10 md:pt-16">
+    <h1 class="page-title">{title}</h1>
     <p class="mt-2 text-lg text-ink-soft">{intro}</p>
     {tags.length > 0 && kind === 'blog' && (
       <nav class="mt-4 flex flex-wrap gap-2" aria-label={t('post.tags')}>

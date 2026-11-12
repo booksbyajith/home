@@ -13,8 +13,8 @@ const dict = pick(lang, ['newsletter.unsub.', 'site.loading', 'site.error.generi
 ---
 
 <BaseLayout lang={lang} title={t('newsletter.unsub.title')} description={t('newsletter.unsub.title')} noindex>
-  <section class="container-page py-10">
-    <h1 class="text-3xl font-bold">{t('newsletter.unsub.title')}</h1>
+  <section class="container-page pt-12 pb-10 md:pt-16">
+    <h1 class="page-title">{t('newsletter.unsub.title')}</h1>
     <Unsubscribe client:load dict={dict} />
   </section>
 </BaseLayout>

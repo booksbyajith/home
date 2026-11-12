@@ -18,12 +18,12 @@ const shown = upcoming.length ? upcoming.slice(0, 3) : past.slice(0, 2);
 ---
 
 <BaseLayout lang={lang} title={t('press.title')} description={t('press.intro')}>
-  <section class="container-page py-10">
-    <h1 class="text-3xl font-bold">{t('press.title')}</h1>
+  <section class="container-page pt-12 pb-10 md:pt-16">
+    <h1 class="page-title">{t('press.title')}</h1>
     <p class="mt-2 text-lg text-ink-soft">{t('press.intro')}</p>
     <div class="mt-8 grid gap-10 lg:grid-cols-2">
       <section>
-        <h2 class="text-2xl font-bold">{t('press.coverage')}</h2>
+        <h2 class="display-md">{t('press.coverage')}</h2>
         <ul class="mt-4 space-y-3">
           {press.map((p) => (
             <li class="card p-4">
@@ -40,7 +40,7 @@ const shown = upcoming.length ? upcoming.slice(0, 3) : past.slice(0, 2);
         </ul>
       </section>
       <section>
-        <h2 class="text-2xl font-bold">{upcoming.length ? t('press.upcoming') : t('events.past')}</h2>
+        <h2 class="display-md">{upcoming.length ? t('press.upcoming') : t('events.past')}</h2>
         {!upcoming.length && <p class="mt-2 text-ink-soft">{t('events.none')}</p>}
         <div class="mt-4 space-y-3">
           {shown.map((e) => (

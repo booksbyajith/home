@@ -95,6 +95,12 @@ importers:
       '@astrojs/rss':
         specifier: 4.0.19
         version: 4.0.19
+      '@fontsource/cormorant-garamond':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource/figtree':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@fontsource/noto-sans-sinhala':
         specifier: 5.3.0
         version: 5.3.0
@@ -885,6 +891,12 @@ packages:
 
   '@firebase/webchannel-wrapper@1.0.7':
     resolution: {integrity: sha512-phBFwieDLvkZGYN9CE9ZFNEIoBVksprzsnCzQejCmCHtgwCXReeuRpoEGN9C4EbhONztv8NRV1tau6Rb9pONwQ==}
+
+  '@fontsource/cormorant-garamond@5.3.0':
+    resolution: {integrity: sha512-weuGsCirGVWBWqpt6YUp0yLThTe4G8YO45noq8wxeJCRvEpq5lFrxNMFSTxcyOyV5k5otzJ8guDzYegdYlcLMQ==}
+
+  '@fontsource/figtree@5.3.0':
+    resolution: {integrity: sha512-/iTcTXL1eRBGhvD7NN9dnKzXzWqDLVZVEUFI9xIxAC1G/hXU8tCyYeXCAuPOuvSYPInFUP7H6KLGgygmDfy1SA==}
 
   '@fontsource/noto-sans-sinhala@5.3.0':
     resolution: {integrity: sha512-g52kQSjsB3vHmFbp6zrPfumJxZADhsssOHd3fMkN+hCK1JrpKvSudtJMAAGuVUcrC7r9dqNmmslj7I9VU1dzbw==}
@@ -7044,6 +7056,10 @@ snapshots:
       tslib: 2.9.1
 
   '@firebase/webchannel-wrapper@1.0.7': {}
+
+  '@fontsource/cormorant-garamond@5.3.0': {}
+
+  '@fontsource/figtree@5.3.0': {}
 
   '@fontsource/noto-sans-sinhala@5.3.0': {}
 

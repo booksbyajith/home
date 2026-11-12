@@ -27,8 +27,8 @@ const long = {
 ---
 
 <BaseLayout lang={lang} title={t('pressKit.title')} description={t('pressKit.intro')}>
-  <section class="container-page py-10">
-    <h1 class="text-3xl font-bold">{t('pressKit.title')}</h1>
+  <section class="container-page pt-12 pb-10 md:pt-16">
+    <h1 class="page-title">{t('pressKit.title')}</h1>
     <p class="mt-2 text-lg text-ink-soft">{t('pressKit.intro')}</p>
     <div class="mt-8 grid gap-10 lg:grid-cols-[280px_1fr]">
       <figure>
@@ -45,7 +45,7 @@ const long = {
         </figcaption>
       </figure>
       <div class="max-w-[72ch]">
-        <h2 class="text-2xl font-bold">{t('pressKit.shortBio')}</h2>
+        <h2 class="display-md">{t('pressKit.shortBio')}</h2>
         <p class="mt-2">{short}</p>
         <h2 class="mt-8 text-2xl font-bold">{t('pressKit.longBio')}</h2>
         <p class="mt-2">{long}</p>
