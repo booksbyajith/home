@@ -1,18 +1,132 @@
 ---
 import type { Lang } from '@shared/constants';
+import Cover from '../components/Cover.astro';
+import PostCard from '../components/PostCard.astro';
+import Slideshow from '../components/Slideshow.astro';
+import SocialSection from '../components/SocialSection.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { useT } from '../i18n';
+import { formatDate, useT } from '../i18n';
+import { getBookText, getBooks, getLatest } from '../lib/content';
+import { absUrl, href } from '../lib/paths';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useT(lang);
+const books = await getBooks();
+const featured = books.find((b) => b.featured) ?? books[0];
+const featuredText = await getBookText(featured.slug, lang);
+const latest = await getLatest(lang, 3);
+const front = featured.covers.find((c) => c.kind === 'front')!;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: t('site.name'),
+  url: absUrl(href(lang, '/')),
+  inLanguage: lang,
+};
+const authorIntro =
+  lang === 'si'
+    ? 'වෘත්තියෙන් වෛද්‍ය විශේෂඥයෙකු වන ආචාර්ය අජිත් අමරසිංහ ශ්‍රී ලංකා රාජකීය ආසියාතික සංගමයේ සාමාජිකයෙකු සහ ඓතිහාසික පර්යේෂණ කෘති තුනක කතුවරයා වේ.'
+    : 'A medical specialist by profession, Dr. Ajith Amarasinghe is a member of the Royal Asiatic Society of Sri Lanka and the author of three historical research works.';
 ---
 
-<BaseLayout lang={lang} title={t('site.name')} description={t('site.tagline')}>
-  <section class="container-page py-12">
-    <h1 class="text-3xl font-bold">{t('site.name')}</h1>
-    <p class="mt-2 text-lg text-ink-soft">{t('site.tagline')}</p>
+<BaseLayout
+  lang={lang}
+  title={t('site.name')}
+  description={`${t('site.tagline')}. ${authorIntro}`}
+  jsonLd={jsonLd}
+>
+  <h1 class="sr-only">
+    {t('site.name')} — {t('site.tagline')}
+  </h1>
+  <div class="border-b border-line bg-paper-dark">
+    <Slideshow lang={lang} books={books} />
+  </div>
+
+  <section class="container-page mt-14" aria-labelledby="featured-h">
+    <div class="card grid gap-6 p-6 md:grid-cols-[220px_1fr] md:p-8">
+      <Cover
+        path={`/covers/${front.file}`}
+        alt={front.alt[lang]}
+        sizes="220px"
+        class="mx-auto w-44 rounded shadow-lg md:w-full"
+      />
+      <div>
+        <p class="font-semibold text-gold">{t('home.featured.title')}</p>
+        <h2 id="featured-h" class="mt-1 text-3xl font-bold">
+          {featured.title[lang]}
+        </h2>
+        {featured.launch && (
+          <p class="mt-2 text-ink-soft">
+            {t('home.featured.launched', {
+              date: formatDate(lang, featured.launch.date),
+              venue: featured.launch.venue[lang],
+            })}
+          </p>
+        )}
+        {featuredText && <p class="mt-3 text-lg">{featuredText.data.summary}</p>}
+        <p class="mt-5 flex flex-wrap gap-3">
+          <a href={href(lang, `/order/?book=${featured.slug}`)} class="btn-primary" data-featured-order>
+            {t('home.featured.orderNow')}
+          </a>
+          <a href={href(lang, `/books/${featured.slug}/`)} class="btn-secondary">
+            {t('home.featured.details')}
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {latest.length > 0 && (
+    <section class="container-page mt-14" aria-labelledby="latest-h">
+      <div class="flex items-baseline justify-between gap-4">
+        <h2 id="latest-h" class="text-2xl font-bold">
+          {t('home.latest.title')}
+        </h2>
+        <a href={href(lang, '/news/')}>{t('home.latest.all')} →</a>
+      </div>
+      <div class="mt-4 grid gap-6 md:grid-cols-3">
+        {latest.map(({ kind, post }) => (
+          <PostCard lang={lang} kind={kind} post={post} headingLevel="h3" />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="container-page mt-14" aria-labelledby="author-h">
+    <div class="grid items-center gap-6 md:grid-cols-[200px_1fr]">
+      <Cover
+        path="/author/author-portrait.jpg"
+        alt={t('pressKit.photo')}
+        sizes="200px"
+        class="mx-auto w-40 rounded-full md:w-full"
+      />
+      <div>
+        <h2 id="author-h" class="text-2xl font-bold">
+          {t('home.author.title')}
+        </h2>
+        <p class="mt-2 text-lg">{authorIntro}</p>
+        <p class="mt-3 flex flex-wrap gap-4">
+          <a href={href(lang, '/about/')}>{t('home.author.more')} →</a>
+          <a href="#" data-config="facebook" hidden target="_blank" rel="noopener">
+            {t('footer.facebook')} ↗
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <SocialSection lang={lang} />
+
+  <section class="container-page mt-14" aria-labelledby="news-h">
+    <div class="card bg-paper-dark p-6 md:p-8">
+      <h2 id="news-h" class="text-2xl font-bold">
+        {t('home.newsletter.title')}
+      </h2>
+      <p class="mt-2">{t('home.newsletter.blurb')}</p>
+      <div data-island="newsletter" data-source="home" class="mt-4"></div>
+    </div>
   </section>
 </BaseLayout>

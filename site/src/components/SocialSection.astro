@@ -1,0 +1,63 @@
+---
+import type { Lang } from '@shared/constants';
+import { useT } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+---
+
+<div data-social data-lang={lang} data-play-label={t('home.reels.play')}>
+  <section class="container-page mt-14" data-story hidden aria-labelledby="story-h">
+    <div class="card grid gap-4 p-6 md:grid-cols-[1fr_auto] md:items-center">
+      <div>
+        <h2 id="story-h" class="text-2xl font-bold">
+          {t('home.story.title')}
+        </h2>
+        <p class="mt-2 text-lg font-semibold" data-story-title></p>
+        <p class="mt-1 text-ink-soft" data-story-blurb></p>
+      </div>
+      <a href="#" class="btn-primary" data-story-link target="_blank" rel="noopener">
+        {t('home.story.watch')} ↗
+      </a>
+    </div>
+  </section>
+  <section class="container-page mt-14" data-reels hidden aria-labelledby="reels-h">
+    <h2 id="reels-h" class="text-2xl font-bold">
+      {t('home.reels.title')}
+    </h2>
+    <ul class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-reel-list></ul>
+    <p class="mt-4">
+      <a href="#" data-config="facebook" hidden target="_blank" rel="noopener">
+        {t('home.reels.onFacebook')} ↗
+      </a>
+    </p>
+  </section>
+</div>
+
+<template data-reel-template>
+  <li class="card overflow-hidden">
+    <div class="relative aspect-[9/12] bg-ink" data-reel-frame>
+      <button
+        type="button"
+        class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-white"
+        data-reel-play
+      >
+        <span
+          class="flex h-16 w-16 items-center justify-center rounded-full bg-maroon text-3xl"
+          aria-hidden="true"
+        >
+          ▶
+        </span>
+        <span class="text-center font-semibold" data-reel-title></span>
+      </button>
+    </div>
+  </li>
+</template>
+
+<script>
+  import { initSocial } from '../lib/social';
+  initSocial();
+</script>

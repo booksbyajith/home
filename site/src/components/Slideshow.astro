@@ -1,0 +1,100 @@
+---
+import type { Lang } from '@shared/constants';
+import { useT } from '../i18n';
+import type { BookFacts } from '../lib/content';
+import { href } from '../lib/paths';
+import Cover from './Cover.astro';
+
+interface Props {
+  lang: Lang;
+  books: BookFacts[];
+}
+const { lang, books } = Astro.props;
+const t = useT(lang);
+---
+
+<section
+  aria-roledescription="carousel"
+  aria-label={t('home.hero.label')}
+  class="relative"
+  data-slideshow
+  data-interval="5000"
+  data-label-pause={t('home.hero.pause')}
+  data-label-play={t('home.hero.play')}
+>
+  <div
+    class="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    data-track
+    aria-live="off"
+  >
+    {books.map((b, i) => {
+      const front = b.covers.find((c) => c.kind === 'front')!;
+      return (
+        <div
+          role="group"
+          aria-roledescription="slide"
+          aria-label={t('home.hero.slideOf', { n: i + 1, total: books.length })}
+          class="w-full shrink-0 snap-start"
+          data-slide
+        >
+          <div class="container-page grid items-center gap-6 py-8 md:grid-cols-[minmax(0,320px)_1fr] md:py-12">
+            <a
+              href={href(lang, `/books/${b.slug}/`)}
+              class="mx-auto block w-48 sm:w-60 md:w-full"
+              tabindex="-1"
+              aria-hidden="true"
+            >
+              <Cover
+                path={`/covers/${front.file}`}
+                alt=""
+                eager={i === 0}
+                sizes="(min-width: 768px) 320px, 240px"
+                class="rounded-md shadow-xl"
+              />
+            </a>
+            <div class="text-center md:text-left">
+              <p class="font-semibold text-gold">
+                {b.featured ? t('home.featured.title') : t('books.title')}
+              </p>
+              <p class="mt-1 font-serif text-2xl font-bold sm:text-4xl">{b.title[lang]}</p>
+              {b.awards[0] && <p class="mt-2 text-ink-soft">🏅 {b.awards[0][lang]}</p>}
+              <p class="mt-5">
+                <a href={href(lang, `/books/${b.slug}/`)} class="btn-primary">
+                  {t('books.viewDetails')}
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+  <div class="container-page flex items-center justify-center gap-3 pb-4">
+    <button type="button" class="btn-quiet h-11 w-11 p-0 text-2xl" data-prev aria-label={t('home.hero.prev')}>
+      ‹
+    </button>
+    <div class="flex gap-1" role="group" aria-label={t('home.hero.label')}>
+      {books.map((_, i) => (
+        <button
+          type="button"
+          class="group flex h-11 w-8 items-center justify-center"
+          data-dot={i}
+          aria-label={t('home.hero.slideOf', { n: i + 1, total: books.length })}
+        >
+          <span class="block h-3 w-3 rounded-full border-2 border-maroon group-aria-[current=true]:bg-maroon" />
+        </button>
+      ))}
+    </div>
+    <button type="button" class="btn-quiet h-11 w-11 p-0 text-2xl" data-next aria-label={t('home.hero.next')}>
+      ›
+    </button>
+    <button type="button" class="btn-quiet h-11 px-3 text-sm" data-toggle aria-pressed="false">
+      {t('home.hero.pause')}
+    </button>
+  </div>
+</section>
+
+<script>
+  import { initSlideshow } from '../lib/slideshow';
+  document.querySelectorAll<HTMLElement>('[data-slideshow]').forEach(initSlideshow);
+</script>
