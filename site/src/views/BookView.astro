@@ -5,8 +5,10 @@ import BookStatus from '../components/BookStatus.astro';
 import Cover from '../components/Cover.astro';
 import Lightbox from '../components/Lightbox.astro';
 import ShareButtons from '../components/ShareButtons.astro';
+import ReviewForm from '../islands/forms/ReviewForm';
+import StockAlertForm from '../islands/forms/StockAlertForm';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { formatDate, useT } from '../i18n';
+import { formatDate, pick, useT } from '../i18n';
 import { getBookText, getPress, getTestimonials, type BookFacts } from '../lib/content';
 import { absUrl, asset, href } from '../lib/paths';
 
@@ -147,7 +149,12 @@ const jsonLd = {
             <div slot="notify" data-notify-slot={book.slug}>
               <h2 class="font-sans text-lg font-semibold">{t('book.notify.title')}</h2>
               <p class="text-ink-soft">{t('book.notify.blurb')}</p>
-              <div data-island="stock-alert" data-slug={book.slug}></div>
+              <StockAlertForm
+                client:visible
+                lang={lang}
+                dict={pick(lang, ['book.notify.', 'order.field.', 'bulk.consent', 'form.'])}
+                slug={book.slug}
+              />
             </div>
           </BookStatus>
         </div>
@@ -221,15 +228,36 @@ const jsonLd = {
       <h2 id="reviews-h" class="text-2xl font-bold">
         {t('book.readerReviews')}
       </h2>
-      <div data-reviews={book.slug} data-empty={t('book.noReviews')} class="mt-4">
+      <div data-reviews={book.slug} data-lang={lang} class="mt-4">
         <p class="text-ink-soft" data-reviews-empty>
           {t('book.noReviews')}
         </p>
+        <ul class="grid gap-4 md:grid-cols-2" data-reviews-list></ul>
       </div>
+      <template data-review-template>
+        <li class="card p-4">
+          <p class="text-gold" data-review-stars></p>
+          <p class="mt-1" data-review-text></p>
+          <p class="mt-2 text-sm text-ink-soft">
+            — <span data-review-name></span>
+          </p>
+        </li>
+      </template>
+      <script>
+        import { initReviews } from '../lib/reviewsList';
+        initReviews();
+      </script>
       <details class="mt-4">
         <summary class="btn-secondary inline-flex">{t('book.writeReview')}</summary>
         <p class="mt-2 text-sm text-ink-soft">{t('review.moderated')}</p>
-        <div data-island="review" data-slug={book.slug} class="mt-3"></div>
+        <div class="mt-3">
+          <ReviewForm
+            client:visible
+            lang={lang}
+            dict={pick(lang, ['review.', 'bulk.consent', 'form.'])}
+            slug={book.slug}
+          />
+        </div>
       </details>
     </section>
 

@@ -1,18 +1,27 @@
 ---
 import type { Lang } from '@shared/constants';
+import EnquiryForm from '../islands/forms/EnquiryForm';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { useT } from '../i18n';
+import { pick, useT } from '../i18n';
+import { getBooks } from '../lib/content';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useT(lang);
+const books = (await getBooks()).map((b) => ({ slug: b.slug, title: b.title }));
+const dict = pick(lang, ['bulk.', 'form.', 'order.field.optional']);
 ---
 
 <BaseLayout lang={lang} title={t('bulk.title')} description={t('bulk.intro')}>
-  <section class="container-page py-10">
-    <h1 class="text-3xl font-bold">{t('bulk.title')}</h1>
-    <p class="mt-2 text-lg text-ink-soft">{t('bulk.intro')}</p>
+  <section class="container-page py-8">
+    <div class="prose-page">
+      <h1 class="text-3xl font-bold">{t('bulk.title')}</h1>
+      <p class="mt-2 text-lg">{t('bulk.intro')}</p>
+      <div class="mt-6">
+        <EnquiryForm client:visible lang={lang} dict={dict} books={books} />
+      </div>
+    </div>
   </section>
 </BaseLayout>

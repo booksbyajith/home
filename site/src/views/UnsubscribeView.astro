@@ -1,18 +1,20 @@
 ---
 import type { Lang } from '@shared/constants';
+import Unsubscribe from '../islands/forms/Unsubscribe';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { useT } from '../i18n';
+import { pick, useT } from '../i18n';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useT(lang);
+const dict = pick(lang, ['newsletter.unsub.', 'site.loading', 'site.error.generic']);
 ---
 
 <BaseLayout lang={lang} title={t('newsletter.unsub.title')} description={t('newsletter.unsub.title')} noindex>
   <section class="container-page py-10">
     <h1 class="text-3xl font-bold">{t('newsletter.unsub.title')}</h1>
-    <p class="mt-2 text-lg text-ink-soft">{t('newsletter.unsub.title')}</p>
+    <Unsubscribe client:load dict={dict} />
   </section>
 </BaseLayout>

@@ -1,18 +1,23 @@
 ---
 import type { Lang } from '@shared/constants';
+import TrackApp from '../islands/track/TrackApp';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { useT } from '../i18n';
+import { pick, useT } from '../i18n';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useT(lang);
+const dict = pick(lang, ['track.', 'status.']);
 ---
 
 <BaseLayout lang={lang} title={t('track.title')} description={t('track.intro')}>
-  <section class="container-page py-10">
+  <section class="container-page py-8">
     <h1 class="text-3xl font-bold">{t('track.title')}</h1>
-    <p class="mt-2 text-lg text-ink-soft">{t('track.intro')}</p>
+    <p class="mt-2 max-w-prose text-lg text-ink-soft">{t('track.intro')}</p>
+    <div class="mt-6">
+      <TrackApp client:load lang={lang} dict={dict} />
+    </div>
   </section>
 </BaseLayout>

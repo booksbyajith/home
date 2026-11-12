@@ -3,9 +3,10 @@ import type { Lang } from '@shared/constants';
 import Cover from '../components/Cover.astro';
 import PostCard from '../components/PostCard.astro';
 import Slideshow from '../components/Slideshow.astro';
+import NewsletterForm from '../islands/forms/NewsletterForm';
 import SocialSection from '../components/SocialSection.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { formatDate, useT } from '../i18n';
+import { formatDate, pick, useT } from '../i18n';
 import { getBookText, getBooks, getLatest } from '../lib/content';
 import { absUrl, href } from '../lib/paths';
 
@@ -126,7 +127,14 @@ const authorIntro =
         {t('home.newsletter.title')}
       </h2>
       <p class="mt-2">{t('home.newsletter.blurb')}</p>
-      <div data-island="newsletter" data-source="home" class="mt-4"></div>
+      <div class="mt-4">
+        <NewsletterForm
+          client:visible
+          lang={lang}
+          dict={pick(lang, ['newsletter.', 'form.'])}
+          source="home"
+        />
+      </div>
     </div>
   </section>
 </BaseLayout>

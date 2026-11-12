@@ -1,6 +1,7 @@
 ---
 import type { Lang } from '@shared/constants';
-import { useT } from '../i18n';
+import NewsletterForm from '../islands/forms/NewsletterForm';
+import { pick, useT } from '../i18n';
 import { href } from '../lib/paths';
 
 interface Props {
@@ -37,6 +38,17 @@ const info = [
         </a>
       </p>
       <slot />
+      <div class="mt-6">
+        <p class="font-semibold">{t('footer.newsletter')}</p>
+        <div class="mt-2">
+          <NewsletterForm
+            client:visible
+            lang={lang}
+            dict={pick(lang, ['newsletter.', 'form.'])}
+            source="footer"
+          />
+        </div>
+      </div>
     </div>
     <nav aria-label={t('footer.links')}>
       <h2 class="font-sans text-base font-semibold">{t('footer.links')}</h2>
