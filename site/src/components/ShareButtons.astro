@@ -13,18 +13,25 @@ const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ur
 const wa = `https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`;
 ---
 
-<div class="flex flex-wrap items-center gap-2" data-share>
-  <span class="font-semibold">{t('book.share')}:</span>
-  <a class="btn-secondary px-3 py-1" href={fb} target="_blank" rel="noopener">
-    {t('book.share.facebook')}
-  </a>
-  <a class="btn-secondary px-3 py-1" href={wa} target="_blank" rel="noopener">
-    {t('book.share.whatsapp')}
-  </a>
-  <button type="button" class="btn-secondary px-3 py-1" data-copy={url} data-copied-label={t('site.copied')}>
-    {t('book.share.copy')}
-  </button>
-  <span class="text-sm text-success" role="status" data-copy-status></span>
+<div data-share>
+  <p class="text-sm font-semibold text-ink-soft">{t('book.share')}</p>
+  <div class="mt-2 flex flex-wrap items-center gap-2">
+    <a class="btn-secondary min-h-10 px-4 py-1 text-sm" href={fb} target="_blank" rel="noopener">
+      {t('book.share.facebook')}
+    </a>
+    <a class="btn-secondary min-h-10 px-4 py-1 text-sm" href={wa} target="_blank" rel="noopener">
+      {t('book.share.whatsapp')}
+    </a>
+    <button
+      type="button"
+      class="btn-secondary min-h-10 px-4 py-1 text-sm"
+      data-copy={url}
+      data-copied-label={t('site.copied')}
+    >
+      {t('book.share.copy')}
+    </button>
+    <span class="text-sm text-success" role="status" data-copy-status></span>
+  </div>
 </div>
 
 <script>

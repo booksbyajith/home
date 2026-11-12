@@ -14,13 +14,15 @@ interface Props {
 const { lang, kind, post, headingLevel: H = 'h2' } = Astro.props;
 const t = useT(lang);
 const url = href(lang, `/${kind}/${postSlug(post)}/`);
+// Posts without their own picture get the map-and-portrait image.
+const cover = post.data.cover ?? '/news/letters-default.jpg';
 ---
 
 <article class="card card-hover group relative flex h-full flex-col overflow-hidden">
-  {post.data.cover && (
+  {cover && (
     <a href={url} tabindex="-1" aria-hidden="true" class="block aspect-[16/10] overflow-hidden bg-paper-dark">
       <Cover
-        path={post.data.cover}
+        path={cover}
         alt=""
         sizes="(min-width: 1024px) 380px, 90vw"
         class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"

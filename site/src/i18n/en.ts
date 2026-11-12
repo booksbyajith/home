@@ -65,7 +65,7 @@ export const en: Dict = {
   'home.reels.title': 'History stories on Facebook',
   'home.reels.play': 'Play video: {title}',
   'home.reels.onFacebook': 'See more on our Facebook page',
-  'home.newsletter.title': 'Stay informed',
+  'home.newsletter.title': 'Readers’ circle',
   'home.newsletter.blurb':
     'Get an email when a new book, talk or launch is announced. No more than a few emails a year.',
 

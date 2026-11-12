@@ -63,7 +63,7 @@ export const si = {
   'home.reels.title': 'Facebook හි ඉතිහාස කතා',
   'home.reels.play': 'වීඩියෝව ධාවනය කරන්න: {title}',
   'home.reels.onFacebook': 'අපගේ Facebook පිටුවේ තවත් බලන්න',
-  'home.newsletter.title': 'දැනුවත්ව සිටින්න',
+  'home.newsletter.title': 'පාඨක කවය',
   'home.newsletter.blurb':
     'නව පොතක්, දේශනයක් හෝ එළිදැක්වීමක් ගැන ඊමේල් පණිවිඩයක් ලබා ගන්න. වසරකට ඊමේල් කිහිපයකට වඩා නොඑවමු.',
 

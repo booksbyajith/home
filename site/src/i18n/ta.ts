@@ -65,7 +65,7 @@ export const ta: Dict = {
   'home.reels.title': 'Facebook இல் வரலாற்றுக் கதைகள்',
   'home.reels.play': 'காணொளியை இயக்கு: {title}',
   'home.reels.onFacebook': 'எங்கள் Facebook பக்கத்தில் மேலும் காண்க',
-  'home.newsletter.title': 'தகவல் பெறுங்கள்',
+  'home.newsletter.title': 'வாசகர் வட்டம்',
   'home.newsletter.blurb':
     'புதிய புத்தகம், உரை அல்லது வெளியீடு அறிவிக்கப்படும்போது மின்னஞ்சல் பெறுங்கள். ஆண்டுக்குச் சில மின்னஞ்சல்கள் மட்டுமே.',
 

@@ -44,7 +44,7 @@ export default function NewsletterForm({
       }}
     >
       <Honeypot value={hp} onInput={setHp} />
-      <div class="flex flex-col gap-2 sm:flex-row">
+      <div class="flex flex-wrap items-stretch gap-2">
         <label for={`${id}-email`} class="sr-only">
           {t('newsletter.email')}
         </label>
@@ -53,13 +53,17 @@ export default function NewsletterForm({
           type="email"
           inputMode="email"
           autocomplete="email"
-          class="field-input sm:max-w-sm"
+          class="field-input min-w-0 flex-[1_1_13rem]"
           placeholder={t('newsletter.email')}
           value={email}
           onInput={(e) => setEmail((e.currentTarget as HTMLInputElement).value)}
           aria-invalid={invalid ? true : undefined}
         />
-        <button class="btn-primary" type="submit" disabled={!hydrated || f.busy || !consent}>
+        <button
+          class="btn-primary flex-none px-5 whitespace-nowrap"
+          type="submit"
+          disabled={!hydrated || f.busy || !consent}
+        >
           {t('newsletter.submit')}
         </button>
       </div>
