@@ -1,0 +1,67 @@
+---
+import type { Lang } from '@shared/constants';
+import { useT } from '../i18n';
+import { href } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+const year = new Date().getFullYear();
+const explore = [
+  ['/books/', t('nav.books')],
+  ['/news/', t('nav.news')],
+  ['/blog/', t('nav.blog')],
+  ['/events/', t('nav.events')],
+  ['/press-kit/', t('nav.pressKit')],
+  ['/bulk-orders/', t('nav.bulk')],
+];
+const info = [
+  ['/faq/', t('nav.faq')],
+  ['/track/', t('nav.track')],
+  ['/contact/', t('nav.contact')],
+  ['/terms/', t('footer.terms')],
+  ['/privacy/', t('footer.privacy')],
+];
+---
+
+<footer class="mt-16 border-t border-line bg-paper-dark">
+  <div class="container-page grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="lg:col-span-2">
+      <p class="font-serif text-lg font-bold">{t('site.name')}</p>
+      <p class="mt-2 max-w-prose text-ink-soft">{t('footer.about')}</p>
+      <p class="mt-4">
+        <a href="#" data-config="facebook" hidden class="font-semibold" rel="noopener" target="_blank">
+          {t('footer.facebook')}
+        </a>
+      </p>
+      <slot />
+    </div>
+    <nav aria-label={t('footer.links')}>
+      <h2 class="font-sans text-base font-semibold">{t('footer.links')}</h2>
+      <ul class="mt-2 space-y-1">
+        {explore.map(([p, l]) => (
+          <li>
+            <a href={href(lang, p)}>{l}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <nav aria-label={t('footer.legal')}>
+      <h2 class="font-sans text-base font-semibold">{t('footer.legal')}</h2>
+      <ul class="mt-2 space-y-1">
+        {info.map(([p, l]) => (
+          <li>
+            <a href={href(lang, p)}>{l}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+  <div class="border-t border-line">
+    <p class="container-page py-4 text-sm text-ink-soft">
+      © {year} {t('site.name')}. {t('footer.rights')}
+    </p>
+  </div>
+</footer>

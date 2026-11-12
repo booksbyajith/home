@@ -1,0 +1,95 @@
+---
+import type { Lang } from '@shared/constants';
+import { useT } from '../i18n';
+import { altHref, href, stripLang } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+  altPath?: string | null;
+}
+const { lang, altPath } = Astro.props;
+const t = useT(lang);
+const current = stripLang(Astro.url.pathname);
+const other: Lang = lang === 'si' ? 'en' : 'si';
+const toggleHref =
+  altPath === null ? href(other, '/') : altPath ? href(other, altPath) : altHref(Astro.url.pathname, other);
+const nav = [
+  { path: '/books/', label: t('nav.books') },
+  { path: '/news/', label: t('nav.news') },
+  { path: '/blog/', label: t('nav.blog') },
+  { path: '/press/', label: t('nav.press') },
+  { path: '/about/', label: t('nav.about') },
+  { path: '/contact/', label: t('nav.contact') },
+];
+const isCurrent = (p: string) => current === p || (p !== '/' && current.startsWith(p));
+---
+
+<header class="border-b border-line bg-paper/95">
+  <div class="container-page flex items-center justify-between gap-4 py-3">
+    <a href={href(lang, '/')} class="flex flex-col leading-tight text-ink no-underline">
+      <span class="font-serif text-lg font-bold sm:text-xl">{t('site.name')}</span>
+      <span class="text-sm text-ink-soft">{t('site.tagline')}</span>
+    </a>
+    <nav aria-label={t('site.menu')} class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {nav.map((n) => (
+          <li>
+            <a
+              href={href(lang, n.path)}
+              aria-current={isCurrent(n.path) ? 'page' : undefined}
+              class:list={[
+                'rounded px-3 py-2 text-ink no-underline hover:bg-paper-dark',
+                isCurrent(n.path) && 'font-semibold text-maroon',
+              ]}
+            >
+              {n.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href={toggleHref} hreflang={other} lang={other} class="btn-quiet px-3" data-lang-toggle={other}>
+        {t('site.langToggle')}
+      </a>
+      <a href={href(lang, '/order/')} class="btn-primary hidden px-4 sm:inline-flex">
+        {t('nav.order')}
+      </a>
+      <details class="relative lg:hidden" data-menu>
+        <summary class="btn-quiet cursor-pointer list-none px-3" aria-label={t('site.menu')}>
+          <svg
+            aria-hidden="true"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M3 6h18M3 12h18M3 18h18"></path>
+          </svg>
+        </summary>
+        <nav aria-label={t('site.menu')} class="card absolute right-0 z-30 mt-2 w-64 p-2 shadow-lg">
+          <ul>
+            {[
+              { path: '/', label: t('nav.home') },
+              ...nav,
+              { path: '/order/', label: t('nav.order') },
+              { path: '/track/', label: t('nav.track') },
+            ].map((n) => (
+              <li>
+                <a
+                  href={href(lang, n.path)}
+                  aria-current={current === n.path ? 'page' : undefined}
+                  class="block rounded px-3 py-2 text-ink no-underline hover:bg-paper-dark"
+                >
+                  {n.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>

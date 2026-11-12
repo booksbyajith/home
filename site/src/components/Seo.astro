@@ -1,0 +1,67 @@
+---
+import type { Lang } from '@shared/constants';
+import { absUrl, asset, href, stripLang } from '../lib/paths';
+import { t } from '../i18n';
+
+export interface SeoProps {
+  lang: Lang;
+  title: string;
+  description: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article' | 'book' | 'profile';
+  noindex?: boolean;
+  /** Language-neutral path of this page's counterpart, or null when it has none. */
+  altPath?: string | null;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  extraMeta?: { property: string; content: string }[];
+}
+
+const {
+  lang,
+  title,
+  description,
+  ogImage,
+  ogType = 'website',
+  noindex = false,
+  altPath,
+  jsonLd,
+  extraMeta = [],
+} = Astro.props as SeoProps;
+const neutral = stripLang(Astro.url.pathname);
+const canonical = absUrl(href(lang, neutral));
+const alt = altPath === undefined ? neutral : altPath;
+const siUrl = lang === 'si' ? canonical : alt !== null ? absUrl(href('si', alt)) : null;
+const enUrl = lang === 'en' ? canonical : alt !== null ? absUrl(href('en', alt)) : null;
+const siteName = t(lang, 'site.name');
+const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+const image = absUrl(ogImage ?? asset(`/og/default-${lang}.jpg`));
+const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{siUrl && <link rel="alternate" hreflang="si" href={siUrl} />}
+{enUrl && <link rel="alternate" hreflang="en" href={enUrl} />}
+{siUrl && <link rel="alternate" hreflang="x-default" href={siUrl} />}
+{noindex && <meta name="robots" content="noindex" />}
+<meta property="og:site_name" content={siteName} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={image} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content={lang === 'si' ? 'si_LK' : 'en_GB'} />
+<meta property="og:locale:alternate" content={lang === 'si' ? 'en_GB' : 'si_LK'} />
+{extraMeta.map((m) => (
+  <meta property={m.property} content={m.content} />
+))}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+{ld.map((obj) => (
+  <script type="application/ld+json" set:html={JSON.stringify(obj).replace(/</g, '\\u003c')} />
+))}

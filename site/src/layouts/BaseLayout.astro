@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+import sansSinhala400 from '@fontsource/noto-sans-sinhala/files/noto-sans-sinhala-sinhala-400-normal.woff2?url';
+import serifSinhala700 from '@fontsource/noto-serif-sinhala/files/noto-serif-sinhala-sinhala-700-normal.woff2?url';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Seo, { type SeoProps } from '../components/Seo.astro';
+import { useT } from '../i18n';
+import { asset } from '../lib/paths';
+
+type Props = SeoProps & { mainClass?: string; bare?: boolean };
+const props = Astro.props as Props;
+const { lang, mainClass = '', bare = false } = props;
+const t = useT(lang);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#7a1f1f" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="preload" href={sansSinhala400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={serifSinhala700} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href={asset('/icons/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={asset('/icons/favicon-32.png')} sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href={asset('/icons/apple-touch-icon.png')} />
+    <link rel="manifest" href={asset('/manifest.webmanifest')} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={t('rss.title')}
+      href={asset(lang === 'en' ? '/en/rss.xml' : '/rss.xml')}
+    />
+    <Seo {...props} />
+    <slot name="head" />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <a href="#main" class="sr-only-focusable absolute top-2 left-2 z-50 rounded bg-ink px-4 py-2 text-white">
+      {t('site.skipToContent')}
+    </a>
+    {!bare && <Header lang={lang} altPath={props.altPath} />}
+    <main id="main" tabindex="-1" class:list={['flex-1', mainClass]}>
+      <slot />
+    </main>
+    {!bare && (
+      <Footer lang={lang}>
+        <slot name="footer" />
+      </Footer>
+    )}
+    <script>
+      import { initConfigLinks } from '../lib/configLinks';
+      initConfigLinks();
+    </script>
+  </body>
+</html>

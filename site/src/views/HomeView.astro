@@ -1,0 +1,18 @@
+---
+import type { Lang } from '@shared/constants';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { useT } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+---
+
+<BaseLayout lang={lang} title={t('site.name')} description={t('site.tagline')}>
+  <section class="container-page py-12">
+    <h1 class="text-3xl font-bold">{t('site.name')}</h1>
+    <p class="mt-2 text-lg text-ink-soft">{t('site.tagline')}</p>
+  </section>
+</BaseLayout>

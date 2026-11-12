@@ -1,0 +1,21 @@
+/** Static, language-neutral routes (each exists in Sinhala at the root and in English under /en). */
+export const STATIC_ROUTES: { path: string; priority: number; sitemap: boolean }[] = [
+  { path: '/', priority: 1.0, sitemap: true },
+  { path: '/books/', priority: 0.9, sitemap: true },
+  { path: '/blog/', priority: 0.7, sitemap: true },
+  { path: '/news/', priority: 0.7, sitemap: true },
+  { path: '/press/', priority: 0.6, sitemap: true },
+  { path: '/events/', priority: 0.6, sitemap: true },
+  { path: '/press-kit/', priority: 0.4, sitemap: true },
+  { path: '/about/', priority: 0.7, sitemap: true },
+  { path: '/faq/', priority: 0.5, sitemap: true },
+  { path: '/contact/', priority: 0.5, sitemap: true },
+  { path: '/privacy/', priority: 0.2, sitemap: true },
+  { path: '/terms/', priority: 0.3, sitemap: true },
+  { path: '/bulk-orders/', priority: 0.4, sitemap: true },
+  { path: '/order/', priority: 0.8, sitemap: true },
+  { path: '/track/', priority: 0.3, sitemap: true },
+  { path: '/order/success/', priority: 0, sitemap: false },
+  { path: '/newsletter/unsubscribe/', priority: 0, sitemap: false },
+  { path: '/offline/', priority: 0, sitemap: false },
+];

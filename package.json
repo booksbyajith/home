@@ -10,12 +10,18 @@
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "scan": "node scripts/scan.mjs",
-    "typecheck": "pnpm --filter functions typecheck && pnpm --filter tests exec tsc --noEmit",
-    "test:unit": "pnpm --filter functions test",
+    "typecheck": "pnpm --filter functions typecheck && pnpm --filter tests exec tsc --noEmit && node scripts/with-env.mjs .env.emulator pnpm --filter site check",
+    "test:unit": "pnpm --filter functions test && pnpm --filter site test",
     "test:rules": "firebase emulators:exec --only firestore,storage --project demo-ajith \"pnpm --filter tests exec vitest run -c vitest.rules.config.ts\"",
     "build:functions": "node scripts/ensure-local-env.mjs && pnpm --filter functions build",
     "test:functions": "pnpm build:functions && firebase emulators:exec --only auth,firestore,storage,functions --project demo-ajith \"pnpm --filter tests exec vitest run -c vitest.functions.config.ts\"",
-    "seed": "node scripts/seed.mjs"
+    "seed": "node scripts/seed.mjs",
+    "build": "pnpm --filter site build",
+    "build:emu": "node scripts/with-env.mjs .env.emulator pnpm --filter site build",
+    "preview:emu": "node scripts/with-env.mjs .env.emulator pnpm --filter site preview",
+    "check:links": "node scripts/check-links.mjs site/dist",
+    "dev": "node scripts/dev.mjs",
+    "test:e2e": "pnpm build:emu && pnpm build:functions && firebase emulators:exec --only auth,firestore,storage,functions --project demo-ajith \"pnpm --filter tests exec playwright test --trace off\""
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

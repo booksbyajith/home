@@ -18,3 +18,6 @@ test-results
 .firebase
 *.tsbuildinfo
 *-debug.log
+
+site/public/_gen
+site/src/generated/images.json

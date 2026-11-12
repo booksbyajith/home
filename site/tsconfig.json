@@ -1,0 +1,14 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "baseUrl": ".",
+    "paths": { "@shared/*": ["../functions/src/shared/*"] },
+    "types": ["node"],
+    "allowImportingTsExtensions": false,
+    "verbatimModuleSyntax": false
+  },
+  "include": [".astro/types.d.ts", "src/**/*", "astro.config.ts", "../functions/src/shared/**/*.ts"],
+  "exclude": ["dist", "node_modules", "../functions/src/**/*.test.ts", "../functions/src/**/*.fixture.ts"]
+}

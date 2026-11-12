@@ -1,0 +1,153 @@
+@import '@fontsource/noto-sans-sinhala/400.css';
+@import '@fontsource/noto-sans-sinhala/600.css';
+@import '@fontsource/noto-sans-sinhala/700.css';
+@import '@fontsource/noto-serif-sinhala/500.css';
+@import '@fontsource/noto-serif-sinhala/700.css';
+@import 'tailwindcss';
+
+@theme {
+  --color-paper: #f8f3e7;
+  --color-paper-dark: #efe6d2;
+  --color-card: #fffdf8;
+  --color-ink: #1f1b16;
+  --color-ink-soft: #4a4136;
+  --color-maroon: #7a1f1f;
+  --color-maroon-dark: #5c1616;
+  --color-gold: #9a6b12;
+  --color-teal: #1f4e5f;
+  --color-line: #dccfb4;
+  --color-success: #1e6b3a;
+  --color-danger: #a32020;
+  --color-warn-bg: #fff4d6;
+
+  --font-sans: 'Noto Sans Sinhala', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Noto Serif Sinhala', 'Noto Serif', Georgia, 'Times New Roman', serif;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 106.25%; /* 17px */
+    line-height: 1.75;
+    -webkit-text-size-adjust: 100%;
+  }
+  html[lang='en'] {
+    line-height: 1.65;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    line-height: 1.35;
+    color: var(--color-ink);
+  }
+  a {
+    color: var(--color-maroon);
+    text-underline-offset: 3px;
+  }
+  a:hover {
+    color: var(--color-maroon-dark);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-teal);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6;
+}
+@utility prose-page {
+  @apply mx-auto w-full max-w-[72ch];
+}
+@utility btn {
+  @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-md px-5 py-2 font-semibold no-underline transition-colors;
+}
+@utility btn-primary {
+  @apply btn bg-maroon text-white hover:bg-maroon-dark hover:text-white;
+}
+@utility btn-secondary {
+  @apply btn border border-maroon bg-transparent text-maroon hover:bg-paper-dark;
+}
+@utility btn-quiet {
+  @apply btn text-ink-soft hover:bg-paper-dark hover:text-ink;
+}
+@utility card {
+  @apply rounded-lg border border-line bg-card;
+}
+@utility field-label {
+  @apply mb-1 block font-semibold;
+}
+@utility field-input {
+  @apply block min-h-11 w-full rounded-md border border-ink-soft/60 bg-white px-3 py-2 text-ink;
+}
+@utility field-hint {
+  @apply mt-1 text-sm text-ink-soft;
+}
+@utility field-error {
+  @apply mt-1 text-sm font-semibold text-danger;
+}
+@utility badge {
+  @apply inline-block rounded-full px-3 py-0.5 text-sm font-semibold;
+}
+
+@layer components {
+  :is(.btn, .btn-primary, .btn-secondary, .btn-quiet):is([disabled], [aria-disabled='true']) {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  .field-input[aria-invalid='true'] {
+    border-color: var(--color-danger);
+  }
+  .sr-only-focusable:not(:focus) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  .prose :where(h2) {
+    @apply mt-10 mb-3 text-2xl font-bold;
+  }
+  .prose :where(h3) {
+    @apply mt-8 mb-2 text-xl font-bold;
+  }
+  .prose :where(p, ul, ol, blockquote) {
+    @apply my-4;
+  }
+  .prose :where(ul) {
+    @apply list-disc pl-6;
+  }
+  .prose :where(ol) {
+    @apply list-decimal pl-6;
+  }
+  .prose :where(blockquote) {
+    @apply border-l-4 border-gold pl-4 text-ink-soft italic;
+  }
+  .prose :where(img) {
+    @apply my-6 rounded-md;
+  }
+}

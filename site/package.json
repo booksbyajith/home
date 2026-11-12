@@ -1,5 +1,38 @@
 {
   "name": "site",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@astrojs/mdx": "8.1.5",
+    "@astrojs/preact": "6.1.5",
+    "@astrojs/rss": "4.0.19",
+    "@fontsource/noto-sans-sinhala": "5.3.0",
+    "@fontsource/noto-serif-sinhala": "5.3.0",
+    "@tailwindcss/vite": "4.3.5",
+    "astro": "7.4.11",
+    "browser-image-compression": "2.0.2",
+    "firebase": "13.3.0",
+    "html-to-image": "1.11.13",
+    "idb-keyval": "6.3.0",
+    "jspdf": "4.2.1",
+    "preact": "10.29.8",
+    "qrcode": "1.5.4",
+    "tailwindcss": "4.3.5",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@types/qrcode": "1.5.6",
+    "typescript": "6.0.3",
+    "vitest": "5.1.0",
+    "yaml": "^2.9.1"
+  },
+  "scripts": {
+    "prebuild": "node ../scripts/build-images.mjs && node ../scripts/build-og.mjs",
+    "build": "astro build",
+    "dev": "astro dev --host 127.0.0.1 --port 4321",
+    "preview": "astro preview --host 127.0.0.1 --port 4321",
+    "check": "node ../scripts/build-images.mjs && astro check",
+    "test": "vitest run"
+  }
 }
