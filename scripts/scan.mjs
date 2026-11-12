@@ -12,7 +12,14 @@ const BINARY = /\.(png|jpe?g|webp|gif|ico|woff2?|ttf|otf|pdf|zip|gz|jar)$/i;
 const SELF = 'scripts/scan.mjs';
 
 const rules = [
-  { id: 'google-api-key', re: /AIza[0-9A-Za-z_-]{35}/ },
+  {
+    id: 'google-api-key',
+    re: /AIza[0-9A-Za-z_-]{35}/g,
+    // The Firebase *web* API key is public by design and must be in the built site.
+    // It is passed in at build time and allowed only when scanning build output.
+    allow: (m) => !!process.env.PUBLIC_FIREBASE_API_KEY && m === process.env.PUBLIC_FIREBASE_API_KEY,
+    skipAllowFor: /^(?!site\/dist(-prod)?\/)/,
+  },
   { id: 'private-key', re: /-----BEGIN [A-Z ]*PRIVATE KEY-----/ },
   { id: 'aws-key', re: /AKIA[0-9A-Z]{16}/ },
   { id: 'github-token', re: /gh[pousr]_[0-9A-Za-z]{30,}/ },
@@ -24,7 +31,9 @@ const rules = [
     id: 'email',
     re: /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g,
     allow: (m) =>
-      /@(example\.(com|org)|users\.noreply\.github\.com|anthropic\.com|developer\.gserviceaccount\.com|[a-z0-9-]+\.iam\.gserviceaccount\.com)$/i.test(m) ||
+      /@(example\.(com|org)|users\.noreply\.github\.com|anthropic\.com|developer\.gserviceaccount\.com|[a-z0-9-]+\.iam\.gserviceaccount\.com)$/i.test(
+        m,
+      ) ||
       /@(types|astrojs|firebase|fontsource|eslint|playwright|tailwindcss|vitest|lhci|axe-core|vite-pwa|resvg)\//.test(
         m,
       ) ||
@@ -89,7 +98,7 @@ for (const file of files) {
         rule.re.flags.includes('g') ? rule.re.flags : rule.re.flags + 'g',
       );
       for (const m of line.matchAll(re)) {
-        if (rule.allow?.(m[0])) continue;
+        if (rule.allow?.(m[0]) && !(rule.skipAllowFor && rule.skipAllowFor.test(file))) continue;
         hits++;
         console.log(`${file}:${i + 1}  [${rule.id}]  ${m[0].slice(0, 60)}`);
       }

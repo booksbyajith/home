@@ -18,8 +18,16 @@ const SECRETS = [
   { name: 'HASH_SALT', help: 'Leave empty to generate a random value (recommended)', generate: true },
   { name: 'TELEGRAM_BOT_TOKEN', help: 'Optional. Leave empty to disable Telegram alerts', optional: true },
   { name: 'TELEGRAM_CHAT_ID', help: 'Optional. Leave empty to disable Telegram alerts', optional: true },
-  { name: 'WA_TOKEN', help: 'Optional. WhatsApp Cloud API permanent token. Leave empty to disable', optional: true },
-  { name: 'WA_PHONE_NUMBER_ID', help: 'Optional. WhatsApp Cloud API phone number ID. Leave empty to disable', optional: true },
+  {
+    name: 'WA_TOKEN',
+    help: 'Optional. WhatsApp Cloud API permanent token. Leave empty to disable',
+    optional: true,
+  },
+  {
+    name: 'WA_PHONE_NUMBER_ID',
+    help: 'Optional. WhatsApp Cloud API phone number ID. Leave empty to disable',
+    optional: true,
+  },
 ];
 
 const args = process.argv.slice(2);
@@ -50,11 +58,27 @@ function askHidden(question) {
 
 function setSecret(name, value) {
   return new Promise((resolve, reject) => {
-    const p = spawn('pnpm', ['exec', 'firebase', 'functions:secrets:set', name, '--project', project, '--data-file', '-', '--force'], {
-      stdio: ['pipe', 'inherit', 'inherit'],
-    });
+    const p = spawn(
+      'pnpm',
+      [
+        'exec',
+        'firebase',
+        'functions:secrets:set',
+        name,
+        '--project',
+        project,
+        '--data-file',
+        '-',
+        '--force',
+      ],
+      {
+        stdio: ['pipe', 'inherit', 'inherit'],
+      },
+    );
     p.stdin.end(value);
-    p.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(`${name}: firebase exited with ${code}`))));
+    p.on('exit', (code) =>
+      code === 0 ? resolve() : reject(new Error(`${name}: firebase exited with ${code}`)),
+    );
   });
 }
 
