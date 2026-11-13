@@ -9,7 +9,6 @@ This policy explains how we handle personal information when you order a book, t
 ## What we collect and why
 
 - **When you order:** your name, mobile and WhatsApp numbers, email address (optional), delivery address, district, postal code, landmark or delivery notes, any gift or dedication request, the books you order, and a photo or PDF of your bank slip. We use these only to verify your payment, prepare and deliver your order, and contact you about it.
-- **Your location (optional):** if you tap "Use my current location", your browser shares your latitude, longitude and its accuracy. We store these with your order only to help the courier find you. We do not track your location at any other time.
 - **Tracking an order:** we ask for your order number and the last four digits of your mobile number. The tracking page shows only the order status and courier details, never your name, address or phone number.
 - **Updates, stock alerts, reviews and bulk enquiries:** the details you type into those forms, with your consent.
 
@@ -27,7 +26,7 @@ If analytics are switched on, we use a privacy-friendly service that does not us
 
 ## How long we keep it
 
-We keep order details for as long as needed to deliver the order and handle any problems. Personal details of completed, rejected or cancelled orders (name, phone numbers, email, address, location, dedication note and the bank slip) are removed after a period set by us, normally 12 months. The order number, books, amounts and district are kept for our accounts. Newsletter subscriptions are kept until you unsubscribe.
+We keep order details for as long as needed to deliver the order and handle any problems. Personal details of completed, rejected or cancelled orders (name, phone numbers, email, address, dedication note and the bank slip) are removed after a period set by us, normally 12 months. The order number, books, amounts and district are kept for our accounts. Newsletter subscriptions are kept until you unsubscribe.
 
 ## Your choices
 

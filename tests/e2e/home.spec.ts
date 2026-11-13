@@ -10,22 +10,36 @@ const index = (page: import('@playwright/test').Page) =>
   page.locator('[data-slideshow]').getAttribute('data-index').then(Number);
 
 test.describe('home slideshow', () => {
-  test('one slide per book; arrows and dots work', async ({ page }) => {
+  test('one slide per book; arrows (desktop), side taps (phone) and dots work', async ({
+    page,
+    isMobile,
+  }) => {
     const con = watchConsole(page);
     await page.goto('');
     const show = page.locator('[data-slideshow]');
     await expect(show.locator('[data-slide]')).toHaveCount(3);
     await show.locator('[data-toggle]').click(); // pause autoplay so the index is deterministic
     await expect(show).toHaveAttribute('data-playing', 'false');
-    await show.locator('[data-next]').click();
+    // Phones have no arrows: tapping the blurred side book brings it to the centre.
+    const next = () =>
+      isMobile
+        ? show.locator('[data-slide][data-pos="right"] [data-slide-cover]').click()
+        : show.locator('[data-next]').click();
+    const prev = () =>
+      isMobile
+        ? show.locator('[data-slide][data-pos="left"] [data-slide-cover]').click()
+        : show.locator('[data-prev]').click();
+    if (isMobile) await expect(show.locator('[data-next]')).toBeHidden();
+    await next();
     await expect(show).toHaveAttribute('data-index', '1');
     await show.locator('[data-dot="2"]').click();
     await expect(show).toHaveAttribute('data-index', '2');
     await expect(show.locator('[data-dot="2"]')).toHaveAttribute('aria-current', 'true');
-    await show.locator('[data-next]').click();
+    await next();
     await expect(show).toHaveAttribute('data-index', '0');
-    await show.locator('[data-prev]').click();
+    await prev();
     await expect(show).toHaveAttribute('data-index', '2');
+    await expect(page).toHaveURL(/\/booksbyajith\/$/); // a side tap switches books, it doesn't open one
     con.expectClean();
   });
 

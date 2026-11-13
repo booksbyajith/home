@@ -73,7 +73,7 @@ const pos = (i: number) => (i === 0 ? 'center' : i === 1 ? 'right' : i === n - 1
   <div class="mt-6 flex items-center justify-center gap-2">
     <button
       type="button"
-      class="btn-quiet h-11 w-11 border border-line p-0 text-2xl"
+      class="btn-quiet h-11 w-11 border border-line p-0 text-2xl max-sm:hidden"
       data-prev
       aria-label={t('home.hero.prev')}
     >
@@ -94,7 +94,7 @@ const pos = (i: number) => (i === 0 ? 'center' : i === 1 ? 'right' : i === n - 1
     </div>
     <button
       type="button"
-      class="btn-quiet h-11 w-11 border border-line p-0 text-2xl"
+      class="btn-quiet h-11 w-11 border border-line p-0 text-2xl max-sm:hidden"
       data-next
       aria-label={t('home.hero.next')}
     >
@@ -153,6 +153,13 @@ const pos = (i: number) => (i === 0 ? 'center' : i === 1 ? 'right' : i === n - 1
     transition:
       opacity 0.7s ease,
       transform 0.7s var(--ease-out-soft);
+  }
+  /* Only the cover and text take taps, so the centre slide's empty area doesn't cover the side books. */
+  .carousel-slide {
+    pointer-events: none;
+  }
+  .carousel-slide[data-pos='center'] :is(.carousel-cover, .carousel-text) {
+    pointer-events: auto;
   }
   .carousel-slide[data-pos='center'] {
     z-index: 3;

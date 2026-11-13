@@ -5,7 +5,6 @@ import { DISTRICTS, OVERSEAS, districtName, regionLine } from '@shared/districts
 import { maskPhone } from '@shared/mask';
 import { computeTotals, formatLKR, orderability } from '@shared/pricing';
 import { domesticMobileError, orderAddressSchema, orderCustomerSchema } from '@shared/schemas';
-import { buildMapsUrl } from '@shared/templates';
 import type { BookDoc, L10n, OrderItem, PublicConfig, Totals } from '@shared/types';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { I18nKey } from '../../i18n/si';
@@ -16,12 +15,10 @@ import {
   isMeaningful,
   loadDraft,
   type DraftFields,
-  type DraftGeo,
 } from '../../lib/draft';
 import { guessCountryName } from '../../lib/guessCountry';
 import { loadPhoneRules, usePhoneRules } from '../shared/phoneRules';
 import { call, callError, orderErrorKey } from '../../lib/firebase';
-import { currentLocation, geoSupported, type GeoError } from '../../lib/geo';
 import { prepareSlip } from '../../lib/imageCompress';
 import { addMyOrder, saveReceipt } from '../../lib/myOrders';
 import { fetchBooks, fetchPublicConfig } from '../../lib/publicData';
@@ -126,8 +123,6 @@ export default function OrderApp({
   const [fields, setFields] = useState<DraftFields>(emptyFields());
   const overseas = fields.districtId === OVERSEAS;
   usePhoneRules();
-  const [geo, setGeo] = useState<DraftGeo | null>(null);
-  const [geoState, setGeoState] = useState<'idle' | 'locating' | GeoError>('idle');
   const [slip, setSlip] = useState<Slip | null>(null);
   const [slipMsg, setSlipMsg] = useState<I18nKey | null>(null);
   const [slipBusy, setSlipBusy] = useState(false);
@@ -158,7 +153,6 @@ export default function OrderApp({
     if (d && isMeaningful(d)) {
       setStep(Math.min(Math.max(d.step, 0), 3));
       setFields(withGuess(d.fields));
-      setGeo(d.geo);
       setConsent(!!d.consent);
       setRestored(true);
       if (d.slipMeta) {
@@ -197,11 +191,11 @@ export default function OrderApp({
       step,
       cart,
       fields,
-      geo,
+      geo: null,
       slipMeta: slip ? { name: slip.name, type: slip.type, size: slip.size } : null,
       consent,
     });
-  }, [ready, step, cart, fields, geo, slip, consent]);
+  }, [ready, step, cart, fields, slip, consent]);
 
   // ---- move focus to the step heading when the step changes ----
   useEffect(() => {
@@ -279,24 +273,12 @@ export default function OrderApp({
     setStep(0);
     setCart([]);
     setFields(emptyFields());
-    setGeo(null);
-    setGeoState('idle');
     setSlip(null);
     setSlipMsg(null);
     setConsent(false);
     setErrors({});
     setRestored(false);
     setSubmitError(null);
-  };
-
-  const locate = async () => {
-    setGeoState('locating');
-    try {
-      setGeo(await currentLocation());
-      setGeoState('idle');
-    } catch (e) {
-      setGeoState(e as GeoError);
-    }
   };
 
   const onSlip = async (e: Event) => {
@@ -428,7 +410,7 @@ export default function OrderApp({
           country: overseas ? fields.country : '',
           landmark: fields.landmark,
         },
-        geo,
+        geo: null,
         signedCopy: signedAvailable && fields.signedCopy,
         dedicationNote: fields.dedicationNote,
         expectedTotalLKR: totals.grandTotalLKR,
@@ -818,65 +800,6 @@ export default function OrderApp({
               <textarea {...input('landmark', { rows: 2, maxLength: 200 })} />
             </Field>
 
-            <div class="mb-6 rounded-xl border border-line bg-card p-4" data-testid="geo">
-              {geoSupported() && !geo && (
-                <button
-                  type="button"
-                  class="btn-secondary"
-                  onClick={locate}
-                  disabled={geoState === 'locating'}
-                  data-geo-button
-                >
-                  📍 {geoState === 'locating' ? t('order.geo.locating') : t('order.geo.button')}
-                </button>
-              )}
-              {geo && (
-                <div data-geo-saved>
-                  <p class="flex flex-wrap items-baseline gap-x-3">
-                    <span class="font-semibold text-success">✓ {t('order.geo.saved')}</span>
-                    <span class="text-sm text-ink-soft">{t('order.geo.accuracy', { m: geo.accuracyM })}</span>
-                  </p>
-                  <p class="mt-3 flex flex-wrap gap-2">
-                    <a
-                      href={buildMapsUrl(geo.lat, geo.lng)}
-                      target="_blank"
-                      rel="noopener"
-                      class="btn-secondary min-h-10 px-4 py-1 text-sm"
-                      data-geo-link
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path>
-                        <circle cx="12" cy="9.5" r="2.5"></circle>
-                      </svg>
-                      {t('order.geo.viewMap')} ↗
-                    </a>
-                    <button
-                      type="button"
-                      class="btn-quiet min-h-10 px-4 py-1 text-sm"
-                      onClick={() => setGeo(null)}
-                    >
-                      ✕ {t('order.geo.remove')}
-                    </button>
-                  </p>
-                </div>
-              )}
-              {(geoState === 'denied' || geoState === 'unavailable' || geoState === 'timeout') && (
-                <p class="mt-2 text-sm text-danger" role="alert" data-geo-error={geoState}>
-                  {t(`order.geo.${geoState}` as I18nKey)}
-                </p>
-              )}
-            </div>
-
             {signedAvailable && (
               <div class="mb-4 flex items-start gap-2">
                 <input
@@ -1096,7 +1019,6 @@ export default function OrderApp({
                   .filter((x) => x.trim())
                   .join(', ')}
               </p>
-              {geo && <p class="text-sm text-success">📍 {t('order.geo.saved')}</p>}
               {fields.dedicationNote && <p class="mt-1 text-sm">✎ {fields.dedicationNote}</p>}
             </section>
             <section class="card p-4">
