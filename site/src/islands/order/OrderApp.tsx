@@ -132,6 +132,8 @@ export default function OrderApp({
   const [live, setLive] = useState<Record<string, BookDoc> | null>(null);
   const [config, setConfig] = useState<PublicConfig | null>(null);
   const [configLoaded, setConfigLoaded] = useState(false);
+  // Commercial Bank's logo replaces the written bank name (the copy button still copies the full name).
+  const showBankLogo = !!bankLogo && !!config && /commercial\s+bank/i.test(config.bank.bankName);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<I18nKey | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
@@ -848,34 +850,25 @@ export default function OrderApp({
             {config && (
               <section class="card p-4" aria-labelledby="bank-h">
                 <h3 id="bank-h" class="flex items-center gap-3 font-sans text-lg font-semibold">
-                  {bankLogo && /commercial\s+bank/i.test(config.bank.bankName) ? (
-                    <img
-                      src={bankLogo}
-                      alt=""
-                      class="h-11 w-auto max-w-[9rem] shrink-0 object-contain"
-                      data-bank-logo
-                    />
-                  ) : (
-                    <span
-                      class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-maroon text-white"
-                      aria-hidden="true"
+                  <span
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-maroon text-white"
+                    aria-hidden="true"
+                  >
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
                     >
-                      <svg
-                        width="22"
-                        height="22"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M3 9.5L12 4l9 5.5"></path>
-                        <path d="M4.5 10v7M9 10v7M15 10v7M19.5 10v7"></path>
-                        <path d="M3 20h18"></path>
-                      </svg>
-                    </span>
-                  )}
+                      <path d="M3 9.5L12 4l9 5.5"></path>
+                      <path d="M4.5 10v7M9 10v7M15 10v7M19.5 10v7"></path>
+                      <path d="M3 20h18"></path>
+                    </svg>
+                  </span>
                   {t('order.payment.title')}
                 </h3>
                 <dl class="mt-3 space-y-3" data-testid="bank">
@@ -895,9 +888,15 @@ export default function OrderApp({
                       <div>
                         <dt class="text-sm text-ink-soft">{t(k)}</dt>
                         <dd class="flex items-center justify-between gap-3 font-semibold">
-                          <span class="min-w-0 break-words" data-bank-field={k}>
-                            {v}
-                          </span>
+                          {k === 'order.payment.bankName' && showBankLogo ? (
+                            <span class="min-w-0" data-bank-field={k}>
+                              <img src={bankLogo} alt={v} class="h-7 w-auto sm:h-8" data-bank-logo />
+                            </span>
+                          ) : (
+                            <span class="min-w-0 break-words" data-bank-field={k}>
+                              {v}
+                            </span>
+                          )}
                           <button
                             type="button"
                             class={`btn-quiet h-10 w-10 shrink-0 border border-line p-0 ${copied === k ? 'text-success' : ''}`}
