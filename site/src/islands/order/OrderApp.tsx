@@ -900,8 +900,12 @@ export default function OrderApp({
                         <dt class="text-sm text-ink-soft">{t(k)}</dt>
                         <dd class="flex items-center justify-between gap-3 font-semibold">
                           {k === 'order.payment.bankName' && showBankLogo ? (
-                            <span class="min-w-0" data-bank-field={k}>
-                              <img src={bankLogo} alt={v} class="h-7 w-auto sm:h-8" data-bank-logo />
+                            <span class="flex min-w-0 flex-1 items-center justify-between gap-3">
+                              <span class="min-w-0 break-words" data-bank-field={k}>
+                                {/* "Commercial Bank of Ceylon PLC" reads as just "Commercial Bank" beside its logo */}
+                                {v.replace(/\s+of\s+Ceylon\b.*$/i, '')}
+                              </span>
+                              <img src={bankLogo} alt="" class="h-6 w-auto shrink-0 sm:h-7" data-bank-logo />
                             </span>
                           ) : (
                             <span class="min-w-0 break-words" data-bank-field={k}>
