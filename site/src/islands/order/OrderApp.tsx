@@ -337,35 +337,59 @@ export default function OrderApp({
     }
   };
 
-  const next = async () => {
-    if (step === 0) {
-      if (!lines.length) return setErrors({ cart: 'order.cart.empty' });
+  /** Checks one step; shows its errors and returns false when it can't be left yet. */
+  const checkStep = async (st: number): Promise<boolean> => {
+    if (st === 0) {
+      if (!lines.length) return (setErrors({ cart: 'order.cart.empty' }), false);
       if (lines.some((l) => orderability(l.book, l.qty) !== 'ok'))
-        return setErrors({ cart: 'order.error.outOfStock' });
+        return (setErrors({ cart: 'order.error.outOfStock' }), false);
+      if (!fields.districtId) {
+        // Arriving at the address step with no district yet: pre-select overseas delivery when the
+        // device is outside Sri Lanka (it may not have been known, or was cleared, at page load).
+        const country = guessCountryName(lang);
+        if (country)
+          setFields((f) =>
+            f.districtId ? f : { ...f, districtId: OVERSEAS, country: f.country || country },
+          );
+      }
     }
-    if (step === 0 && !fields.districtId) {
-      // Arriving at the address step with no district yet: pre-select overseas delivery when the
-      // device is outside Sri Lanka (it may not have been known, or was cleared, at page load).
-      const country = guessCountryName(lang);
-      if (country)
-        setFields((f) => (f.districtId ? f : { ...f, districtId: OVERSEAS, country: f.country || country }));
-    }
-    if (step === 1) {
+    if (st === 1) {
       await loadPhoneRules();
       const errs = validateDetails(fields);
       setErrors(errs);
       if (Object.keys(errs).length) {
         const first = Object.keys(errs)[0];
         setTimeout(() => document.getElementById(`f-${first}`)?.focus(), 0);
+        return false;
+      }
+    }
+    if (st === 2 && !slip) {
+      setErrors({ slip: 'order.slip.required' });
+      return false;
+    }
+    setErrors({});
+    return true;
+  };
+
+  const next = async () => {
+    if (await checkStep(step)) setStep((s) => Math.min(s + 1, 3));
+  };
+
+  /** Step tabs: going back is always allowed; going forward checks every step on the way. */
+  const goTo = async (target: number) => {
+    if (target === step) return;
+    if (target < step) {
+      setErrors({});
+      setStep(target);
+      return;
+    }
+    for (let st = step; st < target; st++) {
+      if (!(await checkStep(st))) {
+        setStep(st);
         return;
       }
     }
-    if (step === 2 && !slip) {
-      setErrors({ slip: 'order.slip.required' });
-      return;
-    }
-    setErrors({});
-    setStep((s) => Math.min(s + 1, 3));
+    setStep(target);
   };
 
   const back = () => {
@@ -553,12 +577,17 @@ export default function OrderApp({
           aria-label={t('order.stepOf', { n: step + 1, total: 4 })}
         >
           {STEPS.map((k, i) => (
-            <li
-              aria-current={i === step ? 'step' : undefined}
-              class={`rounded-md border px-1 py-2 ${i === step ? 'border-maroon bg-maroon text-white' : i < step ? 'border-line bg-paper-dark' : 'border-line'}`}
-            >
-              <span class="block font-semibold">{i + 1}</span>
-              <span class="block leading-tight">{t(k)}</span>
+            <li>
+              <button
+                type="button"
+                onClick={() => void goTo(i)}
+                aria-current={i === step ? 'step' : undefined}
+                data-step-tab={i}
+                class={`block h-full w-full cursor-pointer rounded-md border px-1 py-2 ${i === step ? 'border-maroon bg-maroon text-white' : i < step ? 'border-line bg-paper-dark text-ink hover:border-maroon/50' : 'border-line text-ink hover:bg-paper-dark'}`}
+              >
+                <span class="block font-semibold">{i + 1}</span>
+                <span class="block leading-tight">{t(k)}</span>
+              </button>
             </li>
           ))}
         </ol>

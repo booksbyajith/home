@@ -147,3 +147,23 @@ test('a mistyped international mobile is caught on the form', async ({ page }) =
   await page.click('[data-next-step]');
   await expect(page.locator('[data-slip-input]')).toBeAttached();
 });
+
+test('step tabs: back to any step, forward only through the checks', async ({ page }) => {
+  await page.goto('order/?book=portuguese-era-1505-1594');
+  await ready(page);
+  // Forward from the start stops at the details step until they are filled in.
+  await page.click('[data-step-tab="2"]');
+  await expect(page.locator('[data-step-tab="1"]')).toHaveAttribute('aria-current', 'step');
+  await fillDetails(page);
+  await page.click('[data-step-tab="3"]');
+  // No bank slip yet: stops at the payment step.
+  await expect(page.locator('[data-step-tab="2"]')).toHaveAttribute('aria-current', 'step');
+  await attachSlip(page);
+  await page.click('[data-step-tab="3"]');
+  await expect(page.locator('[data-step-tab="3"]')).toHaveAttribute('aria-current', 'step');
+  // Back to the books, then straight back to the review: everything is kept.
+  await page.click('[data-step-tab="0"]');
+  await expect(page.locator('[data-step-tab="0"]')).toHaveAttribute('aria-current', 'step');
+  await page.click('[data-step-tab="3"]');
+  await expect(page.locator('[data-step-tab="3"]')).toHaveAttribute('aria-current', 'step');
+});
