@@ -4,6 +4,7 @@ import { getSlipUrlSchema } from '../shared/schemas.js';
 import type { AuditEvent, OrderDoc } from '../shared/types.js';
 import { Timestamp, bucket, db } from '../lib/admin.js';
 import { fail } from '../lib/errors.js';
+import { errorCode, log } from '../lib/log.js';
 import { parse, requireAdmin, requireAppCheck } from '../lib/guard.js';
 
 const TTL_MS = 5 * 60 * 1000;
@@ -20,7 +21,13 @@ export async function handleGetSlipUrl(request: CallableRequest<unknown>) {
   // link would need the functions' service account to hold the Token Creator role, which a fresh
   // project doesn't grant: without it the request failed and the admin's button did nothing.
   const file = bucket().file(order.slip.path);
-  const [buf] = await file.download();
+  let buf: Buffer;
+  try {
+    [buf] = await file.download();
+  } catch (err) {
+    log.error('slip download failed', { code: errorCode(err), path: order.slip.path });
+    fail('internal', 'SLIP_UNREADABLE');
+  }
   const url = `data:${order.slip.contentType};base64,${buf.toString('base64')}`;
   const expiresAt = Date.now() + TTL_MS;
   const event: AuditEvent = {

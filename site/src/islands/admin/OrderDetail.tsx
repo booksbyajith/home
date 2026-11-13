@@ -128,17 +128,18 @@ export function OrderDetail({ orderId }: { orderId: string }) {
     else if (window.confirm(t('admin.confirmStatus', { status: t(`status.${to}` as I18nKey) }))) void act(to);
   };
 
-  const [slipErr, setSlipErr] = useState(false);
+  const [slipErr, setSlipErr] = useState<string | null>(null);
   const viewSlip = async () => {
-    setSlipErr(false);
+    setSlipErr(null);
     // Open the PDF tab synchronously (inside the tap) so phone pop-up blockers allow it.
     const win = order?.slip?.contentType === 'application/pdf' ? window.open('', '_blank') : null;
     let r: { url: string; contentType: string };
     try {
       r = await call<{ orderId: string }, { url: string; contentType: string }>('getSlipUrl', { orderId });
-    } catch {
+    } catch (e) {
       win?.close();
-      setSlipErr(true);
+      const ce = callError(e);
+      setSlipErr(`${ce.status}${ce.code ? ` · ${ce.code}` : ''}`);
       return;
     }
     let url = r.url;
@@ -388,7 +389,7 @@ export function OrderDetail({ orderId }: { orderId: string }) {
             )}
             {slipErr && (
               <p class="field-error" role="alert">
-                {t('admin.slipError')}
+                {t('admin.slipError')} ({slipErr})
               </p>
             )}
           </>

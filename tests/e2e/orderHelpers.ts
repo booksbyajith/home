@@ -28,7 +28,7 @@ export async function fillDetails(page: Page, c = CUSTOMER) {
   await page.fill('#f-city', c.city);
   await page.fill('#f-postalCode', c.postalCode);
   await page.selectOption('#f-districtId', c.district);
-  if (c.country) await page.fill('#f-country', c.country);
+  if (c.country) await page.selectOption('#f-country', c.country);
   await page.fill('#f-landmark', c.landmark);
 }
 

@@ -74,12 +74,15 @@ export function guessCountryCode(timeZone?: string): string | null {
   return PREFIX.find(([p]) => tz === p || (p.endsWith('/') && tz.startsWith(p)))?.[1] ?? null;
 }
 
-/** The guessed country's name in the page language, or null. */
-export function guessCountryName(lang: Lang, timeZone?: string): string | null {
+/**
+ * The guessed country's name, always in English (addresses and labels use one language).
+ * `_lang` is kept for callers; the name no longer depends on it.
+ */
+export function guessCountryName(_lang: Lang, timeZone?: string): string | null {
   const code = guessCountryCode(timeZone);
   if (!code) return null;
   try {
-    return new Intl.DisplayNames([lang, 'en'], { type: 'region' }).of(code) ?? null;
+    return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) ?? null;
   } catch {
     return null;
   }

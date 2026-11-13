@@ -12,6 +12,7 @@ export const ERROR_CODES = [
   'MISSING_FIELDS',
   'NOT_ADMIN',
   'NOT_STAFF',
+  'SLIP_UNREADABLE',
   'APP_CHECK',
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];

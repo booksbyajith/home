@@ -15,6 +15,6 @@ describe('guessCountry', () => {
   });
   it('names the country in the page language', () => {
     expect(guessCountryName('en', 'Australia/Melbourne')).toBe('Australia');
-    expect(guessCountryName('si', 'Australia/Melbourne')).toBeTruthy();
+    expect(guessCountryName('si', 'Australia/Melbourne')).toBe('Australia');
   });
 });

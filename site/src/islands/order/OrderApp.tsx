@@ -17,6 +17,7 @@ import {
   loadDraft,
   type DraftFields,
 } from '../../lib/draft';
+import { countryNames } from '../../lib/countries';
 import { guessCountryName } from '../../lib/guessCountry';
 import { loadPhoneRules, usePhoneRules } from '../shared/phoneRules';
 import { call, callError, orderErrorKey } from '../../lib/firebase';
@@ -806,7 +807,16 @@ export default function OrderApp({
             {overseas && (
               <>
                 <Field id="f-country" label={t('order.field.country')} error={err('country')}>
-                  <input {...input('country', { autocomplete: 'country-name', maxLength: 60 })} />
+                  <select {...input('country', { autocomplete: 'country-name' })}>
+                    <option value="">—</option>
+                    {/* A country typed in another language before this list existed stays selectable. */}
+                    {fields.country && !countryNames().includes(fields.country) && (
+                      <option value={fields.country}>{fields.country}</option>
+                    )}
+                    {countryNames().map((c) => (
+                      <option value={c}>{c}</option>
+                    ))}
+                  </select>
                 </Field>
                 <p class="mb-4 rounded-lg bg-warn-bg p-3 text-sm" data-testid="overseas-note">
                   {t('order.overseas.note')}
