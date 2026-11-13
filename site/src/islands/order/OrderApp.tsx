@@ -892,10 +892,20 @@ export default function OrderApp({
                       ['order.payment.accountName', config.bank.accountName],
                       ['order.payment.accountNumber', config.bank.accountNumber],
                       ['order.payment.reference', payRef],
-                    ] as [I18nKey, string][]
+                      // Shown as Rs. 4,500; copied as 4500 (bank apps reject commas).
+                      ...(totals
+                        ? [
+                            [
+                              'order.payment.amount',
+                              formatLKR(totals.grandTotalLKR),
+                              String(totals.grandTotalLKR),
+                            ],
+                          ]
+                        : []),
+                    ] as [I18nKey, string, string?][]
                   )
                     .filter(([, v]) => v)
-                    .map(([k, v]) => (
+                    .map(([k, v, copyAs]) => (
                       <div>
                         <dt class="text-sm text-ink-soft">{t(k)}</dt>
                         <dd class="flex items-center justify-between gap-3 font-semibold">
@@ -915,7 +925,7 @@ export default function OrderApp({
                           <button
                             type="button"
                             class={`btn-quiet h-10 w-10 shrink-0 border border-line p-0 ${copied === k ? 'text-success' : ''}`}
-                            onClick={() => copy(k, v)}
+                            onClick={() => copy(k, copyAs ?? v)}
                             aria-label={`${copied === k ? t('site.copied') : t('site.copy')}: ${t(k)}`}
                             title={copied === k ? t('site.copied') : t('site.copy')}
                           >

@@ -191,3 +191,19 @@ test('the order number shown as the bank reference is the one the order gets', a
   await admin.fill('#o-q', ref);
   await expect(admin.locator(`text=${orderId}`).first()).toBeVisible();
 });
+
+test('the total can be copied without commas for the bank app', async ({ page, context, browserName }) => {
+  test.skip(browserName !== 'chromium');
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('order/?book=portuguese-era-1505-1594');
+  await ready(page);
+  await page.click('[data-next-step]');
+  await fillDetails(page);
+  await page.click('[data-next-step]');
+  const amount = page.locator('[data-bank-field="order.payment.amount"]');
+  await expect(amount).toContainText(/Rs\. [\d,]+/);
+  await amount.locator('xpath=ancestor::dd').locator('button').click();
+  const copied = await page.evaluate(() => navigator.clipboard.readText());
+  expect(copied).toMatch(/^\d+$/);
+  expect(Number(copied)).toBeGreaterThan(0);
+});
