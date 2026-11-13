@@ -17,6 +17,13 @@ export function requireAdmin(request: Pick<CallableRequest, 'auth'>): AdminActor
   return { uid: a.uid, email: (a.token.email as string | undefined) ?? null };
 }
 
+/** Packing staff (the staff claim) or an admin. */
+export function requireStaff(request: Pick<CallableRequest, 'auth'>): AdminActor {
+  const a = request.auth;
+  if (!a || (a.token?.staff !== true && a.token?.admin !== true)) fail('permission-denied', 'NOT_STAFF');
+  return { uid: a.uid, email: (a.token.email as string | undefined) ?? null };
+}
+
 export function clientIp(request: Pick<CallableRequest, 'rawRequest'>): string {
   const r = request.rawRequest;
   const fwd = r?.headers?.['x-forwarded-for'];

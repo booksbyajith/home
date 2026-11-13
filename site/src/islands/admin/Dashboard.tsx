@@ -48,7 +48,7 @@ export function Dashboard() {
       );
       const paid = fs.query(
         orders,
-        fs.where('status', 'in', ['payment_verified', 'dispatched', 'delivered']),
+        fs.where('status', 'in', ['payment_verified', 'packed', 'dispatched', 'delivered']),
         fs.where('createdAt', '>=', fs.Timestamp.fromDate(colomboStart('month'))),
       );
       try {

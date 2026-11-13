@@ -1,0 +1,14 @@
+---
+import StaffApp from '../../islands/staff/StaffApp';
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { pick, t } from '../../i18n';
+import { env } from '../../lib/env';
+
+// The packing page for staff: verified orders, label printing and scanning. Not linked anywhere.
+const prefixes = ['staff.', 'status.packed', 'admin.signIn', 'admin.signOut', 'admin.checkAgain'];
+const dicts = { si: pick('si', prefixes), en: pick('en', prefixes), ta: pick('ta', prefixes) };
+---
+
+<AdminLayout title="Packing">
+  <StaffApp client:only="preact" dicts={dicts} siteUrl={env.siteUrl} senderName={t('en', 'site.name')} />
+</AdminLayout>

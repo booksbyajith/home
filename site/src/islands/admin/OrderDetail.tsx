@@ -13,6 +13,7 @@ import { Section, fmtDate, useAdmin, useT } from './ui';
 const ACTION: Record<OrderStatus, I18nKey> = {
   acknowledged: 'admin.action.acknowledge',
   payment_verified: 'admin.action.verify',
+  packed: 'admin.action.pack',
   dispatched: 'admin.action.dispatch',
   delivered: 'admin.action.deliver',
   rejected: 'admin.action.reject',

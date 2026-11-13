@@ -7,7 +7,7 @@ import type { AuditEvent, BookDoc, OrderDoc, OrderStatus } from '../shared/types
 import { FieldValue, Timestamp, db } from '../lib/admin.js';
 import { getPrivateConfig, getPublicConfig } from '../lib/config.js';
 import { fail } from '../lib/errors.js';
-import { parse, requireAdmin, requireAppCheck } from '../lib/guard.js';
+import { parse, requireAdmin, requireAppCheck, requireStaff } from '../lib/guard.js';
 import { log } from '../lib/log.js';
 import { statusMessage } from '../lib/messages.js';
 
@@ -22,8 +22,9 @@ export async function handleUpdateOrderStatus(
   request: CallableRequest<unknown>,
 ): Promise<UpdateOrderStatusResult> {
   requireAppCheck(request);
-  const actor = requireAdmin(request);
+  // Packing staff may only mark verified orders as packed; everything else is for admins.
   const input = parse(updateOrderStatusSchema, request.data);
+  const actor = input.to === 'packed' ? requireStaff(request) : requireAdmin(request);
   const missing = requiredFields(input.to).filter((f) => !input[f]);
   if (missing.length) fail('invalid-argument', 'MISSING_FIELDS', { fields: missing });
   const pub = await getPublicConfig();

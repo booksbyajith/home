@@ -29,6 +29,7 @@ const FLOW: OrderStatus[] = [
   'pending_verification',
   'acknowledged',
   'payment_verified',
+  'packed',
   'dispatched',
   'delivered',
 ];

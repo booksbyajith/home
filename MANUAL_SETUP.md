@@ -234,6 +234,17 @@ GitHub → **Actions → Deploy site to GitHub Pages → Run workflow** (it also
 
 To remove someone: temporarily set `ADMIN_EMAILS` to **only that person**, run the task **revoke-admins**, then put the remaining admins back into `ADMIN_EMAILS`.
 
+## 14b. Give the packing staff access (optional)
+
+The staff page is **https://booksbyajith.github.io/home/staff/** (not linked from the site). Staff see only orders whose payment you have verified, print postal labels (6 per A4, cut along the dashed lines) and scan each label's QR code when the parcel is packed. The order then shows **Packed – ready to post** on the customer's tracking page, and customers who gave an email get a short email.
+
+1. The staff member opens the staff page once and signs in with their Google account.
+2. GitHub → **Settings → Secrets and variables → Actions → New repository secret**: name `STAFF_EMAILS`, value the staff Google address(es), comma-separated. Keep this address out of every other file.
+3. **Actions → Admin tools → Run workflow → grant-staff**.
+4. The staff member taps **Check again** (or signs in again).
+
+To remove access: run **revoke-staff**. Staff cannot open the admin panel, see unverified orders, bank slips or emails, or change an order in any other way.
+
 ## 15. Fill in the settings and prices
 
 In the admin panel:

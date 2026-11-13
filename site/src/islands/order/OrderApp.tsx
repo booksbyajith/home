@@ -447,6 +447,16 @@ export default function OrderApp({
         totalMismatch: res.totalMismatch,
         expectedTotalLKR: totals.grandTotalLKR,
         overseas,
+        customerName: fields.name.trim(),
+        addressLines: [
+          fields.line1,
+          fields.line2,
+          fields.city,
+          regionLine(
+            { districtId: fields.districtId, postalCode: fields.postalCode, country: fields.country },
+            lang,
+          ),
+        ].filter((x) => x.trim()),
       });
       addMyOrder({
         orderId: res.orderId,

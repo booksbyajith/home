@@ -16,6 +16,8 @@ const T = {
     track: 'ඇණවුම පරීක්ෂා කරන්න',
     confirmSubject: 'ඔබගේ ඇණවුම ලැබුණා',
     confirmBody: 'ඔබගේ ඇණවුමට ස්තුතියි. අපි ඔබගේ බැංකු ගෙවීම පරීක්ෂා කර ඉක්මනින් ඔබට දැනුම් දෙන්නෙමු.',
+    packedSubject: 'ඔබගේ පොත ඇසුරුම් කළා',
+    packedBody: 'ඔබගේ පොත ඇසුරුම් කර තැපැල් කිරීමට සූදානම්. යැවූ පසු ලුහුබැඳීමේ අංකය ඔබට ලැබේ.',
     verifiedSubject: 'ගෙවීම තහවුරු විය',
     verifiedBody: 'ඔබගේ ගෙවීම තහවුරු විය. අපි දැන් ඔබගේ පොත යැවීමට සූදානම් කරමින් සිටිමු.',
     dispatchedSubject: 'ඔබගේ පොත යවා ඇත',
@@ -40,6 +42,9 @@ const T = {
     track: 'Track your order',
     confirmSubject: 'We received your order',
     confirmBody: 'Thank you for your order. We will check your bank transfer and let you know shortly.',
+    packedSubject: 'Your book is packed',
+    packedBody:
+      'Your book is packed and ready to post. You will receive the tracking number once it has been sent.',
     verifiedSubject: 'Payment verified',
     verifiedBody: 'Your payment has been verified. We are now preparing your book for dispatch.',
     dispatchedSubject: 'Your book is on its way',
@@ -64,6 +69,8 @@ const T = {
     track: 'உங்கள் ஆர்டரைக் கண்காணிக்கவும்',
     confirmSubject: 'உங்கள் ஆர்டர் கிடைத்தது',
     confirmBody: 'உங்கள் ஆர்டருக்கு நன்றி. உங்கள் வங்கிப் பரிமாற்றத்தைச் சரிபார்த்து விரைவில் உங்களுக்குத் தெரிவிப்போம்.',
+    packedSubject: 'உங்கள் நூல் பொதி செய்யப்பட்டது',
+    packedBody: 'உங்கள் நூல் பொதி செய்யப்பட்டு அனுப்பத் தயாராக உள்ளது. அனுப்பியதும் கண்காணிப்பு எண் உங்களுக்குக் கிடைக்கும்.',
     verifiedSubject: 'கட்டணம் சரிபார்க்கப்பட்டது',
     verifiedBody: 'உங்கள் கட்டணம் சரிபார்க்கப்பட்டது. உங்கள் புத்தகத்தை அனுப்புவதற்குத் தயார் செய்து வருகிறோம்.',
     dispatchedSubject: 'உங்கள் புத்தகம் அனுப்பப்பட்டது',
@@ -96,7 +103,8 @@ function itemsText(order: OrderDoc, lang: Lang): string {
 function customerEmail(
   order: OrderDoc,
   siteUrl: string,
-  subjectKey: 'confirmSubject' | 'verifiedSubject' | 'dispatchedSubject' | 'rejectedSubject',
+  subjectKey:
+    'confirmSubject' | 'verifiedSubject' | 'packedSubject' | 'dispatchedSubject' | 'rejectedSubject',
   intro: string,
   extraRows: [string, string][] = [],
   outro = '',
@@ -140,6 +148,9 @@ export const customerConfirmation = (order: OrderDoc, siteUrl: string) =>
 
 export const customerVerified = (order: OrderDoc, siteUrl: string) =>
   customerEmail(order, siteUrl, 'verifiedSubject', T[order.lang].verifiedBody);
+
+export const customerPacked = (order: OrderDoc, siteUrl: string) =>
+  customerEmail(order, siteUrl, 'packedSubject', T[order.lang].packedBody);
 
 export const customerDispatched = (order: OrderDoc, siteUrl: string) => {
   const t = T[order.lang];

@@ -30,14 +30,25 @@ export const Receipt = forwardRef<HTMLDivElement, Props>(function Receipt(
     >
       <div class="flex items-start justify-between border-b-4 border-maroon pb-4">
         <div>
-          <p class="font-serif text-2xl font-bold text-maroon">{siteName}</p>
-          <p class="text-xl font-semibold">{t('receipt.title')}</p>
+          <p class="font-serif text-3xl font-bold">{t('receipt.title')}</p>
+          <p class="text-sm text-ink-soft">
+            {t('receipt.seller')}: <span class="font-semibold text-maroon">{siteName}</span>
+          </p>
         </div>
         <div class="text-right">
           <p class="text-sm text-ink-soft">{t('receipt.orderId')}</p>
           <p class="font-mono text-2xl font-bold">{r.orderId}</p>
         </div>
       </div>
+      {r.customerName && (
+        <div class="mt-4 rounded-lg bg-paper-dark/60 p-3" data-testid="receipt-customer">
+          <p class="text-sm text-ink-soft">{t('receipt.deliverTo')}</p>
+          <p class="font-semibold">{r.customerName}</p>
+          {r.addressLines?.map((l) => (
+            <p>{l}</p>
+          ))}
+        </div>
+      )}
       <dl class="mt-4 grid grid-cols-2 gap-2">
         <div>
           <dt class="text-sm text-ink-soft">{t('receipt.date')}</dt>

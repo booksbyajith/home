@@ -15,7 +15,8 @@ import type { OrderStatus } from './types.js';
 const allowed: Record<OrderStatus, OrderStatus[]> = {
   pending_verification: ['acknowledged', 'rejected', 'cancelled'],
   acknowledged: ['payment_verified', 'rejected', 'cancelled'],
-  payment_verified: ['dispatched', 'cancelled'],
+  payment_verified: ['packed', 'dispatched', 'cancelled'],
+  packed: ['dispatched', 'cancelled'],
   dispatched: ['delivered'],
   delivered: [],
   rejected: ['pending_verification'],
@@ -24,7 +25,7 @@ const allowed: Record<OrderStatus, OrderStatus[]> = {
 
 describe('state machine', () => {
   const pairs = ORDER_STATUSES.flatMap((from) => ORDER_STATUSES.map((to) => [from, to] as const));
-  it('has 49 pairs', () => expect(pairs).toHaveLength(49));
+  it('has 64 pairs', () => expect(pairs).toHaveLength(64));
   it.each(pairs)('%s -> %s', (from, to) => {
     expect(canTransition(from, to)).toBe(allowed[from].includes(to));
   });
@@ -57,6 +58,11 @@ describe('transition rules', () => {
     expect(templateKeyFor('cancelled')).toBeNull();
   });
   it('customer emails', () => {
-    expect(ORDER_STATUSES.filter(customerEmailFor)).toEqual(['payment_verified', 'dispatched', 'rejected']);
+    expect(ORDER_STATUSES.filter(customerEmailFor)).toEqual([
+      'payment_verified',
+      'packed',
+      'dispatched',
+      'rejected',
+    ]);
   });
 });

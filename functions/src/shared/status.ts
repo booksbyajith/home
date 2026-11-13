@@ -6,7 +6,8 @@ export type { OrderStatus };
 export const TRANSITIONS: Readonly<Record<OrderStatus, readonly OrderStatus[]>> = {
   pending_verification: ['acknowledged', 'rejected', 'cancelled'],
   acknowledged: ['payment_verified', 'rejected', 'cancelled'],
-  payment_verified: ['dispatched', 'cancelled'],
+  payment_verified: ['packed', 'dispatched', 'cancelled'],
+  packed: ['dispatched', 'cancelled'],
   dispatched: ['delivered'],
   delivered: [],
   rejected: ['pending_verification'],
@@ -59,5 +60,5 @@ export function templateKeyFor(to: OrderStatus): Exclude<TemplateKey, 'back_in_s
 }
 
 export function customerEmailFor(to: OrderStatus): boolean {
-  return to === 'payment_verified' || to === 'dispatched' || to === 'rejected';
+  return to === 'payment_verified' || to === 'packed' || to === 'dispatched' || to === 'rejected';
 }

@@ -10,6 +10,8 @@ export const ORDER_STATUSES = [
   'pending_verification',
   'acknowledged',
   'payment_verified',
+  /** Label printed and parcel packed by the staff (scanned at /staff/). */
+  'packed',
   'dispatched',
   'delivered',
   'rejected',

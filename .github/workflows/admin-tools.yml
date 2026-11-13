@@ -14,6 +14,8 @@ on:
           - seed
           - grant-admins
           - revoke-admins
+          - grant-staff
+          - revoke-staff
         default: sync-secrets
 
 permissions:
@@ -90,4 +92,19 @@ jobs:
           for e in "${emails[@]}"; do
             e="$(echo "$e" | xargs)"
             [ -n "$e" ] && node scripts/grant-admin.mjs "$e" --project "$PROJECT" $FLAG
+          done
+
+      - name: Grant or revoke packing-staff access for STAFF_EMAILS
+        if: inputs.task == 'grant-staff' || inputs.task == 'revoke-staff'
+        env:
+          STAFF_EMAILS: ${{ secrets.STAFF_EMAILS }}
+          PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
+          FLAG: ${{ inputs.task == 'revoke-staff' && '--revoke' || '' }}
+        run: |
+          set -euo pipefail
+          if [ -z "$STAFF_EMAILS" ]; then echo "::error::Repository secret STAFF_EMAILS is missing"; exit 1; fi
+          IFS=',' read -ra emails <<< "$STAFF_EMAILS"
+          for e in "${emails[@]}"; do
+            e="$(echo "$e" | xargs)"
+            [ -n "$e" ] && node scripts/grant-admin.mjs "$e" --project "$PROJECT" --staff $FLAG
           done

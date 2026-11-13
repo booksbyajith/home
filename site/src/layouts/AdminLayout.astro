@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css';
 import { asset } from '../lib/paths';
+
+const { title = 'Admin' } = Astro.props as { title?: string };
 ---
 
 <!doctype html>
@@ -11,7 +13,7 @@ import { asset } from '../lib/paths';
     <meta name="robots" content="noindex, nofollow" />
     <meta name="referrer" content="no-referrer" />
     <meta name="theme-color" content="#6f4626" />
-    <title>Admin</title>
+    <title>{title}</title>
     <link rel="icon" href={asset('/icons/favicon.svg')} type="image/svg+xml" />
   </head>
   <body>

@@ -5,6 +5,7 @@ import {
   customerDispatched,
   customerRejected,
   customerVerified,
+  customerPacked,
   teamNewOrder,
 } from './emailTemplates.js';
 import { telegramNewOrderText } from './telegram.js';
@@ -79,9 +80,11 @@ export function planSends(order: OrderDoc, e: NotifyEvent, s: NotifySettings): S
     const tpl =
       e.to === 'payment_verified'
         ? customerVerified
-        : e.to === 'dispatched'
-          ? customerDispatched
-          : customerRejected;
+        : e.to === 'packed'
+          ? customerPacked
+          : e.to === 'dispatched'
+            ? customerDispatched
+            : customerRejected;
     sends.push({
       channel: 'email',
       role: 'customer',

@@ -14,7 +14,7 @@ This policy explains how we handle personal information when you order a book, t
 
 ## On your device
 
-While you fill in the order form, your answers and your bank slip are saved in your own browser so you do not lose them if the page reloads. They are deleted from your browser when your order is sent, or when you choose "Start over". A short list of your orders (order number, date, books, last four digits of your phone) and your receipt stay in your browser so you can track and download them later. You can remove them from the tracking page.
+While you fill in the order form, your answers and your bank slip are saved in your own browser so you do not lose them if the page reloads. They are deleted from your browser when your order is sent, or when you choose "Start over". A short list of your orders (order number, date, books, last four digits of your phone) and your receipt (which also shows your name and delivery address) stay in your browser so you can track and download them later. You can remove them from the tracking page.
 
 ## Who can see your information
 

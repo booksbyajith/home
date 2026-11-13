@@ -27,6 +27,9 @@ export interface ReceiptData {
   expectedTotalLKR: number;
   /** Delivery outside Sri Lanka: postage is agreed later. */
   overseas?: boolean;
+  /** The customer's own name and delivery address (kept only on their device). */
+  customerName?: string;
+  addressLines?: string[];
 }
 
 export function myOrders(): MyOrder[] {
