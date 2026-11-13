@@ -10,6 +10,7 @@ import { fail } from '../lib/errors.js';
 import { clientIp, parse, requireAppCheck } from '../lib/guard.js';
 import { log, errorCode } from '../lib/log.js';
 import { generateOrderId } from '../lib/orderId.js';
+import { isUsableRequestedId, paymentRef } from '../shared/orderRef.js';
 import { enforceRateLimit } from '../lib/rateLimit.js';
 import { buildSearchTokens } from '../lib/search.js';
 import { decodeSlip } from '../lib/slip.js';
@@ -41,7 +42,12 @@ export async function handleCreateOrder(request: CallableRequest<unknown>): Prom
 
   for (let attempt = 0; attempt < 5; attempt++) {
     const now = Timestamp.now();
-    const orderId = generateOrderId(now.toDate());
+    // First try the number the customer already used as their bank reference.
+    const requested =
+      attempt === 0 && input.orderId && isUsableRequestedId(input.orderId, now.toDate())
+        ? input.orderId
+        : null;
+    const orderId = requested ?? generateOrderId(now.toDate());
     const path = `slips/${orderId}/slip.${slip.ext}`;
     const file = bucket().file(path);
     await file.save(slip.buffer, {
@@ -142,7 +148,8 @@ export async function handleCreateOrder(request: CallableRequest<unknown>): Prom
           dispatch: null,
           rejection: null,
           stockReserved: true,
-          search: buildSearchTokens(orderId, customer),
+          paymentRef: paymentRef(input.orderId ?? orderId),
+          search: buildSearchTokens(orderId, customer, input.orderId),
         };
         tx.create(orderRef, order);
         const audit: AuditEvent = {

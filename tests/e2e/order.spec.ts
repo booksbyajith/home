@@ -167,3 +167,27 @@ test('step tabs: back to any step, forward only through the checks', async ({ pa
   await page.click('[data-step-tab="3"]');
   await expect(page.locator('[data-step-tab="3"]')).toHaveAttribute('aria-current', 'step');
 });
+
+test('the order number shown as the bank reference is the one the order gets', async ({ page, context }) => {
+  await page.goto('order/?book=portuguese-era-1505-1594');
+  await ready(page);
+  await page.click('[data-next-step]');
+  await fillDetails(page);
+  await page.click('[data-next-step]');
+  const ref = (await page.locator('[data-bank-field="order.payment.reference"]').textContent())!.trim();
+  expect(ref).toMatch(/^AJ\d{4}[0-9A-Z]{4}$/);
+  await attachSlip(page);
+  await page.click('[data-next-step]');
+  await page.check('#f-consent');
+  await page.click('[data-submit]');
+  await page.waitForURL(/\/order\/success\//, { timeout: 30_000 });
+  const orderId = (await page.locator('[data-testid="order-id"]').textContent())!.trim();
+  expect(orderId.replace(/-/g, '')).toBe(ref);
+  // Admin can find the order by the reference from the bank statement.
+  await makeUser('admin@example.com', true);
+  const admin = await context.newPage();
+  await adminLogin(admin);
+  await admin.goto('admin/#/orders');
+  await admin.fill('#o-q', ref);
+  await expect(admin.locator(`text=${orderId}`).first()).toBeVisible();
+});

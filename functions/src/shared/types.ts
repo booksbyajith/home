@@ -141,6 +141,8 @@ export interface OrderDoc {
     landmark: string | null;
   };
   geo: { lat: number; lng: number; accuracyM: number; capturedAt: Ts } | null;
+  /** Bank-transfer reference shown to the customer before payment (order number without dashes). */
+  paymentRef?: string;
   items: OrderItem[];
   bookSlugs: string[];
   totalQty: number;

@@ -126,6 +126,8 @@ const MAX_BASE64 = Math.ceil((SLIP_MAX_BYTES * 4) / 3) + 1024;
 export const createOrderSchema = z
   .object({
     lang: langSchema,
+    /** Order number chosen by the order form before payment (used as the bank reference). */
+    orderId: orderIdSchema.optional(),
     items: z
       .array(cartItemSchema)
       .min(1)

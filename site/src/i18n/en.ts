@@ -228,6 +228,8 @@ export const en: Dict = {
   'order.payment.branch': 'Branch',
   'order.payment.accountName': 'Account name',
   'order.payment.accountNumber': 'Account number',
+  'order.payment.referenceHint':
+    'This is your order number without dashes. Enter it as the reference (receiver reference) in your bank app so we can match your payment.',
   'order.payment.amount': 'Amount',
   'order.payment.reference': 'Reference',
   'order.slip.title': 'Upload your bank slip',

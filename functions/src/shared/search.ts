@@ -1,8 +1,13 @@
+import { orderIdFromRef } from './orderRef.js';
+
 export function buildSearchTokens(
   orderId: string,
   customer: { name: string; mobile: string; whatsapp: string },
+  /** The order number the customer paid with, if different (see createOrder). */
+  paidAsId?: string,
 ): string[] {
   const tokens = new Set<string>([orderId, orderId.toLowerCase()]);
+  if (paidAsId) tokens.add(paidAsId);
   for (const p of [customer.mobile, customer.whatsapp]) {
     if (!p) continue;
     tokens.add(p);
@@ -15,6 +20,8 @@ export function buildSearchTokens(
 
 export function normaliseSearchQuery(q: string): string {
   const t = q.trim();
+  const fromRef = orderIdFromRef(t); // bank reference without dashes, e.g. AJ2611K7Q3
+  if (fromRef) return fromRef;
   if (/^aj-/i.test(t)) return t.toUpperCase();
   const digits = t.replace(/[\s\-+]/g, '');
   if (/^\d{4,}$/.test(digits))

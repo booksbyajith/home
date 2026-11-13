@@ -4,7 +4,10 @@ import { sha256 } from './hash.js';
 
 export function detectType(buf: Buffer): SlipType | null {
   if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'image/jpeg';
-  if (buf.length >= 8 && buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])))
+  if (
+    buf.length >= 8 &&
+    buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+  )
     return 'image/png';
   if (buf.length >= 12 && buf.toString('latin1', 0, 4) === 'RIFF' && buf.toString('latin1', 8, 12) === 'WEBP')
     return 'image/webp';
@@ -30,5 +33,11 @@ export function decodeSlip(input: { contentType: string; dataBase64: string }): 
   const declared = input.contentType.toLowerCase().replace('image/jpg', 'image/jpeg');
   if (!detected || !(SLIP_TYPES as readonly string[]).includes(declared) || declared !== detected)
     fail('invalid-argument', 'SLIP_INVALID');
-  return { buffer, contentType: detected, ext: SLIP_EXT[detected], sizeBytes: buffer.length, sha256: sha256(buffer) };
+  return {
+    buffer,
+    contentType: detected,
+    ext: SLIP_EXT[detected],
+    sizeBytes: buffer.length,
+    sha256: sha256(buffer),
+  };
 }

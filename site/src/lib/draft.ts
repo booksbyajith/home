@@ -15,6 +15,8 @@ export interface DraftFields {
   districtId: string;
   postalCode: string;
   country: string;
+  /** Order number chosen before payment (its dash-free form is the bank reference). */
+  orderId: string;
   landmark: string;
   signedCopy: boolean;
   dedicationNote: string;
@@ -50,6 +52,7 @@ export const emptyFields = (): DraftFields => ({
   districtId: '',
   postalCode: '',
   country: '',
+  orderId: '',
   landmark: '',
   signedCopy: false,
   dedicationNote: '',

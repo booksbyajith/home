@@ -21,13 +21,22 @@ describe('slip', () => {
     expect(r.sha256).toMatch(/^[0-9a-f]{64}$/);
   });
   it('accepts a data URL prefix', () => {
-    expect(decodeSlip({ contentType: 'application/pdf', dataBase64: 'data:application/pdf;base64,' + pdf.toString('base64') }).ext).toBe('pdf');
+    expect(
+      decodeSlip({
+        contentType: 'application/pdf',
+        dataBase64: 'data:application/pdf;base64,' + pdf.toString('base64'),
+      }).ext,
+    ).toBe('pdf');
   });
   it('rejects mismatched types', () => {
-    expect(() => decodeSlip({ contentType: 'image/png', dataBase64: jpeg.toString('base64') })).toThrow('SLIP_INVALID');
+    expect(() => decodeSlip({ contentType: 'image/png', dataBase64: jpeg.toString('base64') })).toThrow(
+      'SLIP_INVALID',
+    );
   });
   it('rejects oversize files', () => {
     const big = Buffer.concat([pdf, Buffer.alloc(5 * 1024 * 1024)]);
-    expect(() => decodeSlip({ contentType: 'application/pdf', dataBase64: big.toString('base64') })).toThrow('SLIP_TOO_LARGE');
+    expect(() => decodeSlip({ contentType: 'application/pdf', dataBase64: big.toString('base64') })).toThrow(
+      'SLIP_TOO_LARGE',
+    );
   });
 });

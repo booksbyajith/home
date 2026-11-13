@@ -1,6 +1,7 @@
 import { l10nText as tl } from '@shared/l10n';
 import type { Lang } from '@shared/constants';
 import { MAX_QTY_PER_BOOK } from '@shared/constants';
+import { newOrderId, paymentRef } from '@shared/orderRef';
 import { DISTRICTS, OVERSEAS, districtName, regionLine } from '@shared/districts';
 import { maskPhone } from '@shared/mask';
 import { computeTotals, formatLKR, orderability } from '@shared/pricing';
@@ -132,6 +133,7 @@ export default function OrderApp({
   const [live, setLive] = useState<Record<string, BookDoc> | null>(null);
   const [config, setConfig] = useState<PublicConfig | null>(null);
   const [configLoaded, setConfigLoaded] = useState(false);
+  const payRef = fields.orderId ? paymentRef(fields.orderId) : '';
   // Commercial Bank's logo replaces the written bank name (the copy button still copies the full name).
   const showBankLogo = !!bankLogo && !!config && /commercial\s+bank/i.test(config.bank.bankName);
   const [submitting, setSubmitting] = useState(false);
@@ -198,6 +200,13 @@ export default function OrderApp({
       consent,
     });
   }, [ready, step, cart, fields, slip, consent]);
+
+  // ---- the order number is decided when the payment step opens, so it can be the bank reference ----
+  useEffect(() => {
+    if (step !== 2 || fields.orderId) return;
+    const rand = (max: number) => crypto.getRandomValues(new Uint32Array(1))[0] % max;
+    setFields((f) => (f.orderId ? f : { ...f, orderId: newOrderId(new Date(), rand) }));
+  }, [step, fields.orderId]);
 
   // ---- move focus to the step heading when the step changes ----
   useEffect(() => {
@@ -396,6 +405,7 @@ export default function OrderApp({
       const dataBase64 = await blobToBase64(slip.blob);
       const res = await call<unknown, CreateOrderResult>('createOrder', {
         lang,
+        orderId: fields.orderId || undefined,
         items: lines.map((l) => ({ slug: l.slug, qty: l.qty })),
         customer: {
           name: fields.name,
@@ -881,6 +891,7 @@ export default function OrderApp({
                       ],
                       ['order.payment.accountName', config.bank.accountName],
                       ['order.payment.accountNumber', config.bank.accountNumber],
+                      ['order.payment.reference', payRef],
                     ] as [I18nKey, string][]
                   )
                     .filter(([, v]) => v)
@@ -939,6 +950,11 @@ export default function OrderApp({
                       </div>
                     ))}
                 </dl>
+                {payRef && (
+                  <p class="mt-2 rounded-lg bg-gold/10 p-3 text-sm" data-testid="pay-ref-hint">
+                    {t('order.payment.referenceHint')}
+                  </p>
+                )}
                 <h4 class="mt-4 font-semibold">{t('order.payment.instructions')}</h4>
                 <p class="mt-1 whitespace-pre-line">{tl(config.paymentInstructions, lang)}</p>
               </section>
