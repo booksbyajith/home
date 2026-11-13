@@ -1,3 +1,4 @@
+import './globalOptions.js'; // must stay first: sets options before functions are defined
 import './shared/phoneStrict.js'; // strict international phone numbers for every function
 export { createOrder } from './callables/createOrder.js';
 export { trackOrder } from './callables/trackOrder.js';
