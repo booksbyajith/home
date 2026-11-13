@@ -241,6 +241,13 @@
     opacity: 0.6;
     transform: none;
   }
+  /* iOS gives date inputs a fixed minimum width that can overflow narrow cards. */
+  input[type='date'].field-input {
+    min-width: 0;
+    max-width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+  }
   .field-input[aria-invalid='true'] {
     border-color: var(--color-danger);
   }

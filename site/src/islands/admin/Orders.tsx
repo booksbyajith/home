@@ -109,7 +109,7 @@ export function Orders() {
   return (
     <div data-screen="orders">
       <form
-        class="card mb-4 grid items-end gap-3 p-3 md:grid-cols-6"
+        class="card mb-4 grid items-end gap-3 p-4 md:grid-cols-6 [&>*]:min-w-0"
         onSubmit={(e) => {
           e.preventDefault();
           setSearch(q.trim());

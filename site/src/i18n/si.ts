@@ -365,6 +365,7 @@ export const si = {
 
   'admin.title': 'ඇණවුම් පරිපාලනය',
   'admin.signIn': 'Google සමඟ පුරනය වන්න',
+  'admin.signInHint': 'ඇණවුම් කළමනාකරණය සඳහා කණ්ඩායමේ Google ගිණුමෙන් පුරනය වන්න.',
   'admin.signOut': 'ඉවත් වන්න',
   'admin.notAuthorised': 'අවසර නැත. මෙම ගිණුමට පරිපාලන පැනලයට ප්‍රවේශය නැත.',
   'admin.checkAgain': 'නැවත පරීක්ෂා කරන්න',

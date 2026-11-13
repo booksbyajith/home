@@ -1,5 +1,5 @@
 ---
-title: "The Lanka Leader announces the launch of the new book on the Portuguese period"
+title: "The Lanka Leader: “Dr. Ajith Amarasinghe’s new research book launched”"
 description: "The Lanka Leader reported ahead of the 11 November launch of The Portuguese Period in Sri Lanka (1505–1594) at the Mahaweli Centre, Colombo."
 date: 2026-11-05
 tags: [press, launch, portuguese-period]

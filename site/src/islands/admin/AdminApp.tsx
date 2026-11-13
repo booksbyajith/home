@@ -135,7 +135,7 @@ function Shell(p: {
         .map((l) => (
           <button
             type="button"
-            class="btn-quiet px-3"
+            class="btn-quiet min-h-9 px-2.5 py-1 text-sm sm:px-3"
             lang={l}
             onClick={() => p.setLang(l)}
             data-admin-lang={l}
@@ -150,38 +150,62 @@ function Shell(p: {
 
   if (state !== 'admin')
     return (
-      <div class="mx-auto max-w-md p-6" data-admin-state={state}>
-        <div class="flex items-center justify-between">
-          <h1 class="text-2xl font-bold">{t('admin.title')}</h1>
-          {langBtn}
+      <div class="flex min-h-[80vh] items-center justify-center p-4" data-admin-state={state}>
+        <div class="card w-full max-w-sm p-6 text-center sm:p-8">
+          <div class="flex justify-end">{langBtn}</div>
+          <img
+            src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/author/author-halftone.webp`}
+            alt=""
+            class="mx-auto mt-2 h-20 w-20 rounded-full border border-line bg-sepia object-cover object-[52%_15%]"
+          />
+          <h1 class="mt-4 text-2xl font-bold">{t('admin.title')}</h1>
+          {state === 'signedOut' && (
+            <>
+              <p class="mt-2 text-sm text-ink-soft">{t('admin.signInHint')}</p>
+              <button type="button" class="btn-primary mt-6 w-full" onClick={p.onSignIn} data-google-signin>
+                <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+                  <path
+                    fill="#FFC107"
+                    d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"
+                  ></path>
+                  <path
+                    fill="#FF3D00"
+                    d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"
+                  ></path>
+                  <path
+                    fill="#4CAF50"
+                    d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"
+                  ></path>
+                  <path
+                    fill="#1976D2"
+                    d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"
+                  ></path>
+                </svg>
+                {t('admin.signIn')}
+              </button>
+              {p.EmuSignIn && <p.EmuSignIn />}
+            </>
+          )}
+          {state === 'notAdmin' && (
+            <>
+              <p
+                class="mt-6 rounded-md border border-danger bg-white p-4 font-semibold"
+                role="alert"
+                data-testid="not-authorised"
+              >
+                {t('admin.notAuthorised')}
+              </p>
+              <div class="mt-4 flex gap-3">
+                <button type="button" class="btn-secondary" onClick={p.onCheck}>
+                  {t('admin.checkAgain')}
+                </button>
+                <button type="button" class="btn-quiet" onClick={p.onSignOut}>
+                  {t('admin.signOut')}
+                </button>
+              </div>
+            </>
+          )}
         </div>
-        {state === 'signedOut' && (
-          <>
-            <button type="button" class="btn-primary mt-6" onClick={p.onSignIn} data-google-signin>
-              {t('admin.signIn')}
-            </button>
-            {p.EmuSignIn && <p.EmuSignIn />}
-          </>
-        )}
-        {state === 'notAdmin' && (
-          <>
-            <p
-              class="mt-6 rounded-md border border-danger bg-white p-4 font-semibold"
-              role="alert"
-              data-testid="not-authorised"
-            >
-              {t('admin.notAuthorised')}
-            </p>
-            <div class="mt-4 flex gap-3">
-              <button type="button" class="btn-secondary" onClick={p.onCheck}>
-                {t('admin.checkAgain')}
-              </button>
-              <button type="button" class="btn-quiet" onClick={p.onSignOut}>
-                {t('admin.signOut')}
-              </button>
-            </div>
-          </>
-        )}
       </div>
     );
 
@@ -208,15 +232,36 @@ function Shell(p: {
   return (
     <div class="min-h-screen" data-admin-state="admin">
       <header class="no-print border-b border-line bg-paper-dark">
-        <div class="container-page flex flex-wrap items-center justify-between gap-2 py-2">
-          <a href="#/" class="font-serif text-lg font-bold text-ink no-underline">
+        <div class="container-page flex items-center justify-between gap-2 py-2">
+          <a href="#/" class="min-w-0 truncate font-serif text-lg font-bold text-ink no-underline sm:text-xl">
             {t('admin.title')}
           </a>
-          <div class="flex items-center gap-2">
-            <span class="hidden text-sm text-ink-soft sm:inline">{p.user?.email}</span>
+          <div class="flex shrink-0 items-center gap-1">
+            <span class="mr-1 hidden text-sm text-ink-soft lg:inline">{p.user?.email}</span>
             {langBtn}
-            <button type="button" class="btn-quiet px-3" onClick={p.onSignOut}>
-              {t('admin.signOut')}
+            <button
+              type="button"
+              class="btn-quiet min-h-9 border border-line px-2.5 py-1 text-sm"
+              onClick={p.onSignOut}
+              aria-label={t('admin.signOut')}
+              title={t('admin.signOut')}
+              data-admin-signout
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"></path>
+                <path d="M10 17l-5-5 5-5M5 12h11"></path>
+              </svg>
+              <span class="hidden sm:inline">{t('admin.signOut')}</span>
             </button>
           </div>
         </div>
