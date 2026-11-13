@@ -293,28 +293,7 @@ export default function StaffApp({ dicts, siteUrl, senderName }: Props) {
         </div>
       </header>
 
-      <main class="no-print mx-auto max-w-2xl space-y-4 px-4 py-4">
-        <div class="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            class="btn-primary min-h-14 text-lg"
-            disabled={!toPack.length}
-            onClick={() => print(toPack)}
-            data-print-all
-          >
-            🖨 {t('staff.printAll', { n: toPack.length })}
-          </button>
-          <button
-            type="button"
-            class="btn-secondary min-h-14 text-lg"
-            onClick={() => setScanning(true)}
-            data-scan
-          >
-            📷 {t('staff.scan')}
-          </button>
-        </div>
-        <p class="text-center text-sm text-ink-soft">{t('staff.printHint')}</p>
-
+      <main class="no-print mx-auto max-w-2xl space-y-4 px-4 pt-4 pb-44">
         {msg && (
           <p
             class={`rounded-lg p-3 font-semibold ${msg.kind === 'ok' ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'}`}
@@ -364,6 +343,32 @@ export default function StaffApp({ dicts, siteUrl, senderName }: Props) {
           </section>
         )}
       </main>
+
+      {/* Main actions in a bar at the bottom, within thumb reach. */}
+      <div class="no-print fixed inset-x-0 bottom-0 z-10 border-t border-line bg-paper/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
+        <div class="mx-auto max-w-2xl space-y-2">
+          <div class="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              class="btn-primary min-h-12 px-3 text-base leading-tight"
+              disabled={!toPack.length}
+              onClick={() => print(toPack)}
+              data-print-all
+            >
+              🖨 {t('staff.printAll', { n: toPack.length })}
+            </button>
+            <button
+              type="button"
+              class="btn-secondary min-h-12 px-3 text-base leading-tight"
+              onClick={() => setScanning(true)}
+              data-scan
+            >
+              📷 {t('staff.scan')}
+            </button>
+          </div>
+          <p class="text-center text-xs text-ink-soft">{t('staff.printHint')}</p>
+        </div>
+      </div>
 
       {scanning && (
         <Scanner
