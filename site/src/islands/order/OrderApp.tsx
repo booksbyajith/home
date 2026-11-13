@@ -539,7 +539,7 @@ export default function OrderApp({
 
   return (
     <div
-      class="grid gap-8 lg:grid-cols-[1fr_340px]"
+      class="grid gap-8 lg:grid-cols-[1fr_340px] [&>*]:min-w-0"
       data-order-app
       data-ready={ready ? 'true' : 'false'}
       data-step={step}
@@ -1006,7 +1006,7 @@ export default function OrderApp({
                   <span>
                     <span class="font-semibold text-success">✓ {t('order.slip.ready')}</span>
                     <br />
-                    <span class="text-sm text-ink-soft" data-slip-name>
+                    <span class="min-w-0 text-sm text-ink-soft [overflow-wrap:anywhere]" data-slip-name>
                       {slip.name}
                     </span>
                   </span>
@@ -1031,7 +1031,7 @@ export default function OrderApp({
                   {t('order.review.edit')}
                 </button>
               </div>
-              <p class="mt-1" data-testid="review-details">
+              <p class="mt-1 [overflow-wrap:anywhere]" data-testid="review-details">
                 {fields.name}
                 <br />
                 {maskPhone(fields.mobile.replace(/\D/g, ''))}
@@ -1057,7 +1057,9 @@ export default function OrderApp({
                   {t('order.review.edit')}
                 </button>
               </div>
-              <p class="mt-1">{slip ? `✓ ${slip.name}` : t('order.slip.required')}</p>
+              <p class="mt-1 [overflow-wrap:anywhere]">
+                {slip ? `✓ ${slip.name}` : t('order.slip.required')}
+              </p>
             </section>
             <div class="flex items-start gap-2">
               <input
