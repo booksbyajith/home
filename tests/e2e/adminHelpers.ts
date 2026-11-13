@@ -8,6 +8,10 @@ export async function makeUser(email: string, admin: boolean) {
 }
 
 export async function adminLogin(page: Page, email = 'admin@example.com') {
+  // Accept the "change this order to …?" confirmations; tests that check a dialog add their own.
+  page.on('dialog', (d) => {
+    if (d.type() === 'confirm') void d.accept().catch(() => undefined);
+  });
   await page.goto('admin/');
   await expect(page.locator('[data-admin-state="signedOut"]')).toBeVisible();
   await page.fill('#emu-email', email);

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { outbox, resetAll, waitFor } from '../helpers/emulator.js';
+import { db, outbox, resetAll, waitFor } from '../helpers/emulator.js';
 import { adminLogin, decodeWa, makeUser } from './adminHelpers.js';
 import { CUSTOMER, placeOrder } from './orderHelpers.js';
 
@@ -95,4 +95,22 @@ test('admin acknowledges, verifies and dispatches with WhatsApp links and emails
   await page.goto(`track/#${orderId}`);
   await expect(page.locator('[data-testid="track-courier"]')).toHaveText('Demo Courier');
   await expect(page.locator('[data-testid="track-number"]')).toHaveText('TRK777');
+});
+
+test('one-tap status changes ask for confirmation first', async ({ page, context }) => {
+  const orderId = await placeOrder(page);
+  await makeUser('admin@example.com', true);
+  const admin = await context.newPage();
+  await admin.goto('admin/');
+  await admin.fill('#emu-email', 'admin@example.com');
+  await admin.fill('#emu-pass', 'password-123');
+  await admin.click('[data-testid="emulator-signin"] button[type=submit]');
+  await admin.goto(`admin/#/orders/${orderId}`);
+  const ack = admin.locator('[data-action-to="acknowledged"]');
+  await ack.waitFor();
+  admin.once('dialog', (d) => void d.dismiss());
+  await ack.click();
+  await admin.waitForTimeout(800);
+  const snap = await db.doc(`orders/${orderId}`).get();
+  expect(snap.data()!.status).toBe('pending_verification');
 });

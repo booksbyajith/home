@@ -376,6 +376,8 @@ export const en: Dict = {
 
   'admin.title': 'Order administration',
   'admin.signIn': 'Sign in with Google',
+  'admin.slipError': 'The bank slip could not be loaded. Please try again.',
+  'admin.confirmStatus': 'Change this order to “{status}”?',
   'admin.signInHint': "Sign in with the team's Google account to manage orders.",
   'admin.signOut': 'Sign out',
   'admin.notAuthorised': 'Not authorised. This account does not have access to the admin panel.',

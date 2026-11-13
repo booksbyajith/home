@@ -105,6 +105,34 @@ export default function SuccessApp({ lang, dict, trackHref, trackAbsUrl }: Props
                 {t('success.totalChanged', { total: formatLKR(receipt.totals.grandTotalLKR) })}
               </p>
             )}
+            {/* Save the receipt straight away, right under the total. */}
+            <div class="mt-4">
+              <div class="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  class="btn-primary"
+                  onClick={() => dl('jpg')}
+                  disabled={!!busy || !qr}
+                  data-download="jpg"
+                >
+                  {busy === 'jpg' ? t('success.generating') : t('success.downloadJpg')}
+                </button>
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  onClick={() => dl('pdf')}
+                  disabled={!!busy || !qr}
+                  data-download="pdf"
+                >
+                  {busy === 'pdf' ? t('success.generating') : t('success.downloadPdf')}
+                </button>
+              </div>
+              {failed && (
+                <p class="field-error" role="alert">
+                  {t('site.error.generic')}
+                </p>
+              )}
+            </div>
           </>
         )}
       </div>
@@ -131,31 +159,6 @@ export default function SuccessApp({ lang, dict, trackHref, trackAbsUrl }: Props
 
       {receipt ? (
         <section class="card p-5">
-          <div class="flex flex-wrap gap-3">
-            <button
-              type="button"
-              class="btn-secondary"
-              onClick={() => dl('jpg')}
-              disabled={!!busy || !qr}
-              data-download="jpg"
-            >
-              {busy === 'jpg' ? t('success.generating') : t('success.downloadJpg')}
-            </button>
-            <button
-              type="button"
-              class="btn-secondary"
-              onClick={() => dl('pdf')}
-              disabled={!!busy || !qr}
-              data-download="pdf"
-            >
-              {busy === 'pdf' ? t('success.generating') : t('success.downloadPdf')}
-            </button>
-          </div>
-          {failed && (
-            <p class="field-error" role="alert">
-              {t('site.error.generic')}
-            </p>
-          )}
           <Receipt
             ref={node}
             lang={lang}

@@ -367,6 +367,8 @@ export const si = {
 
   'admin.title': 'ඇණවුම් පරිපාලනය',
   'admin.signIn': 'Google සමඟ පුරනය වන්න',
+  'admin.slipError': 'බැංකු රිසිට්පත ලබා ගත නොහැකි විය. කරුණාකර නැවත උත්සාහ කරන්න.',
+  'admin.confirmStatus': 'මෙම ඇණවුම „{status}“ ලෙස වෙනස් කරන්නද?',
   'admin.signInHint': 'ඇණවුම් කළමනාකරණය සඳහා කණ්ඩායමේ Google ගිණුමෙන් පුරනය වන්න.',
   'admin.signOut': 'ඉවත් වන්න',
   'admin.notAuthorised': 'අවසර නැත. මෙම ගිණුමට පරිපාලන පැනලයට ප්‍රවේශය නැත.',

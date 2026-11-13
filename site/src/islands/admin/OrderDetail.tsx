@@ -123,21 +123,32 @@ export function OrderDetail({ orderId }: { orderId: string }) {
   const start = (to: OrderStatus) => {
     setErr(null);
     if (to === 'dispatched' || to === 'rejected' || to === 'cancelled') setPending(to);
-    else void act(to);
+    // One-tap changes ask first, so a stray tap doesn't change the order (or message the customer).
+    else if (window.confirm(t('admin.confirmStatus', { status: t(`status.${to}` as I18nKey) }))) void act(to);
   };
 
+  const [slipErr, setSlipErr] = useState(false);
   const viewSlip = async () => {
-    const r = await call<{ orderId: string }, { url: string; contentType: string }>('getSlipUrl', {
-      orderId,
-    });
+    setSlipErr(false);
+    // Open the PDF tab synchronously (inside the tap) so phone pop-up blockers allow it.
+    const win = order?.slip?.contentType === 'application/pdf' ? window.open('', '_blank') : null;
+    let r: { url: string; contentType: string };
+    try {
+      r = await call<{ orderId: string }, { url: string; contentType: string }>('getSlipUrl', { orderId });
+    } catch {
+      win?.close();
+      setSlipErr(true);
+      return;
+    }
     let url = r.url;
     if (url.startsWith('data:')) {
-      // Emulator only: decode locally (fetching a data: URL is blocked by the CSP's connect-src).
+      // The server sends the slip itself as a data: URL; turn it into a local file link
+      // (fetching a data: URL is blocked by the CSP's connect-src).
       const bin = atob(url.slice(url.indexOf(',') + 1));
       const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
       url = URL.createObjectURL(new Blob([bytes], { type: r.contentType }));
     }
-    if (r.contentType === 'application/pdf') window.open(url, '_blank', 'noopener');
+    if (win) win.location.href = url;
     setSlip({ url, type: r.contentType });
   };
 
@@ -365,10 +376,18 @@ export function OrderDetail({ orderId }: { orderId: string }) {
               />
             )}
             {slip && slip.type === 'application/pdf' && (
-              <p class="mt-2">
-                <a href={slip.url} target="_blank" rel="noopener">
+              <p class="mt-3 flex flex-wrap gap-2">
+                <a href={slip.url} target="_blank" rel="noopener" class="btn-primary">
                   {t('admin.order.openPdf')} ↗
                 </a>
+                <a href={slip.url} download={`${orderId}-slip.pdf`} class="btn-secondary">
+                  ⬇ PDF
+                </a>
+              </p>
+            )}
+            {slipErr && (
+              <p class="field-error" role="alert">
+                {t('admin.slipError')}
               </p>
             )}
           </>

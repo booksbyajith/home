@@ -1,5 +1,5 @@
 import { onCall, type CallableRequest } from 'firebase-functions/v2/https';
-import { ADMIN_CALLABLE, corsOrigins, isEmulator } from '../options.js';
+import { ADMIN_CALLABLE, corsOrigins } from '../options.js';
 import { getSlipUrlSchema } from '../shared/schemas.js';
 import type { AuditEvent, OrderDoc } from '../shared/types.js';
 import { Timestamp, bucket, db } from '../lib/admin.js';
@@ -16,16 +16,13 @@ export async function handleGetSlipUrl(request: CallableRequest<unknown>) {
   const order = (await ref.get()).data() as OrderDoc | undefined;
   if (!order?.slip) fail('not-found', 'NOT_FOUND');
 
+  // The slip itself is returned (as a data: URL; slips are at most 5 MB). A signed Cloud Storage
+  // link would need the functions' service account to hold the Token Creator role, which a fresh
+  // project doesn't grant: without it the request failed and the admin's button did nothing.
   const file = bucket().file(order.slip.path);
+  const [buf] = await file.download();
+  const url = `data:${order.slip.contentType};base64,${buf.toString('base64')}`;
   const expiresAt = Date.now() + TTL_MS;
-  let url: string;
-  if (isEmulator()) {
-    // The emulator has no signing key: return the bytes as a data URL instead.
-    const [buf] = await file.download();
-    url = `data:${order.slip.contentType};base64,${buf.toString('base64')}`;
-  } else {
-    [url] = await file.getSignedUrl({ version: 'v4', action: 'read', expires: expiresAt });
-  }
   const event: AuditEvent = {
     type: 'slip_view',
     at: Timestamp.now(),

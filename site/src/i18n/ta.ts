@@ -371,6 +371,8 @@ export const ta: Dict = {
 
   'admin.title': 'ஆர்டர் நிர்வாகம்',
   'admin.signIn': 'Google மூலம் உள்நுழையவும்',
+  'admin.slipError': 'வங்கி ரசீதை ஏற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்.',
+  'admin.confirmStatus': 'இந்த ஆர்டரை “{status}” என மாற்றவா?',
   'admin.signInHint': 'ஆர்டர்களை நிர்வகிக்க குழுவின் Google கணக்கில் உள்நுழையவும்.',
   'admin.signOut': 'வெளியேறு',
   'admin.notAuthorised': 'அனுமதி இல்லை. இந்தக் கணக்கிற்கு நிர்வாகப் பகுதிக்கு அணுகல் இல்லை.',

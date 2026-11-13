@@ -248,6 +248,7 @@ describe('anonymiseOldOrders', () => {
       city: '',
       districtId: 'colombo',
       postalCode: '',
+      country: null, // kept for overseas orders (accounts), empty here
       landmark: null,
     });
     expect(o.slip).toBeNull();

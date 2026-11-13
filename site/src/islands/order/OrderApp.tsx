@@ -1052,14 +1052,19 @@ export default function OrderApp({
             </section>
             <section class="card p-4">
               <div class="flex justify-between">
-                <h3 class="font-sans font-semibold">{t('order.slip.title')}</h3>
+                <h3 class="flex items-center gap-2 font-sans font-semibold">
+                  {t('order.slip.title')}
+                  {slip && (
+                    <span class="text-xl leading-none text-success" aria-hidden="true">
+                      ✓
+                    </span>
+                  )}
+                </h3>
                 <button type="button" class="btn-quiet min-h-9 px-2 py-0 text-sm" onClick={() => setStep(2)}>
                   {t('order.review.edit')}
                 </button>
               </div>
-              <p class="mt-1 [overflow-wrap:anywhere]">
-                {slip ? `✓ ${slip.name}` : t('order.slip.required')}
-              </p>
+              <p class="mt-1 [overflow-wrap:anywhere]">{slip ? slip.name : t('order.slip.required')}</p>
             </section>
             <div class="flex items-start gap-2">
               <input
