@@ -38,7 +38,9 @@ const xDefault = urls.find((u) => u.l === 'si')?.url;
 const OG_LOCALE: Record<Lang, string> = { si: 'si_LK', en: 'en_GB', ta: 'ta_LK' };
 const siteName = t(lang, 'site.name');
 const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
-const image = absUrl(ogImage ?? asset(`/og/default-${lang}.jpg`));
+// ?v= changes when the share images are redrawn, so WhatsApp and Facebook fetch the new ones.
+const OG_VERSION = '2';
+const image = `${absUrl(ogImage ?? asset(`/og/default-${lang}.jpg`))}?v=${OG_VERSION}`;
 const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 

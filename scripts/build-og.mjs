@@ -30,7 +30,7 @@ const fresh = (file, ...sources) =>
 
 async function render(file, { title, subtitle, lang, cover }) {
   const band = Buffer.from(
-    `<svg width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="#f8f3e7"/><rect width="${W}" height="14" fill="#7a1f1f"/><rect y="${H - 14}" width="${W}" height="14" fill="#9a6b12"/></svg>`,
+    `<svg width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="#fbf7ef"/><rect width="${W}" height="14" fill="#6f4626"/><rect y="${H - 14}" width="${W}" height="14" fill="#845d16"/></svg>`,
   );
   const layers = [{ input: band, left: 0, top: 0 }];
   let textLeft = 80;
@@ -58,9 +58,9 @@ async function render(file, { title, subtitle, lang, cover }) {
     });
     layers.push({ input: s.data, left: textLeft, top: Math.min(y, H - 200) });
   }
-  const name = await textImage(sharp, NAME[lang], { size: 34, width: textWidth, color: '#7a1f1f' });
+  const name = await textImage(sharp, NAME[lang], { size: 34, width: textWidth, color: '#6f4626' });
   layers.push({ input: name.data, left: textLeft, top: H - 70 - name.height });
-  await sharp({ create: { width: W, height: H, channels: 3, background: '#f8f3e7' } })
+  await sharp({ create: { width: W, height: H, channels: 3, background: '#fbf7ef' } })
     .composite(layers)
     .jpeg({ quality: 82, mozjpeg: true })
     .toFile(file);

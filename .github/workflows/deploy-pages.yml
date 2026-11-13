@@ -22,6 +22,10 @@ jobs:
       - uses: ./.github/actions/setup
       - id: pages
         uses: actions/configure-pages@v5
+      # The share (Open Graph) images are drawn with the system's text engine, which needs
+      # Sinhala and Tamil fonts installed; without them every letter becomes a box.
+      - name: Fonts for share images
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends fonts-noto-core
       - name: Build
         run: pnpm build
         env:

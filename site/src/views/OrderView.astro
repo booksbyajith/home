@@ -5,7 +5,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { pick, useT } from '../i18n';
 import { getBooks } from '../lib/content';
 import { img } from '../lib/images';
-import { href } from '../lib/paths';
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { asset, href } from '../lib/paths';
 
 interface Props {
   lang: Lang;
@@ -19,6 +21,16 @@ const books: OrderBook[] = (await getBooks()).map((b) => {
   const { externalUrl: _x, ...defaults } = b.defaults;
   return { slug: b.slug, title: b.title, cover: small, defaults };
 });
+// Commercial Bank's logo, if one has been added as site/public/icons/bank-logo.(svg|png|jpg|webp).
+let bankLogo: string | undefined;
+try {
+  const f = readdirSync(join(process.cwd(), 'public/icons')).find((n) =>
+    /^bank-logo\.(svg|png|jpe?g|webp)$/i.test(n),
+  );
+  if (f) bankLogo = asset(`/icons/${f}`);
+} catch {
+  /* no icons folder */
+}
 const dict = pick(lang, ['order.', 'books.', 'site.copy', 'site.copied', 'nav.contact']);
 ---
 
@@ -34,6 +46,7 @@ const dict = pick(lang, ['order.', 'books.', 'site.copy', 'site.copied', 'nav.co
         successHref={href(lang, '/order/success/')}
         privacyHref={href(lang, '/privacy/')}
         contactHref={href(lang, '/contact/')}
+        bankLogo={bankLogo}
       />
     </div>
   </section>

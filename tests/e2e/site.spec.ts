@@ -68,7 +68,7 @@ test.describe('site shell', () => {
     await expect(page.locator('h1')).toContainText('இலங்கையில் போர்த்துக்கேயர் காலம்');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
       'content',
-      /og\/book-portuguese-era-1505-1594-ta\.jpg$/,
+      /og\/book-portuguese-era-1505-1594-ta\.jpg\?v=\d+$/,
     );
   });
 
@@ -82,7 +82,7 @@ test.describe('site shell', () => {
     await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'book');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
       'content',
-      /og\/book-finding-sinhabahu-en\.jpg$/,
+      /og\/book-finding-sinhabahu-en\.jpg\?v=\d+$/,
     );
   });
 

@@ -43,6 +43,8 @@ interface Props {
   successHref: string;
   privacyHref: string;
   contactHref: string;
+  /** Commercial Bank's logo (site/public/icons/bank-logo.*), shown when the bank is Commercial Bank. */
+  bankLogo?: string;
 }
 
 interface Slip {
@@ -108,7 +110,15 @@ function validateDetails(f: DraftFields): Record<string, I18nKey> {
   return errors;
 }
 
-export default function OrderApp({ lang, dict, books, successHref, privacyHref, contactHref }: Props) {
+export default function OrderApp({
+  lang,
+  dict,
+  books,
+  successHref,
+  privacyHref,
+  contactHref,
+  bankLogo,
+}: Props) {
   const t = makeT(dict);
   const [ready, setReady] = useState(false);
   const [step, setStep] = useState(0);
@@ -886,25 +896,34 @@ export default function OrderApp({ lang, dict, books, successHref, privacyHref, 
             {config && (
               <section class="card p-4" aria-labelledby="bank-h">
                 <h3 id="bank-h" class="flex items-center gap-3 font-sans text-lg font-semibold">
-                  <span
-                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-maroon text-white"
-                    aria-hidden="true"
-                  >
-                    <svg
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                  {bankLogo && /commercial\s+bank/i.test(config.bank.bankName) ? (
+                    <img
+                      src={bankLogo}
+                      alt=""
+                      class="h-11 w-auto max-w-[9rem] shrink-0 object-contain"
+                      data-bank-logo
+                    />
+                  ) : (
+                    <span
+                      class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-maroon text-white"
+                      aria-hidden="true"
                     >
-                      <path d="M3 9.5L12 4l9 5.5"></path>
-                      <path d="M4.5 10v7M9 10v7M15 10v7M19.5 10v7"></path>
-                      <path d="M3 20h18"></path>
-                    </svg>
-                  </span>
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M3 9.5L12 4l9 5.5"></path>
+                        <path d="M4.5 10v7M9 10v7M15 10v7M19.5 10v7"></path>
+                        <path d="M3 20h18"></path>
+                      </svg>
+                    </span>
+                  )}
                   {t('order.payment.title')}
                 </h3>
                 <dl class="mt-3 space-y-3" data-testid="bank">
