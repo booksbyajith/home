@@ -48,6 +48,10 @@ test('staff see verified orders, print 6-per-page labels with QR codes, and mark
   await staff.click(`[data-mark-packed="${verified}"]`);
   await expect(staff.locator('[data-staff-msg="ok"]')).toBeVisible();
   await expect.poll(async () => (await db.doc(`orders/${verified}`).get()).data()!.status).toBe('packed');
+  // The SMS button opens the SMS app with the customer's number and a message naming the order.
+  const sms = (await staff.locator(`[data-sms="${verified}"]`).first().getAttribute('href'))!;
+  expect(sms.startsWith('sms:+94770000001?&body=')).toBe(true);
+  expect(decodeURIComponent(sms)).toContain(verified);
 
   // Opening the label's QR link shows that order on its own.
   await staff.goto(`staff/#/scan/${verified}`);

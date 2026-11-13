@@ -5,6 +5,7 @@
  */
 import type { Lang } from '@shared/constants';
 import { l10nText as tl } from '@shared/l10n';
+import { buildTrackUrl } from '@shared/templates';
 import type { User } from 'firebase/auth';
 import type { ComponentType } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
@@ -18,6 +19,8 @@ interface StaffOrder {
   verifiedAt: number;
   name: string;
   phone: string;
+  smsNumber: string;
+  lang: Lang;
   addressLines: string[];
   items: { title: { si: string; en: string; ta?: string }; qty: number }[];
   signedCopy: boolean;
@@ -199,6 +202,14 @@ export default function StaffApp({ dicts, siteUrl, senderName }: Props) {
     month: 'short',
   });
 
+  // The message goes out in the customer's own language. "sms:NUMBER?&body=" works on iPhone and Android.
+  const smsHref = (o: StaffOrder) => {
+    const text = ((dicts[o.lang]?.['staff.sms'] ?? dicts.en['staff.sms']) as string)
+      .replace('{orderId}', o.orderId)
+      .replace('{url}', buildTrackUrl(siteUrl, o.lang, o.orderId));
+    return `sms:${o.smsNumber}?&body=${encodeURIComponent(text)}`;
+  };
+
   const card = (o: StaffOrder, big = false) => (
     <li class={`card p-4 ${big ? 'border-2 border-maroon' : ''}`} data-staff-order={o.orderId}>
       <div class="flex flex-wrap items-baseline justify-between gap-2">
@@ -234,7 +245,13 @@ export default function StaffApp({ dicts, siteUrl, senderName }: Props) {
             ✓ {t('staff.markPacked')}
           </button>
         ) : (
-          <span class="badge self-center bg-success/10 text-success">✓ {t('status.packed')}</span>
+          <>
+            <span class="badge self-center bg-success/10 text-success">✓ {t('status.packed')}</span>
+            {/* Opens the phone's SMS app with the customer's number and message filled in. */}
+            <a href={smsHref(o)} class="btn-primary" data-sms={o.orderId}>
+              📱 {t('staff.smsButton')}
+            </a>
+          </>
         )}
         <button type="button" class="btn-secondary" onClick={() => print([o])}>
           🖨 {t('staff.printOne')}

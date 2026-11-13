@@ -1,6 +1,7 @@
 import { onCall, type CallableRequest } from 'firebase-functions/v2/https';
 import { ADMIN_CALLABLE, corsOrigins } from '../options.js';
 import { displayPhone, regionLine } from '../shared/districts.js';
+import type { Lang } from '../shared/constants.js';
 import type { L10n, OrderDoc } from '../shared/types.js';
 import { db, type Timestamp } from '../lib/admin.js';
 import { requireAppCheck, requireStaff } from '../lib/guard.js';
@@ -11,6 +12,9 @@ export interface StaffOrder {
   verifiedAt: number;
   name: string;
   phone: string;
+  /** International form for the SMS app, e.g. +94771234567. */
+  smsNumber: string;
+  lang: Lang;
   addressLines: string[];
   items: { title: L10n; qty: number }[];
   signedCopy: boolean;
@@ -41,6 +45,8 @@ export async function handleStaffOrders(
       verifiedAt: ((verified?.at ?? o.updatedAt) as Timestamp).toMillis(),
       name: o.customer.name,
       phone: displayPhone(o.customer.mobile),
+      smsNumber: `+${o.customer.mobile}`,
+      lang: o.lang,
       addressLines: [a.line1, a.line2, a.city, regionLine(a, 'en')].filter((x): x is string => !!x),
       items: o.items.map((i) => ({ title: i.title, qty: i.qty })),
       signedCopy: !!o.signedCopy,

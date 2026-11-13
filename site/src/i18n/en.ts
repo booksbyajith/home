@@ -380,6 +380,9 @@ export const en: Dict = {
   'admin.title': 'Order administration',
   'admin.signIn': 'Sign in with Google',
   'staff.title': 'Packing',
+  'staff.smsButton': 'Send SMS to customer',
+  'staff.sms':
+    'Dr. Ajith Amarasinghe Books: your order {orderId} is packed and will be posted shortly. Track it here: {url}',
   'staff.signInHint': 'Sign in with the staff Google account to see the orders to pack.',
   'staff.notStaff': 'This account has no access to the packing list. Ask Dr. Amarasinghe to add it.',
   'staff.toPack': 'To pack',
