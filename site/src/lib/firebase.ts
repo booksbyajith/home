@@ -27,15 +27,21 @@ export interface CallError {
   code: string | null;
   fields: string[];
   slugs: string[];
+  reason: string | null;
 }
 
 export function callError(err: unknown): CallError {
-  const e = err as { code?: string; details?: { code?: string; fields?: string[]; slugs?: string[] } };
+  const e = err as {
+    code?: string;
+    message?: string;
+    details?: { code?: string; fields?: string[]; slugs?: string[]; reason?: string };
+  };
   return {
     status: (e?.code ?? 'unknown').replace(/^functions\//, ''),
     code: e?.details?.code ?? null,
     fields: e?.details?.fields ?? [],
     slugs: e?.details?.slugs ?? [],
+    reason: e?.details?.reason ?? e?.message ?? null,
   };
 }
 

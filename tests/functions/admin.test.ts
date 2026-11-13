@@ -13,6 +13,7 @@ import {
   userToken,
 } from '../helpers/emulator.js';
 import { CHINESE, orderInput } from '../helpers/fixtures.js';
+import { pdf } from '../helpers/files.js';
 
 let admin: string;
 beforeEach(async () => {
@@ -33,6 +34,24 @@ describe('getSlipUrl', () => {
       'PERMISSION_DENIED',
     );
     expect((await call('getSlipUrl', { orderId })).error?.status).toBe('PERMISSION_DENIED');
+  });
+});
+
+describe('getSlipUrl with a PDF slip', () => {
+  it('returns the PDF itself', async () => {
+    const file = pdf(300_000);
+    const input = await orderInput({
+      slip: {
+        fileName: 'HNB_Transfer_Receipt.pdf',
+        contentType: 'application/pdf',
+        dataBase64: file.toString('base64'),
+      },
+    });
+    const orderId = (await call('createOrder', input)).result.orderId;
+    const r = await call('getSlipUrl', { orderId }, { idToken: admin });
+    expect(r.error).toBeUndefined();
+    expect(r.result.contentType).toBe('application/pdf');
+    expect(r.result.url.startsWith('data:application/pdf;base64,JVBER')).toBe(true);
   });
 });
 

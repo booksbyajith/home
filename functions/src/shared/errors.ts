@@ -21,4 +21,6 @@ export interface ErrorDetails {
   code: ErrorCode;
   fields?: string[];
   slugs?: string[];
+  /** Admin-only diagnostics (e.g. why a bank slip could not be read). */
+  reason?: string;
 }

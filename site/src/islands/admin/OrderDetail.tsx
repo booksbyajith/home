@@ -139,7 +139,7 @@ export function OrderDetail({ orderId }: { orderId: string }) {
     } catch (e) {
       win?.close();
       const ce = callError(e);
-      setSlipErr(`${ce.status}${ce.code ? ` · ${ce.code}` : ''}`);
+      setSlipErr([ce.status, ce.code, ce.reason].filter(Boolean).join(' · '));
       return;
     }
     let url = r.url;
