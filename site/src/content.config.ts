@@ -53,6 +53,8 @@ const postSchema = z.object({
   tags: z.array(z.string()).default([]),
   cover: z.string().optional(),
   coverAlt: z.string().optional(),
+  /** Link preview picture: the post's cover (default) or the author's photo. */
+  shareImage: z.enum(['cover', 'author']).optional(),
   translationKey: z.string().optional(),
   draft: z.boolean().default(false),
 });

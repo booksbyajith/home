@@ -45,8 +45,9 @@ const frame = () =>
 /** A book cover with a soft shadow, as a PNG of (w + 2*pad) x (h + 2*pad). */
 async function shadowed(file, w, h, pad = 18) {
   const img = await sharp(file).resize({ width: w, height: h, fit: 'cover' }).toBuffer();
+  // A wide soft shadow plus a tighter one at the base, like a book standing on paper.
   const shadow = Buffer.from(
-    `<svg width="${w + 2 * pad}" height="${h + 2 * pad}"><defs><filter id="b"><feGaussianBlur stdDeviation="${pad / 2.5}"/></filter></defs><rect x="${pad + 4}" y="${pad + 8}" width="${w}" height="${h}" fill="#2b1d12" opacity="0.45" filter="url(#b)"/></svg>`,
+    `<svg width="${w + 2 * pad}" height="${h + 2 * pad}"><defs><filter id="a"><feGaussianBlur stdDeviation="${pad / 2}"/></filter><filter id="b"><feGaussianBlur stdDeviation="${Math.max(2, pad / 8)}"/></filter></defs><rect x="${pad + pad / 3}" y="${pad + pad / 1.6}" width="${w}" height="${h}" fill="#1f140b" opacity="0.6" filter="url(#a)"/><rect x="${pad + 2}" y="${pad + 4}" width="${w}" height="${h}" fill="#1f140b" opacity="0.45" filter="url(#b)"/></svg>`,
   );
   return sharp(shadow)
     .composite([{ input: img, left: pad, top: pad }])
@@ -81,7 +82,7 @@ async function roundPortrait(d) {
 }
 
 /** Site-wide card: the author's portrait on the right, name, tagline and the book covers. */
-async function renderDefault(file, { title, subtitle }) {
+async function renderDefault(file, { title, subtitle, covers = COVERS }) {
   const layers = [{ input: frame(), left: 0, top: 0 }];
   const pw = 430;
   if (existsSync(PORTRAIT)) {
@@ -99,13 +100,19 @@ async function renderDefault(file, { title, subtitle }) {
       .toBuffer();
     layers.push({ input: photo, left: W - pw, top: 14 });
   }
-  const textW = W - pw - 90;
+  // One book: shown large beside the portrait, with the text kept on the left.
+  const single = covers.length === 1;
+  const bw = 290;
+  const bh = 431;
+  const bpad = 40;
+  const bookLeft = W - pw - bw + 40;
+  const textW = single ? bookLeft - 70 - 20 : W - pw - 90;
   const t = await textImage(sharp, title, {
     size: title.length > 30 ? 46 : 56,
     width: textW,
     color: '#1f1b16',
   });
-  layers.push({ input: t.data, left: 70, top: 60 });
+  let sub = null;
   if (subtitle) {
     const s = await textImage(sharp, subtitle, {
       size: 28,
@@ -114,13 +121,26 @@ async function renderDefault(file, { title, subtitle }) {
       serif: false,
       bold: false,
     });
-    layers.push({ input: s.data, left: 70, top: 60 + t.height + 14 });
+    sub = s;
+  }
+  // With one large book the text block is centred vertically; otherwise it sits at the top.
+  const block = t.height + (sub ? 14 + sub.height : 0);
+  const top = single ? Math.max(40, Math.round((H - block) / 2)) : 60;
+  layers.push({ input: t.data, left: 70, top });
+  if (sub) layers.push({ input: sub.data, left: 70, top: top + t.height + 14 });
+  if (single) {
+    layers.push({
+      input: await shadowed(covers[0], bw, bh, bpad),
+      left: bookLeft - bpad,
+      top: Math.round((H - bh) / 2) - bpad + 6,
+    });
+    covers = [];
   }
   // The books side by side.
   const cw = 174;
   const ch = 261;
   let x = 52;
-  for (const c of COVERS) {
+  for (const c of covers) {
     layers.push({ input: await shadowed(c, cw, ch), left: x, top: H - 14 - ch - 60 });
     x += cw + 12;
   }
@@ -204,13 +224,23 @@ for (const kind of ['news', 'blog']) {
       const slug = name.replace(/\.mdx?$/, '');
       const f = path.join(out, `${kind}-${slug}-${lang}.jpg`);
       const cover = fm.cover ? path.join(site, 'public', fm.cover) : null;
-      if (!fresh(f, src))
-        await render(f, {
-          title: fm.title,
-          subtitle: fm.description,
-          lang,
-          cover: cover && existsSync(cover) ? cover : null,
-        });
+      if (!fresh(f, src)) {
+        const hasCover = cover && existsSync(cover);
+        // shareImage: author → the author's photo, with this post's cover as the only book.
+        if (fm.shareImage === 'author')
+          await renderDefault(f, {
+            title: fm.title,
+            subtitle: fm.description,
+            covers: hasCover ? [cover] : COVERS,
+          });
+        else
+          await render(f, {
+            title: fm.title,
+            subtitle: fm.description,
+            lang,
+            cover: hasCover ? cover : null,
+          });
+      }
       count++;
     }
   }
