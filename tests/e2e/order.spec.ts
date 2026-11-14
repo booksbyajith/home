@@ -33,8 +33,7 @@ test('full order with two books and a slip upload', async ({ page }) => {
   await attachSlip(page);
   await page.click('[data-next-step]');
 
-  await expect(page.locator('[data-submit]')).toBeDisabled();
-  await page.check('#f-consent');
+  await expect(page.locator('[data-testid="consent-note"] a')).toHaveAttribute('href', /privacy/);
   await page.click('[data-submit]');
   await page.waitForURL(/\/order\/success\/#AJ-\d{4}-[2-9A-HJKMNP-TV-Z]{4}$/, { timeout: 30_000 });
   const orderId = (await page.locator('[data-testid="order-id"]').textContent())!.trim();
@@ -178,7 +177,6 @@ test('the order number shown as the bank reference is the one the order gets', a
   expect(ref).toMatch(/^AJ\d{4}[0-9A-Z]{4}$/);
   await attachSlip(page);
   await page.click('[data-next-step]');
-  await page.check('#f-consent');
   await page.click('[data-submit]');
   await page.waitForURL(/\/order\/success\//, { timeout: 30_000 });
   const orderId = (await page.locator('[data-testid="order-id"]').textContent())!.trim();

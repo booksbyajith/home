@@ -244,8 +244,9 @@ export const en: Dict = {
   'order.review.title': 'Check and confirm',
   'order.review.edit': 'Edit',
   'order.review.consent':
-    'I agree that my details are used to deliver this order, as described in the privacy policy.',
-  'order.review.submit': 'Place order',
+    'By tapping «Agree and place order», you agree that your details are used to deliver this order, as described in the privacy policy.',
+  'order.review.privacyLink': 'Privacy policy',
+  'order.review.submit': 'Agree and place order',
   'order.review.submitting': 'Sending your order…',
   'order.draft.restored': 'Your unfinished order was restored.',
   'order.draft.startOver': 'Start over',

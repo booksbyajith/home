@@ -54,6 +54,7 @@ export function corsOrigins(): string[] | boolean {
 
 export const PUBLIC_CALLABLE = {
   region: REGION,
+  invoker: 'public' as const,
   enforceAppCheck: true,
   maxInstances: 10,
   memory: '256MiB' as const,
@@ -61,6 +62,7 @@ export const PUBLIC_CALLABLE = {
 
 export const ADMIN_CALLABLE = {
   region: REGION,
+  invoker: 'public' as const,
   enforceAppCheck: true,
   maxInstances: 10,
   memory: '256MiB' as const,

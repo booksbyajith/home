@@ -128,7 +128,6 @@ export default function OrderApp({
   const [slip, setSlip] = useState<Slip | null>(null);
   const [slipMsg, setSlipMsg] = useState<I18nKey | null>(null);
   const [slipBusy, setSlipBusy] = useState(false);
-  const [consent, setConsent] = useState(false);
   const [errors, setErrors] = useState<Record<string, I18nKey>>({});
   const [restored, setRestored] = useState(false);
   const [live, setLive] = useState<Record<string, BookDoc> | null>(null);
@@ -158,7 +157,6 @@ export default function OrderApp({
     if (d && isMeaningful(d)) {
       setStep(Math.min(Math.max(d.step, 0), 3));
       setFields(withGuess(d.fields));
-      setConsent(!!d.consent);
       setRestored(true);
       if (d.slipMeta) {
         void loadSlip().then((s) => {
@@ -198,9 +196,9 @@ export default function OrderApp({
       fields,
       geo: null,
       slipMeta: slip ? { name: slip.name, type: slip.type, size: slip.size } : null,
-      consent,
+      consent: false,
     });
-  }, [ready, step, cart, fields, slip, consent]);
+  }, [ready, step, cart, fields, slip]);
 
   // ---- the order number is decided when the payment step opens, so it can be the bank reference ----
   useEffect(() => {
@@ -287,7 +285,6 @@ export default function OrderApp({
     setFields(emptyFields());
     setSlip(null);
     setSlipMsg(null);
-    setConsent(false);
     setErrors({});
     setRestored(false);
     setSubmitError(null);
@@ -392,7 +389,7 @@ export default function OrderApp({
   };
 
   const submit = async () => {
-    if (!consent || !slip || !totals || submitting) return;
+    if (!slip || !totals || submitting) return;
     await loadPhoneRules();
     const errs = validateDetails(fields);
     if (Object.keys(errs).length) {
@@ -1086,21 +1083,12 @@ export default function OrderApp({
               </div>
               <p class="mt-1 [overflow-wrap:anywhere]">{slip ? slip.name : t('order.slip.required')}</p>
             </section>
-            <div class="flex items-start gap-2">
-              <input
-                id="f-consent"
-                type="checkbox"
-                class="mt-1 h-5 w-5 accent-maroon"
-                checked={consent}
-                onChange={(e) => setConsent((e.currentTarget as HTMLInputElement).checked)}
-              />
-              <label for="f-consent">
-                {t('order.review.consent')}{' '}
-                <a href={privacyHref} target="_blank" rel="noopener">
-                  ↗
-                </a>
-              </label>
-            </div>
+            <p class="text-sm text-ink-soft" data-testid="consent-note">
+              {t('order.review.consent')}{' '}
+              <a href={privacyHref} target="_blank" rel="noopener">
+                {t('order.review.privacyLink')} ↗
+              </a>
+            </p>
             {submitError && (
               <p class="field-error" role="alert" data-testid="submit-error">
                 {t(submitError)}
@@ -1125,7 +1113,7 @@ export default function OrderApp({
               type="button"
               class="btn-primary"
               onClick={submit}
-              disabled={!consent || !slip || submitting || blocked || !totals}
+              disabled={!slip || submitting || blocked || !totals}
               data-submit
             >
               {submitting ? t('order.review.submitting') : t('order.review.submit')}

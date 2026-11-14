@@ -52,7 +52,6 @@ export async function placeOrder(
   await page.click('[data-next-step]');
   await attachSlip(page);
   await page.click('[data-next-step]');
-  await page.check('#f-consent');
   await page.click('[data-submit]');
   await page.waitForURL(/\/order\/success\/#AJ-\d{4}-[A-Z0-9]{4}$/, { timeout: 30_000 });
   const id = (await page.locator('[data-testid="order-id"]').textContent())!.trim();

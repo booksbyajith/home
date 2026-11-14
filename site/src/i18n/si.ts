@@ -241,8 +241,10 @@ export const si = {
   'order.slip.required': 'කරුණාකර ඔබගේ බැංකු රිසිට්පත උඩුගත කරන්න.',
   'order.review.title': 'පරීක්ෂා කර තහවුරු කරන්න',
   'order.review.edit': 'සංස්කරණය',
-  'order.review.consent': 'පෞද්ගලිකත්ව ප්‍රතිපත්තියේ සඳහන් පරිදි මෙම ඇණවුම බෙදාහැරීමට මගේ තොරතුරු භාවිත කිරීමට මම එකඟ වෙමි.',
-  'order.review.submit': 'ඇණවුම යවන්න',
+  'order.review.consent':
+    '«එකඟ වී ඇණවුම යවන්න» එබීමෙන්, පෞද්ගලිකත්ව ප්‍රතිපත්තියේ සඳහන් පරිදි මෙම ඇණවුම බෙදාහැරීමට ඔබගේ තොරතුරු භාවිත කිරීමට ඔබ එකඟ වේ.',
+  'order.review.privacyLink': 'පෞද්ගලිකත්ව ප්‍රතිපත්තිය',
+  'order.review.submit': 'එකඟ වී ඇණවුම යවන්න',
   'order.review.submitting': 'ඔබගේ ඇණවුම යවමින්…',
   'order.draft.restored': 'ඔබ අවසන් නොකළ ඇණවුම නැවත ලබා දී ඇත.',
   'order.draft.startOver': 'නැවත අරඹන්න',
