@@ -274,6 +274,7 @@ export const ta: Dict = {
   'success.next.message': 'கட்டணம் சரிபார்க்கப்பட்டதும் WhatsApp செய்தி அனுப்புவோம்.',
   'success.next.dispatch': 'உங்கள் புத்தகம் அனுப்பப்பட்டு, கண்காணிப்பு எண் உங்களுக்குக் கிடைக்கும்.',
   'success.whatsapp': 'WhatsApp இல் எங்களுக்குச் செய்தி அனுப்புங்கள்',
+  'success.sms': 'எமக்கு SMS அனுப்பவும்',
   'success.waMessage': 'வணக்கம், இணையதளத்தில் {orderId} ஆர்டரைச் செய்தேன்.',
   'success.downloadJpg': 'ரசீதைப் பதிவிறக்கு (படம்)',
   'success.downloadPdf': 'ரசீதைப் பதிவிறக்கு (PDF)',

@@ -275,6 +275,7 @@ export const en: Dict = {
   'success.next.message': 'We send you a WhatsApp message when the payment is verified.',
   'success.next.dispatch': 'Your book is posted and you receive the tracking number.',
   'success.whatsapp': 'Message us on WhatsApp',
+  'success.sms': 'Send us an SMS',
   'success.waMessage': 'Hello, I placed order {orderId} on the website.',
   'success.downloadJpg': 'Download receipt (image)',
   'success.downloadPdf': 'Download receipt (PDF)',

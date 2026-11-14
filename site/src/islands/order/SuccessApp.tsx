@@ -28,6 +28,7 @@ export default function SuccessApp({ lang, dict, trackHref, trackAbsUrl }: Props
   const [orderId, setOrderId] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
   const [wa, setWa] = useState<string | null>(null);
+  const [sms, setSms] = useState<string | null>(null);
   const [qr, setQr] = useState<string | null>(null);
   const [busy, setBusy] = useState<'jpg' | 'pdf' | null>(null);
   const [failed, setFailed] = useState(false);
@@ -45,6 +46,9 @@ export default function SuccessApp({ lang, dict, trackHref, trackAbsUrl }: Props
     void fetchPublicConfig().then((c) => {
       if (c?.contact.whatsappNumber)
         setWa(buildWaUrl(c.contact.whatsappNumber, t('success.waMessage', { orderId: id })));
+      // For customers without WhatsApp: the same message as an SMS, to the order phone number.
+      const smsNo = c?.contact.orderPhone || c?.contact.whatsappNumber;
+      if (smsNo) setSms(`sms:+${smsNo}?&body=${encodeURIComponent(t('success.waMessage', { orderId: id }))}`);
     });
   }, []);
 
@@ -150,6 +154,11 @@ export default function SuccessApp({ lang, dict, trackHref, trackAbsUrl }: Props
         {wa && (
           <a href={wa} class="btn-primary" target="_blank" rel="noopener" data-testid="success-wa">
             {t('success.whatsapp')}
+          </a>
+        )}
+        {sms && (
+          <a href={sms} class="btn-secondary" data-testid="success-sms">
+            {t('success.sms')}
           </a>
         )}
         <a href={`${trackHref}#${orderId}`} class="btn-secondary">

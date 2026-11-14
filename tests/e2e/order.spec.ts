@@ -42,6 +42,10 @@ test('full order with two books and a slip upload', async ({ page }) => {
     'href',
     new RegExp(`^https://wa\\.me/94770000000\\?text=.*${orderId}`),
   );
+  await expect(page.locator('[data-testid="success-sms"]')).toHaveAttribute(
+    'href',
+    new RegExp(`^sms:\\+94770000000\\?&body=.*${orderId}`),
+  );
 
   const order = (await db.doc(`orders/${orderId}`).get()).data()!;
   expect(order.totals.grandTotalLKR).toBe(6750);
