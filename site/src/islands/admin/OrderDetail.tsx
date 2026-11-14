@@ -364,11 +364,13 @@ export function OrderDetail({ orderId }: { orderId: string }) {
       <Section title={t('admin.order.slip')}>
         {order.slip ? (
           <>
-            <button type="button" class="btn-secondary" onClick={viewSlip} data-view-slip>
-              {order.slip.contentType === 'application/pdf'
-                ? t('admin.order.openPdf')
-                : t('admin.order.viewSlip')}
-            </button>
+            {!slip && (
+              <button type="button" class="btn-secondary" onClick={viewSlip} data-view-slip>
+                {order.slip.contentType === 'application/pdf'
+                  ? t('admin.order.openPdf')
+                  : t('admin.order.viewSlip')}
+              </button>
+            )}
             {slip && slip.type.startsWith('image/') && (
               <img
                 src={slip.url}
