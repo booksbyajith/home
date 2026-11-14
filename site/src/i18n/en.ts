@@ -326,6 +326,8 @@ export const en: Dict = {
   'track.myOrders.none': 'No orders have been placed from this device.',
   'track.myOrders.track': 'Track',
   'track.myOrders.remove': 'Remove from this device',
+  'track.myOrders.removeConfirm':
+    'Remove order {orderId} from this device? The order is not cancelled, but its receipt will no longer be shown on this device.',
   'status.pending_verification': 'Received',
   'status.acknowledged': 'Being checked',
   'status.payment_verified': 'Payment verified',

@@ -54,9 +54,30 @@ test('tracking with correct and wrong phone digits', async ({ page, browser }) =
 
   // Remove from this device.
   await page.goto('track/');
+  page.once('dialog', (d) => void d.accept());
   await page
     .getByRole('button', { name: /ඉවත් කරන්න/ })
     .first()
     .click();
   await expect(page.locator('[data-testid="my-orders"]')).toHaveCount(0);
+});
+
+test('removing an order from this device asks first', async ({ page }) => {
+  const orderId = await placeOrder(page);
+  await page.goto('track/');
+  const mine = page.locator('[data-testid="my-orders"]');
+  await expect(mine).toContainText(orderId);
+
+  // Cancel the question: the order stays.
+  page.once('dialog', (d) => {
+    expect(d.message()).toContain(orderId);
+    void d.dismiss();
+  });
+  await page.click(`[data-my-remove="${orderId}"]`);
+  await expect(mine).toContainText(orderId);
+
+  // Confirm: it is removed.
+  page.once('dialog', (d) => void d.accept());
+  await page.click(`[data-my-remove="${orderId}"]`);
+  await expect(page.locator(`[data-my-remove="${orderId}"]`)).toHaveCount(0);
 });

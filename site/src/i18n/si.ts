@@ -320,6 +320,8 @@ export const si = {
   'track.myOrders.none': 'මෙම උපාංගයෙන් ඇණවුම් කර නැත.',
   'track.myOrders.track': 'පරීක්ෂා කරන්න',
   'track.myOrders.remove': 'මෙම උපාංගයෙන් ඉවත් කරන්න',
+  'track.myOrders.removeConfirm':
+    '{orderId} ඇණවුම මෙම උපාංගයෙන් ඉවත් කරන්නද? ඇණවුම අවලංගු නොවේ, නමුත් ඔබගේ රිසිට්පත මෙම උපාංගයේ තවදුරටත් නොපෙන්වේ.',
   'status.pending_verification': 'ලැබුණි',
   'status.acknowledged': 'පරීක්ෂා කරමින්',
   'status.payment_verified': 'ගෙවීම තහවුරුයි',

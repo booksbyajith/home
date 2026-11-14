@@ -322,6 +322,8 @@ export const ta: Dict = {
   'track.myOrders.none': 'இந்தச் சாதனத்திலிருந்து ஆர்டர்கள் எதுவும் செய்யப்படவில்லை.',
   'track.myOrders.track': 'கண்காணி',
   'track.myOrders.remove': 'இந்தச் சாதனத்திலிருந்து நீக்கு',
+  'track.myOrders.removeConfirm':
+    '{orderId} ஆர்டரை இந்தச் சாதனத்திலிருந்து நீக்கவா? ஆர்டர் ரத்து செய்யப்படாது, ஆனால் அதன் ரசீது இந்தச் சாதனத்தில் இனி காட்டப்படாது.',
   'status.pending_verification': 'பெறப்பட்டது',
   'status.acknowledged': 'சரிபார்க்கப்படுகிறது',
   'status.payment_verified': 'கட்டணம் சரிபார்க்கப்பட்டது',

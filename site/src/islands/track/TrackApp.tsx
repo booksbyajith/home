@@ -221,9 +221,12 @@ export default function TrackApp({ lang, dict }: Props) {
                     type="button"
                     class="btn-quiet min-h-9 px-3 py-0 text-sm"
                     onClick={() => {
+                      // Ask first: once removed, the order (and its saved receipt) is gone from this device.
+                      if (!window.confirm(t('track.myOrders.removeConfirm', { orderId: o.orderId }))) return;
                       removeMyOrder(o.orderId);
                       setMine(myOrders());
                     }}
+                    data-my-remove={o.orderId}
                   >
                     {t('track.myOrders.remove')}
                   </button>
