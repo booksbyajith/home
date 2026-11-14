@@ -12,7 +12,7 @@ export interface StaffOrder {
   verifiedAt: number;
   name: string;
   phone: string;
-  /** International form for the SMS app, e.g. +94771234567. */
+  /** International form for the SMS app, e.g. +94 followed by the number. */
   smsNumber: string;
   lang: Lang;
   addressLines: string[];
