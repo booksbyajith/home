@@ -2,7 +2,7 @@
 // Seeds books/* and config/* in Firestore.
 //   node scripts/seed.mjs --emulator [--fixtures]   local emulators (project demo-ajith)
 //   node scripts/seed.mjs --project <id>            production (Application Default Credentials)
-// Without --fixtures it only creates missing documents and never overwrites.
+// Without --fixtures it creates missing documents and only refreshes book titles.
 import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -46,8 +46,11 @@ export async function runSeed(db, { fixtures = false } = {}) {
   };
   const created = [];
   for (const b of readBooks()) {
-    if (await createIfMissing(db.collection('books').doc(b.slug), bookDocFromYaml(b)))
-      created.push(`books/${b.slug}`);
+    const ref = db.collection('books').doc(b.slug);
+    if (await createIfMissing(ref, bookDocFromYaml(b))) created.push(`books/${b.slug}`);
+    // Titles come from book.yaml, so a renamed book is renamed in orders, emails and labels
+    // too. Prices, stock and other admin settings are left as they are.
+    else await ref.set({ title: b.title }, { merge: true });
   }
   if (await createIfMissing(db.doc('config/public'), { ...defaults.DEFAULT_PUBLIC_CONFIG, updatedBy: null }))
     created.push('config/public');

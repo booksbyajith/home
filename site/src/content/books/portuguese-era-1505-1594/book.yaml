@@ -4,7 +4,7 @@ featured: true
 title:
   si: ලංකාවේ පෘතුගීසි සිටි යුගය (1505-1594)
   # Working English translation of the title. AUTHOR: please confirm.
-  en: The Portuguese Period in Lanka (1505–1594)
+  en: The Portuguese in Sri Lanka (1505–1594)
   # Working Tamil translation of the title. AUTHOR: please confirm.
   ta: இலங்கையில் போர்த்துக்கேயர் காலம் (1505–1594)
 originalLanguage: si
@@ -20,7 +20,7 @@ covers:
     kind: front
     alt:
       si: ලංකාවේ පෘතුගීසි සිටි යුගය පොතේ ඉදිරි කවරය
-      en: Front cover of The Portuguese Period in Lanka
+      en: Front cover of The Portuguese in Sri Lanka
       ta: இலங்கையில் போர்த்துக்கேயர் காலம் நூலின் முன் அட்டை
   - file: portuguese-era-1505-1594-back.jpg
     kind: back

@@ -75,7 +75,7 @@ describe('updateOrderStatus', () => {
     const r = await call('updateOrderStatus', { orderId: en, to: 'acknowledged' }, { idToken: admin });
     expect(r.result.waUrl.startsWith('https://wa.me/447911123456?text=')).toBe(true);
     expect(decode(r.result.waUrl)).toBe(
-      `Thank you for ordering The Portuguese Period in Lanka (1505–1594), English Reader! 🙏 Your order number is ${en}. We will verify your bank transfer shortly and start preparing your book.`,
+      `Thank you for ordering The Portuguese in Sri Lanka (1505–1594), English Reader! 🙏 Your order number is ${en}. We will verify your bank transfer shortly and start preparing your book.`,
     );
   });
 
