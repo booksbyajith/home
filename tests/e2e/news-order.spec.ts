@@ -15,3 +15,12 @@ for (const path of ['news/how-to-order/', 'en/news/how-to-order/', 'ta/news/how-
     await expect(page.locator('article a[href$="/order/"]')).toHaveCount(1);
   });
 }
+
+test('the order page shows how to order, with the settings bank details', async ({ page }) => {
+  await resetAll();
+  await page.goto('order/');
+  const box = page.locator('[data-testid="how-to-order"]');
+  await expect(box.locator('[data-config-text="bank-account-number"]')).toHaveText('000000000000');
+  await expect(box.locator('[data-config-text="whatsapp-number"]')).toHaveText('+94770000000');
+  await expect(box.locator('a')).toHaveCount(0);
+});

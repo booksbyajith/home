@@ -2,6 +2,7 @@
 import type { Lang } from '@shared/constants';
 import OrderApp, { type OrderBook } from '../islands/order/OrderApp';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import HowToOrder from '../components/HowToOrder.astro';
 import { pick, useT } from '../i18n';
 import { getBooks } from '../lib/content';
 import { img } from '../lib/images';
@@ -37,6 +38,7 @@ const dict = pick(lang, ['order.', 'books.', 'site.copy', 'site.copied', 'nav.co
 <BaseLayout lang={lang} title={t('order.title')} description={t('order.payment.instructions')}>
   <section class="container-page pt-12 pb-10 md:pt-16">
     <h1 class="page-title">{t('order.title')}</h1>
+    <HowToOrder lang={lang} />
     <div class="mt-6">
       <OrderApp
         client:load

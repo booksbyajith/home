@@ -1,0 +1,38 @@
+---
+// How to order (by bank deposit and WhatsApp), shown above the order form. The bank details
+// and WhatsApp number come from the admin settings (filled in by configLinks.ts).
+import type { Lang } from '@shared/constants';
+import { useT } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const t = useT(Astro.props.lang);
+---
+
+<details class="card mt-6 p-4 sm:p-5" open data-testid="how-to-order">
+  <summary class="cursor-pointer text-lg font-semibold">{t('howto.title')}</summary>
+  <ol class="mt-3 list-decimal space-y-2 pl-6">
+    <li>{t('howto.step1')}</li>
+    <li>
+      {t('howto.step2')}
+      <ul class="mt-1 list-disc pl-5">
+        <li>
+          {t('howto.accountName')}: <span data-config-text="bank-account-name">…</span>
+        </li>
+        <li>
+          {t('howto.bank')}: <span data-config-text="bank-name">…</span>
+        </li>
+        <li>
+          {t('howto.accountNumber')}: <strong data-config-text="bank-account-number">…</strong>
+        </li>
+        <li>
+          {t('howto.branch')}: <span data-config-text="bank-branch">…</span>, {t('howto.country')}
+        </li>
+      </ul>
+    </li>
+    <!-- prettier-ignore -->
+    <li>{t('howto.step3a')} <span data-config-text="whatsapp-number">…</span>{t('howto.step3b')}</li>
+    <li>{t('howto.step4')}</li>
+  </ol>
+</details>

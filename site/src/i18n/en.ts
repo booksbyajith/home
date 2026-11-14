@@ -170,6 +170,19 @@ export const en: Dict = {
   'privacy.title': 'Privacy policy',
   'terms.title': 'Delivery & returns',
 
+  'howto.title': 'How to order books',
+  'howto.step1':
+    'Within Sri Lanka: since the postal fee is included in the price of the book, please deposit the amount corresponding to the value of the book you are ordering into the account below. You can also make a credit or debit card deposit using this page.',
+  'howto.step2': 'Account details:',
+  'howto.accountName': 'Account name',
+  'howto.bank': 'Bank',
+  'howto.accountNumber': 'Account number',
+  'howto.branch': 'Branch',
+  'howto.country': 'Sri Lanka',
+  'howto.step3a':
+    'Send a copy of your receipt along with your name and the postal address to the WhatsApp number',
+  'howto.step3b': '.',
+  'howto.step4': 'You will receive a message once the books you ordered have been posted.',
   'order.title': 'Order books',
   'order.step.books': 'Books',
   'order.step.details': 'Delivery',
