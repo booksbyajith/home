@@ -28,48 +28,150 @@ const fresh = (file, ...sources) =>
   sources.every((s) => !s || statSync(file).mtimeMs > statSync(s).mtimeMs) &&
   statSync(file).mtimeMs > scriptMtime;
 
-async function render(file, { title, subtitle, lang, cover }) {
-  const band = Buffer.from(
+const PORTRAIT = path.join(site, 'public/author/author-portrait.jpg');
+const COVERS = [
+  'portuguese-era-1505-1594-front.jpg',
+  'chinese-expedition-front.jpg',
+  'finding-sinhabahu-front.jpg',
+]
+  .map((f) => path.join(site, 'public/covers', f))
+  .filter((f) => existsSync(f));
+
+const frame = () =>
+  Buffer.from(
     `<svg width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="#fbf7ef"/><rect width="${W}" height="14" fill="#6f4626"/><rect y="${H - 14}" width="${W}" height="14" fill="#845d16"/></svg>`,
   );
-  const layers = [{ input: band, left: 0, top: 0 }];
-  let textLeft = 80;
-  if (cover && existsSync(cover)) {
-    const img = await sharp(cover).resize({ height: 500, width: 340, fit: 'cover' }).toBuffer();
-    layers.push({ input: img, left: 70, top: 65 });
-    textLeft = 470;
+
+/** A book cover with a soft shadow, as a PNG of (w + 2*pad) x (h + 2*pad). */
+async function shadowed(file, w, h, pad = 18) {
+  const img = await sharp(file).resize({ width: w, height: h, fit: 'cover' }).toBuffer();
+  const shadow = Buffer.from(
+    `<svg width="${w + 2 * pad}" height="${h + 2 * pad}"><defs><filter id="b"><feGaussianBlur stdDeviation="${pad / 2.5}"/></filter></defs><rect x="${pad + 4}" y="${pad + 8}" width="${w}" height="${h}" fill="#2b1d12" opacity="0.45" filter="url(#b)"/></svg>`,
+  );
+  return sharp(shadow)
+    .composite([{ input: img, left: pad, top: pad }])
+    .png()
+    .toBuffer();
+}
+
+/** The author's photo in a circle with a gold ring. */
+async function roundPortrait(d) {
+  const ring = 4;
+  const img = await sharp(PORTRAIT)
+    .resize({ width: d, height: d, fit: 'cover', position: 'top' })
+    .composite([
+      {
+        input: Buffer.from(
+          `<svg width="${d}" height="${d}"><circle cx="${d / 2}" cy="${d / 2}" r="${d / 2}"/></svg>`,
+        ),
+        blend: 'dest-in',
+      },
+    ])
+    .png()
+    .toBuffer();
+  const D = d + 2 * ring;
+  return sharp(
+    Buffer.from(
+      `<svg width="${D}" height="${D}"><circle cx="${D / 2}" cy="${D / 2}" r="${D / 2}" fill="#b08a3e"/></svg>`,
+    ),
+  )
+    .composite([{ input: img, left: ring, top: ring }])
+    .png()
+    .toBuffer();
+}
+
+/** Site-wide card: the author's portrait on the right, name, tagline and the book covers. */
+async function renderDefault(file, { title, subtitle }) {
+  const layers = [{ input: frame(), left: 0, top: 0 }];
+  const pw = 430;
+  if (existsSync(PORTRAIT)) {
+    const ph = H - 28;
+    const photo = await sharp(PORTRAIT)
+      .resize({ width: pw, height: ph, fit: 'cover', position: 'top' })
+      .composite([
+        {
+          // Fade the photo's left edge into the paper colour.
+          input: Buffer.from(
+            `<svg width="${pw}" height="${ph}"><defs><linearGradient id="g"><stop offset="0" stop-color="#fbf7ef" stop-opacity="1"/><stop offset="0.28" stop-color="#fbf7ef" stop-opacity="0"/></linearGradient></defs><rect width="${pw}" height="${ph}" fill="url(#g)"/></svg>`,
+          ),
+        },
+      ])
+      .toBuffer();
+    layers.push({ input: photo, left: W - pw, top: 14 });
   }
+  const textW = W - pw - 90;
+  const t = await textImage(sharp, title, {
+    size: title.length > 30 ? 46 : 56,
+    width: textW,
+    color: '#1f1b16',
+  });
+  layers.push({ input: t.data, left: 70, top: 60 });
+  if (subtitle) {
+    const s = await textImage(sharp, subtitle, {
+      size: 28,
+      width: textW,
+      color: '#6f4626',
+      serif: false,
+      bold: false,
+    });
+    layers.push({ input: s.data, left: 70, top: 60 + t.height + 14 });
+  }
+  // The books side by side.
+  const cw = 174;
+  const ch = 261;
+  let x = 52;
+  for (const c of COVERS) {
+    layers.push({ input: await shadowed(c, cw, ch), left: x, top: H - 14 - ch - 60 });
+    x += cw + 12;
+  }
+  await sharp({ create: { width: W, height: H, channels: 3, background: '#fbf7ef' } })
+    .composite(layers)
+    .jpeg({ quality: 84, mozjpeg: true })
+    .toFile(file);
+}
+
+/** A book or post: its cover on the left, the title, and the author's round photo and name. */
+async function render(file, { title, subtitle, lang, cover }) {
+  if (!cover || !existsSync(cover)) return renderDefault(file, { title, subtitle });
+  const layers = [{ input: frame(), left: 0, top: 0 }];
+  layers.push({ input: await shadowed(cover, 330, 490), left: 52, top: 52 });
+  const textLeft = 470;
   const textWidth = W - textLeft - 70;
   const t = await textImage(sharp, title, {
-    size: title.length > 40 ? 50 : 60,
+    size: title.length > 40 ? 48 : 58,
     width: textWidth,
     color: '#1f1b16',
   });
-  let y = 110;
-  layers.push({ input: t.data, left: textLeft, top: y });
-  y += t.height + 24;
+  layers.push({ input: t.data, left: textLeft, top: 90 });
   if (subtitle) {
     const s = await textImage(sharp, subtitle, {
-      size: 30,
+      size: 28,
       width: textWidth,
       color: '#4a4136',
       serif: false,
       bold: false,
     });
-    layers.push({ input: s.data, left: textLeft, top: Math.min(y, H - 200) });
+    layers.push({ input: s.data, left: textLeft, top: Math.min(90 + t.height + 22, H - 260) });
   }
-  const name = await textImage(sharp, NAME[lang], { size: 34, width: textWidth, color: '#6f4626' });
-  layers.push({ input: name.data, left: textLeft, top: H - 70 - name.height });
+  const d = 104;
+  const name = await textImage(sharp, NAME[lang], { size: 32, width: textWidth - d - 30, color: '#6f4626' });
+  const rowTop = H - 64 - d;
+  if (existsSync(PORTRAIT)) layers.push({ input: await roundPortrait(d), left: textLeft, top: rowTop });
+  layers.push({
+    input: name.data,
+    left: textLeft + d + 30,
+    top: Math.round(rowTop + (d + 8 - name.height) / 2),
+  });
   await sharp({ create: { width: W, height: H, channels: 3, background: '#fbf7ef' } })
     .composite(layers)
-    .jpeg({ quality: 82, mozjpeg: true })
+    .jpeg({ quality: 84, mozjpeg: true })
     .toFile(file);
 }
 
 let count = 0;
 for (const lang of LANGS) {
   const f = path.join(out, `default-${lang}.jpg`);
-  if (!fresh(f)) await render(f, { title: NAME[lang], subtitle: TAG[lang], lang });
+  if (!fresh(f, PORTRAIT)) await renderDefault(f, { title: NAME[lang], subtitle: TAG[lang] });
   count++;
 }
 
