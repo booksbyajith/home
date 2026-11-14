@@ -228,8 +228,6 @@ export const ta: Dict = {
   'order.payment.branch': 'கிளை',
   'order.payment.accountName': 'கணக்கு உரிமையாளர்',
   'order.payment.accountNumber': 'கணக்கு எண்',
-  'order.payment.referenceHint':
-    'இது இடைக்கோடுகள் இல்லாத உங்கள் ஆர்டர் எண். உங்கள் வங்கி செயலியில் இதைக் குறிப்பாக (Receiver Reference) உள்ளிடவும்; உங்கள் கட்டணத்தை இலகுவாகப் பொருத்த இது உதவும்.',
   'order.payment.amount': 'தொகை',
   'order.payment.reference': 'குறிப்பு',
   'order.slip.title': 'உங்கள் வங்கி ரசீதைப் பதிவேற்றுங்கள்',

@@ -226,8 +226,6 @@ export const si = {
   'order.payment.branch': 'ශාඛාව',
   'order.payment.accountName': 'ගිණුම් හිමියා',
   'order.payment.accountNumber': 'ගිණුම් අංකය',
-  'order.payment.referenceHint':
-    'මෙය ඉරි නොමැතිව ඔබගේ ඇණවුම් අංකයයි. ඔබගේ බැංකු ඇප් එකේ යොමුව (Receiver Reference) ලෙස මෙය ඇතුළත් කරන්න. එවිට අපට ඔබගේ ගෙවීම පහසුවෙන් හඳුනාගත හැක.',
   'order.payment.amount': 'මුදල',
   'order.payment.reference': 'යොමුව',
   'order.slip.title': 'බැංකු රිසිට්පත උඩුගත කරන්න',

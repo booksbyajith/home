@@ -981,30 +981,39 @@ export default function OrderApp({
                       </div>
                     ))}
                 </dl>
-                {payRef && (
-                  <p class="mt-2 rounded-lg bg-gold/10 p-3 text-sm" data-testid="pay-ref-hint">
-                    {t('order.payment.referenceHint')}
-                  </p>
-                )}
                 <h4 class="mt-4 font-semibold">{t('order.payment.instructions')}</h4>
                 <p class="mt-1 whitespace-pre-line">{tl(config.paymentInstructions, lang)}</p>
               </section>
             )}
             <section aria-labelledby="slip-h">
-              <h3 id="slip-h" class="font-sans text-lg font-semibold">
+              <h3 id="slip-h" class="sr-only">
                 {t('order.slip.title')}
               </h3>
-              <p class="field-hint" id="slip-hint">
-                {t('order.slip.hint')}
-              </p>
-              <label class="btn-secondary mt-2 cursor-pointer">
-                {slip ? t('order.slip.replace') : t('order.slip.choose')}
+              {/* A large red button until the slip is attached, so it isn't forgotten. */}
+              <label
+                class={
+                  slip
+                    ? 'btn-secondary mt-2 cursor-pointer'
+                    : 'mt-2 flex min-h-16 w-full cursor-pointer flex-col items-center justify-center rounded-2xl bg-[#b3261e] px-5 py-4 text-center text-white shadow-md hover:bg-[#8c1d18] focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-[#b3261e]'
+                }
+                data-slip-button
+              >
+                {slip ? (
+                  t('order.slip.replace')
+                ) : (
+                  <>
+                    <span class="text-lg font-bold">⬆ {t('order.slip.title')}</span>
+                    <span class="mt-1 text-sm text-white" id="slip-hint">
+                      {t('order.slip.hint')}
+                    </span>
+                  </>
+                )}
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp,application/pdf"
                   class="sr-only"
                   onChange={onSlip}
-                  aria-describedby="slip-hint"
+                  aria-describedby={slip ? undefined : 'slip-hint'}
                   data-slip-input
                 />
               </label>
