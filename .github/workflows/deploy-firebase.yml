@@ -51,3 +51,16 @@ jobs:
           echo "only=$t" >> "$GITHUB_OUTPUT"
       - name: Deploy
         run: pnpm exec firebase deploy --only "${{ steps.targets.outputs.only }}" --project "${{ vars.FIREBASE_PROJECT_ID }}" --non-interactive --force
+      - uses: google-github-actions/setup-gcloud@v2
+        if: inputs.functions
+      # Callables must be reachable by anyone (each one checks App Check, sign-in and admin
+      # rights itself). The Firebase CLI only sets this when a function is first created, so a
+      # function whose first deploy failed part-way was left unreachable; set it every time.
+      - name: Make callable functions reachable
+        if: inputs.functions
+        run: |
+          for f in $(grep -rhoE 'export const [A-Za-z]+ = onCall' functions/src | awk '{print $3}'); do
+            gcloud functions add-invoker-policy-binding "$f" --region=asia-south1 \
+              --member=allUsers --project "${{ vars.FIREBASE_PROJECT_ID }}" --quiet >/dev/null
+            echo "ok: $f"
+          done
